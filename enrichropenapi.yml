@@ -1,0 +1,445 @@
+openapi: "3.0.1"
+
+info: 
+  title: Enrichr API
+  description: |
+    For every gene set input, Enrichr outputs ranked lists of enrichment terms,
+    where the highest ranked terms provide knowledge about the input list. 
+  version: '1.0.0'
+  termsOfService: 'http://amp.pharm.mssm.edu/Enrichr/help#terms'
+  contact: 
+    name: Ma'ayan Lab
+    url: http://labs.icahn.mssm.edu/maayanlab/
+  
+servers: 
+  - url: http://amp.pharm.mssm.edu/Enrichr
+
+paths:
+  /addList: 
+    post: 
+      summary: Submit a gene list for analysis
+      operationId: addList
+      requestBody:
+        $ref: '#/components/requestBodies/listdescription'
+      responses: 
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/ids'
+        '400':
+          description: 'Bad request. Missing or invalid gene list.'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /view:
+    get: 
+      summary: Returns a specific gene list
+      operationId: view
+      parameters:
+        - $ref: '#/components/parameters/userListId'
+        - $ref: '#/components/parameters/dataset'
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/viewresponse'
+        '400': 
+          description: 'Bad request. Missing or invalid ID.'
+        '404':
+          description: 'A gene list associated with the specified ID was not found.'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /enrich: 
+    get: 
+      summary: Returns enrichment analysis results for a specific gene list
+      operationId: enrich
+      parameters: 
+        - name: userListId
+          description: Unique ID for a specific gene list
+          in: query
+          schema: 
+            type: integer
+          required: true
+        - $ref: '#/components/parameters/backgroundType'
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/enrichresponse'
+        '400': 
+          description: 'Bad request. Missing or invalid ID or gene library.'
+        '404': 
+          description: 'Results for the specified ID and gene library were not found.'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /genemap: 
+    get: 
+      summary: Returns enrichment terms that contain a given gene
+      operationId: genemap
+      parameters: 
+        - $ref: '#/components/parameters/gene'
+        - $ref: '#/components/parameters/json'
+        - $ref: '#/components/parameters/setup'
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/genemapresponse'
+        '400': 
+          description: 'Bad request. Missing or invalid gene name.'
+        '404': 
+          description: 'Terms containing the specified gene were not found.'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /export: 
+    get: 
+      summary: Download enrichment analysis results for a specific gene list
+      operationId: export
+      parameters: 
+        - name: userListId
+          description: Unique ID for a specific gene list
+          in: query
+          schema: 
+            type: integer
+          required: true
+        - $ref: '#/components/parameters/filename'
+        - $ref: '#/components/parameters/backgroundType'
+      responses: 
+        '200': 
+          description: A text file
+          content: 
+            application/text: 
+              schema: 
+                type: string
+                format: binary
+        '400': 
+          description: 'Bad request - missing/invalid ID or gene library'
+        '404': 
+          description: 'Results for the specified ID and gene library were not found'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /calendar: 
+    get: 
+      summary: Returns usage statistics for Enrichr website 
+      operationId: calendar
+      responses: 
+        '200':
+          description: 'Successful response.'
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/calendarresponse'
+        '400': 
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /count:
+    get: 
+      summary: Returns total number of lists analyzed, number of terms, and number of libraries
+      operationId: count
+      responses:
+        '200':
+          description: 'Successful response.'
+          content: 
+            application/json: 
+              schema: 
+                type: string
+        '400': 
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /datasetStatistics:
+    get: 
+      summary: Returns statistic information on all gene libraries
+      operationId: datasetStatistics
+      responses:
+        '200':
+          description: 'Successful response.'
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/datasetresponse'
+        '400': 
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /json/libraries.json: 
+    get: 
+      summary: Returns descriptive information on all gene libraries in JSON
+      operationId: libraries.json
+      responses: 
+        '200': 
+          description: 'Successful response'
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/librariesresponse'
+        '400': 
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  
+components: 
+  requestBodies:
+    listdescription:
+      description: A list of genes and a short description
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              list:
+                $ref: '#/components/schemas/list'
+              description:  
+                $ref: '#/components/schemas/description'
+  parameters: 
+    userListId: 
+      name: userListId
+      in: query
+      description: Unique ID for a specific gene list. If the short ID is known, use EITHER this OR dataset. 
+      schema: 
+        type: integer
+      example: 363320
+    dataset: 
+      name: dataset
+      in: query
+      description: Short ID for a specific gene list. If the full ID is known, use EITHER this OR userListId.
+      schema: 
+        type: string
+      example: '591h'
+    backgroundType: 
+      name: backgroundType
+      in: query
+      description: Gene set library for which to download results
+      required: true
+      schema: 
+        type: string
+      example: KEGG_2015
+    gene: 
+      name: gene
+      in: query
+      description: Gene to use in search for terms
+      required: true
+      schema: 
+        type: string
+      example: 'AKT1'
+    json:
+      name: json
+      in: query
+      description: Set "true" to return JSON rather than plaintext
+      schema: 
+        type: boolean
+      example: true
+    setup: 
+      name: setup
+      in: query
+      description: Set "true" to return category information for the libraries
+      schema: 
+        type: boolean
+      example: false
+    filename: 
+      name: filename
+      in: query
+      description: Name of text file download
+      schema: 
+        type: string
+      example: example_enrichment
+      required: true
+  responses:
+    '400': 
+      description: 'Bad request'
+    '404':
+      description: 'Page not found'
+    '5XX': 
+      description: 'Unexpected error'
+  schemas: 
+    list: 
+      description: Newline-separated list of gene symbols to enrich
+      type: string
+      example: "PHF14\nRBM3\nMSL1\nPHF21A\nARL10\nINSR\nJADE2"
+    description:
+      description: String describing what the gene symbols represent
+      type: string
+      example: 'Example gene list'
+    ids:
+      type: object
+      properties: 
+        userListId: 
+          $ref: '#/components/parameters/userListId'
+        shortId: 
+          $ref: '#/components/parameters/dataset'
+    genelist: 
+      description: List of genes identified by given ID
+      type: array
+      items:
+        type: string
+      example: ['PHF14','RBM3','MSL1','PHF21A','ARL10','INSR','JADE2']
+    viewresponse: 
+      description: List of genes and short description
+      type: object
+      properties: 
+        genelist: 
+          $ref: '#/components/schemas/genelist'
+        description: 
+          $ref: '#/components/schemas/description'
+    rank: 
+      type: integer
+      example: 1
+    term: 
+      type: string
+      example: "ubiquitin mediated proteolysis"
+    pval: 
+      type: number
+      format: float
+      example: 0.06146387620182772
+    zscore: 
+      type: number
+      format: float
+      example: -1.8593425456520887
+    combscore: 
+      type: number
+      format: float
+      example: 2.816873182384705
+    overlap:
+      type: array
+      items: 
+        type: string
+      example: ['CUL2']
+    adjpval: 
+      type: number
+      format: float
+      example: 0.21981251622012696
+    enrichresponse: 
+      type: array
+      items: 
+        type: array
+        items: 
+          anyOf: 
+            - $ref: '#/components/schemas/rank'
+            - $ref: '#/components/schemas/term'
+            - $ref: '#/components/schemas/pval'
+            - $ref: '#/components/schemas/zscore'
+            - $ref: '#/components/schemas/combscore'
+            - $ref: '#/components/schemas/overlap'
+            - $ref: '#/components/schemas/adjpval'
+    gene:
+      type: object
+      additionalProperties:
+        type: array
+        items: 
+          type: string
+      example: {'GeneSigDB': ['18535662-TableS2b','17671232-TableS2a']}
+    descriptions:
+      type: array
+      items: 
+        type: object
+        properties: 
+          name: 
+            type: string
+            example: GeneSigDB
+          description: 
+            type: string
+            example: 'The GeneSigDB gene-set library was borrowed from the GeneSigDB database (PMID:22110038). The database contains gene lists extracted manually from the supporting tables of thousands of publications; most are from cancer related studies.'
+    library: 
+      type: object
+      properties: 
+        name: 
+          type: string
+          example: "ChEA_2015"
+        isFuzzy: 
+          type: boolean
+          example: true
+        hasGrid: 
+          type: boolean
+          example: true
+        format:
+          type: string
+          example: "{1} binds to the promoter region of {0}"
+    categories: 
+      type: array
+      items: 
+        type: object
+        properties: 
+          name: 
+            type: string
+            example: Transcription
+          libraries:
+            type: array
+            items: 
+              $ref: '#/components/schemas/library'
+    genemapresponse: 
+      type: object
+      properties: 
+        gene: 
+          $ref: '#/components/schemas/gene'
+        descriptions:
+          $ref: '#/components/schemas/descriptions'
+        categories:
+          $ref: '#/components/schemas/categories'
+    calendarresponse:
+      type: array
+      items:
+        type: array
+        items: 
+          type: integer
+      example: 
+      - [2013,2,26,3]
+      - [2013,2,27,5]
+    statisticobject:
+      type: object
+      properties:
+        libraryName: 
+          type: string
+          example: 'Genome_Browser_PWMs'
+        numTerms:
+          type: integer
+          example: 615
+        geneCoverage:
+          type: integer
+          example: 13362
+        genesPerTerm:
+          type: number
+          example: 275.0
+        link: 
+          type: string
+          example: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/'
+    statistics:
+      type: array
+      items: 
+        $ref: '#/components/schemas/statisticobject'
+    datasetresponse:
+      type: object
+      properties: 
+        statistics: 
+          $ref: '#/components/schemas/statistics'
+    librariesresponse:
+      type: object
+      additionalProperties: true
+      example:  {"BioCarta 2016": 
+      {"description": "Metabolic pathways from BioCarta.",
+      "idName": "View Pathway",
+      "idRegExp": "h_[a-zA-Z0-9]*",
+      "idRegExpFlag": "i",
+      "baseUrl": "http://cgap.nci.nih.gov/Pathways/BioCarta/",
+      "homepage": "http://cgap.nci.nih.gov/Pathways/BioCarta/"}}
+
+externalDocs: 
+  description: Learn more about Enrichr
+  url: https://amp.pharm.mssm.edu/Enrichr/help
