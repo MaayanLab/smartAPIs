@@ -1,17 +1,25 @@
 openapi: 3.0.0
 info: 
   title: Enrichr API
-  description: Enrichr is a web-based tool for enrichment analysis, providing users with interactive displays and visual summaries of collective functions of gene lists.
+  description: | 
+    Enrichr is a web-based tool for enrichment analysis, providing users with 
+    interactive displays and visual summaries of collective functions of gene 
+    lists.
   termsOfService: http://amp.pharm.mssm.edu/Enrichr/help#terms
   contact: 
     name: Ma'ayan Lab
     url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    email: avi.maayan@mssm.edu
     x-role: responsible organization
     x-id: http://labs.icahn.mssm.edu/maayanlab/
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html 
   version: 1.0.1
+tags:
+- name: Maayanlab
+- name: gene
+- name: enrichment
 servers: 
 - url: http://amp.pharm.mssm.edu/Enrichr
 paths:
@@ -77,7 +85,7 @@ paths:
         '400': 
           description: Bad request. Missing or invalid ID or gene library.
         '404': 
-          description: Results for the specified ID and gene library were not found.
+          description: Results for the specified ID and library were not found.
         '5XX':
           $ref: '#/components/responses/5XX'
   /genemap: 
@@ -125,8 +133,8 @@ paths:
                 format: binary
         '400': 
           description: Bad request - missing/invalid ID or gene library
-        '404': 
-          description: Results for the specified ID and gene library were not found
+        '404':
+          description: Results for the specified ID and library were not found
         '5XX':
           $ref: '#/components/responses/5XX'
   /calendar: 
@@ -148,7 +156,9 @@ paths:
           $ref: '#/components/responses/5XX'
   /count:
     get: 
-      summary: Returns total number of lists analyzed, number of terms, and number of libraries
+      summary: | 
+        Returns total number of lists analyzed, number of terms, and number of 
+        libraries
       operationId: count
       responses:
         '200':
@@ -214,14 +224,18 @@ components:
     userListId: 
       name: userListId
       in: query
-      description: Unique ID for a specific gene list. If the short ID is known, use EITHER this OR dataset. 
+      description: | 
+        Unique ID for a specific gene list. If the short ID is known, use EITHER 
+        this OR dataset. 
       schema: 
         type: integer
         example: 363320
     dataset: 
       name: dataset
       in: query
-      description: Short ID for a specific gene list. If the full ID is known, use EITHER this OR userListId.
+      description: | 
+        Short ID for a specific gene list. If the full ID is known, use EITHER 
+        this OR userListId.
       schema: 
         type: string
         example: 591h
@@ -358,7 +372,11 @@ components:
             example: GeneSigDB
           description: 
             type: string
-            example: The GeneSigDB gene-set library was borrowed from the GeneSigDB database (PMID:22110038). The database contains gene lists extracted manually from the supporting tables of thousands of publications; most are from cancer related studies.
+            example: | 
+              The GeneSigDB gene-set library was borrowed from the GeneSigDB 
+              database (PMID:22110038). The database contains gene lists 
+              extracted manually from the supporting tables of thousands of 
+              publications; most are from cancer related studies.
     library: 
       type: object
       properties: 
@@ -447,7 +465,10 @@ x-externalResources:
   x-type: api documentation
 - x-url: https://www.ncbi.nlm.nih.gov/pubmed/23586463
   x-type: publication
-  x-description: 'Enrichr: interactive and collaborative HTML5 gene list enrichment analysis tool.'
+  x-description: |
+    Enrichr: interactive and collaborative HTML5 gene list enrichment analysis 
+    tool.
 - x-url: https://www.ncbi.nlm.nih.gov/pubmed/27141961
   x-type: publication
-  x-description: 'Enrichr: a comprehensive gene set enrichment analysis web server 2016 update.'
+  x-description: | 
+    Enrichr: a comprehensive gene set enrichment analysis web server 2016 update.
