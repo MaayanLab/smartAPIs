@@ -314,7 +314,6 @@ components:
             type: object
             properties:
               list: 
-                description: Newline-separated list of gene symbols to enrich
                 type: string
                 example: | 
                   PHF14
@@ -325,7 +324,6 @@ components:
                   INSR
                   JADE2
               description:
-                description: String describing what the gene symbols represent
                 type: string
                 example: Example gene list
   parameters: 
@@ -354,49 +352,39 @@ components:
       description: Unexpected error
   schemas: 
     rank: 
-      description: Rank
       type: integer
       example: 1
     term: 
-      description: Functional term or enrichment term name
       type: string
       example: ubiquitin mediated proteolysis
     pval: 
-      description: P-value
       type: number
       format: float
       example: 0.06146387620182772
     zscore: 
-      description: Z-score or rank score
       type: number
       format: float
       example: -1.8593425456520887
-    combscore: 
-      description: Combined score
+    combscore:
       type: number
       format: float
       example: 2.816873182384705
     overlap:
-      description: Overlapping genes
       type: array
       items: 
         type: string
       example: [CUL2]
     adjpval: 
-      description: Adjusted p-value
       type: number
       format: float
       example: 0.21981251622012696
     oldpval:
-      description: Old p-value
       type: number
       format: float
     oldadjpval:
-      description: Old adjusted p-value
       type: number
       format: float
     gene:
-      description: Terms containing the specified gene
       type: object
       additionalProperties:
         type: array
@@ -405,7 +393,6 @@ components:
       example: 
         GeneSigDB: [18535662-TableS2b,17671232-TableS2a]
     descriptions:
-      description: Descriptions of each term
       type: array
       items: 
         type: object
@@ -421,7 +408,6 @@ components:
               extracted manually from the supporting tables of thousands of 
               publications; most are from cancer related studies.
     libraries:
-      description: Library information
       type: array
       items: 
         type: object
@@ -439,7 +425,6 @@ components:
             type: string
             example: '{1} binds to the promoter region of {0}'
     categories:
-      description: Library categorizations
       type: array
       items: 
         type: object
