@@ -1,5 +1,4 @@
 openapi: 3.0.0
-
 info: 
   title: Enrichr API
   description: Enrichr is a web-based tool for enrichment analysis, providing users with interactive displays and visual summaries of collective functions of gene lists.
@@ -13,10 +12,8 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html 
   version: 1.0.1
-  
 servers: 
 - url: http://amp.pharm.mssm.edu/Enrichr
-
 paths:
   /addList: 
     post: 
@@ -200,7 +197,6 @@ paths:
           $ref: '#/components/responses/404'
         '5XX':
           $ref: '#/components/responses/5XX'
-  
 components: 
   requestBodies:
     listdescription:
@@ -446,7 +442,6 @@ components:
           idRegExpFlag: i,
           baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/,
           homepage: http://cgap.nci.nih.gov/Pathways/BioCarta/}
-
 x-externalResources: 
 - x-url: http://amp.pharm.mssm.edu/Enrichr/help#api
   x-type: api documentation
