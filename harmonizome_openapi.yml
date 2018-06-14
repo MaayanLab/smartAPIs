@@ -114,7 +114,7 @@ paths:
             application/json: 
               schema: 
                 type: object
-                additionalProperties: true
+                additionalProperties: {}
                 example: 
                   symbol: NANOG, 
                   name: Nanog homeobox, 
