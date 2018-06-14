@@ -214,11 +214,6 @@ paths:
                   type: array
                   items: 
                     type: integer
-                  example: 
-                  - 2013
-                  - 2
-                  - 26
-                  - 3
         '400': 
           $ref: '#/components/responses/400'
         '404': 
