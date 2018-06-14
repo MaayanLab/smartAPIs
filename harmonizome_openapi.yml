@@ -1,8 +1,11 @@
-openapi: '3.0.0'
+openapi: 3.0.1
 
 info:
   title: Harmonizome API
-  description: Harmonizome is a web-based tool that allows users to search for genes or proteins and their functional terms, extracted and organized from over a hundred publicly available resources.
+  description: | 
+    Harmonizome is a web-based tool that allows users to search for genes or 
+    proteins and their functional terms, extracted and organized from over a 
+    hundred publicly available resources.
   termsOfService: http://amp.pharm.mssm.edu/Harmonizome/terms
   contact: 
     name: Ma'ayan Lab
@@ -13,6 +16,10 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html 
   version: 1.0.1
+
+tags: 
+- name: Maayanlab
+- name: gene
 
 servers: 
 - url: http://amp.pharm.mssm.edu/Harmonizome
@@ -30,10 +37,12 @@ paths:
               schema: 
                 type: object
                 properties:
-                  version:
-                    $ref: '#/components/schemas/version'
+                  version: 
+                    type: number
+                    format: float
+                    example: 1.0
                   entities:
-                    $ref: '#/components/schemas/entitieslist'
+                    $ref: '#/components/schemas/entities'
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -46,14 +55,33 @@ paths:
       operationId: href
       parameters:
       - $ref: '#/components/parameters/href'
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        description: View the selection of data starting at a certain
+        in: query
+        schema: 
+          type: integer
+          default: 0
       responses: 
         '200':
           description: Successful response
           content: 
             application/json: 
               schema: 
-                $ref: '#/components/schemas/hrefresponse'
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                    example: 56720
+                  selection: 
+                    type: array
+                    items:
+                      type: integer
+                    example: [0,100]
+                  next: 
+                    type: string
+                    example: /api/1.0/gene?cursor=100
+                  entities: 
+                    $ref: '#/components/schemas/hrefentities' 
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -66,15 +94,32 @@ paths:
       operationId: showAssociations
       parameters:
       - $ref: '#/components/parameters/href'
-      - $ref: '#/components/parameters/symbol'
-      - $ref: '#/components/parameters/showAssociations'
+      - name: symbol
+        description: Symbol used to access data in an entity
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: NANOG
+      - name: showAssociations
+        description: Display a gene's functional associations
+        in: query
+        schema: 
+          type: boolean
+          default: false
       responses:
         '200':
           description: Successful response
           content: 
             application/json: 
               schema: 
-                $ref: '#/components/schemas/symbolresponse'
+                type: object
+                additionalProperties: true
+                example: 
+                  symbol: NANOG, 
+                  name: Nanog homeobox, 
+                  ncbiEntrezGeneId: 79923, 
+                  ncbiEntrezGeneUrl: http://www.ncbi.nlm.nih.gov/gene/79923
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -91,30 +136,7 @@ components:
       required: true
       schema: 
         type: string
-        example: /api/1.0/gene
-    cursor: 
-      name: cursor
-      description: View the selection of data starting at a certain
-      in: query
-      schema: 
-        type: integer
-        default: 0
-    symbol: 
-      name: symbol
-      description: Symbol used to access data in an entity
-      in: path
-      required: true
-      schema: 
-        type: string
-        example: NANOG
-    showAssociations: 
-      description: Display a gene's functional associations
-      name: showAssociations
-      in: query
-      schema: 
-        type: boolean
-        default: false
-        example: false
+      example: /api/1.0/gene
   responses:
     '400':
       description: Bad request'
@@ -123,23 +145,17 @@ components:
     '5XX':
       description: Unexpected error
   schemas: 
-    version: 
-      type: number
-      format: float
-      example: 1.0
     entities: 
-      type: object
-      properties: 
-        entity: 
-          type: string
-          example: gene
-        href:
-          type: string
-          example: /api/1.0/gene
-    entitieslist: 
       type: array
       items: 
-        $ref: '#/components/schemas/entities'
+        type: object
+        properties: 
+          entity: 
+            type: string
+            example: gene
+          href:
+            type: string
+            example: /api/1.0/gene
     hrefentities: 
       type: array
       items: 
@@ -150,34 +166,12 @@ components:
         href: /api/1.0/gene/LOC105377913
       - symbol: LOC105377912, 
         href: /api/1.0/gene/LOC105377912
-    hrefresponse:
-      type: object
-      properties: 
-        count: 
-          type: integer
-          example: 56720
-        selection: 
-          type: array
-          items:
-            type: integer
-          example: [0,100]
-        next: 
-          type: string
-          example: /api/1.0/gene?cursor=100
-        hrefentities: 
-          $ref: '#/components/schemas/hrefentities'  
-    symbolresponse: 
-      type: object
-      additionalProperties: true
-      example: 
-        symbol: NANOG, 
-        name: Nanog homeobox, 
-        ncbiEntrezGeneId: 79923, 
-        ncbiEntrezGeneUrl: http://www.ncbi.nlm.nih.gov/gene/79923
 
   x-externalResources:
   - x-url: http://amp.pharm.mssm.edu/Harmonizome/documentation
     x-type: api documentation
   - x-url: https://academic.oup.com/database/article/doi/10.1093/database/baw100/2630482
     x-type: publication
-    x-description: 'The harmonizome: a collection of processed datasets gathered to serve and mine knowledge about genes and proteins'
+    x-description: | 
+      The harmonizome: a collection of processed datasets gathered to serve and 
+      mine knowledge about genes and proteins
