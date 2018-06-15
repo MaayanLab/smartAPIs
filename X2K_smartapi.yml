@@ -26,10 +26,10 @@ tags:
 - name: Maayanlab
   
 servers: 
-- url: https://amp.pharm.mssm.edu/X2K/api/1.0
+- url: https://amp.pharm.mssm.edu/X2K
 
 paths: 
-  /:
+  /api:
     post:
       summary: | 
         Returns transcription factors, protein-protein interactions, overlapping
