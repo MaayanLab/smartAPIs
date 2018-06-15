@@ -53,100 +53,125 @@ paths:
                   type: string
                   enum: [human, mouse, both]
                   default: both
+                  example: both
                 TF-target gene background database used for enrichment: 
                   type: string
                   enum: [ChEA 2015, ENCODE 2015, ChEA & ENCODE Consensus,
                     Transfac and Jaspar, ChEA 2016, ARCHS4 TFs Coexp, CREEDS,
                     Enrichr Submissions TF-Gene Coocurrence]
                   default: 'ChEA & ENCODE Consensus'
+                  example: 'ChEA & ENCODE Consensus'
                 kinase interactions to include: 
                   type: string
                   enum: [kea 2018, ARCHS4, iPTMnet, NetworkIN, Phospho.ELM,
                     Phosphopoint, PhosphoPlus, MINT]
                   default: kea 2018
+                  example: kea 2018
                 enable_Biocarta: 
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_BioGRID:
                   type: string
                   enum: [true, false]
                   default: 'true'
+                  example: 'true'
                 enable_BioPlex:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_DIP: 
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_huMAP:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_InnateDB:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_IntAct:
                   type: string
                   enum: [true, false]
                   default: 'true'
+                  example: 'true'
                 enable_KEGG:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_MINT:
                   type: string
                   enum: [true, false]
                   default: 'true'
+                  example: 'true'
                 enable_ppid:
                   type: string
                   enum: [true, false]
                   default: 'true'
+                  example: 'true'
                 enable_SNAVI:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_iREF:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_Stelzl:
                   type: string
                   enum: [true, false]
                   default: 'true'
+                  example: 'true'
                 enable_vidal:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_BIND:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_figeys:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 enable_HPRD:
                   type: string
                   enum: [true, false]
                   default: 'false'
+                  example: 'false'
                 max_number_of_interactions_per_article: 
-                  type: integer
-                  default: 1000000
+                  type: string
+                  default: '1000000'
+                  example: '1000000'
                 max_number_of_interactions_per_protein: 
-                  type: integer
-                  default: 200
+                  type: string
+                  default: '200'
+                  example: '200'
                 min_network_size: 
-                  type: integer
-                  default: 10
+                  type: string
+                  default: '10'
+                  example: '10'
                 min_number_of_articles_supporting_interaction: 
                   type: integer
-                  default: 0
+                  default: '0'
+                  example: '0'
                 path_length: 
                   type: integer
-                  default: 2
+                  default: '2'
+                  example: '2'
               required: 
               - text-genes
       responses: 
@@ -159,6 +184,10 @@ paths:
                 properties: 
                   X2K: 
                     type: string
+        '400': 
+          description: Bad request
+        '404': 
+          description: Page not found
 
 x-externalResources: 
 - x-url: | 
