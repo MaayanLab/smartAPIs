@@ -165,11 +165,11 @@ paths:
                   default: '10'
                   example: '10'
                 min_number_of_articles_supporting_interaction: 
-                  type: integer
+                  type: string
                   default: '0'
                   example: '0'
                 path_length: 
-                  type: integer
+                  type: string
                   default: '2'
                   example: '2'
               required: 
