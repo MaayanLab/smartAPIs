@@ -432,15 +432,15 @@ components:
             type: string
             example: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/'
 
-x-externalResources: 
-- x-url: http://amp.pharm.mssm.edu/Enrichr/help#api
-  x-type: api documentation
-- x-url: https://www.ncbi.nlm.nih.gov/pubmed/23586463
-  x-type: publication
-  x-description: |
-    Enrichr: interactive and collaborative HTML5 gene list enrichment analysis 
-    tool
-- x-url: https://www.ncbi.nlm.nih.gov/pubmed/27141961
-  x-type: publication
-  x-description: | 
-    Enrichr: a comprehensive gene set enrichment analysis web server 2016 update
+  x-externalResources: 
+  - x-url: http://amp.pharm.mssm.edu/Enrichr/help#api
+    x-type: api documentation
+  - x-url: https://www.ncbi.nlm.nih.gov/pubmed/23586463
+    x-type: publication
+    x-description: |
+      Enrichr: interactive and collaborative HTML5 gene list enrichment analysis 
+      tool
+  - x-url: https://www.ncbi.nlm.nih.gov/pubmed/27141961
+    x-type: publication
+    x-description: | 
+      Enrichr: a comprehensive gene set enrichment analysis web server 2016 update
