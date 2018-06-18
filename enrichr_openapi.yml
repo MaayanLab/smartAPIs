@@ -275,13 +275,12 @@ paths:
                 type: object
                 additionalProperties: {}
               example:  
-                'BioCarta 2016': 
-                  'description': 'Metabolic pathways from BioCarta',
-                  'idName': 'View Pathway',
-                  'idRegExp': 'h_[a-zA-Z0-9]*',
-                  'idRegExpFlag': 'i',
-                  'baseUrl': 'http://cgap.nci.nih.gov/Pathways/BioCarta/',
-                  'homepage': 'http://cgap.nci.nih.gov/Pathways/BioCarta/'
+                BioCarta 2016: 
+                  description: 'Metabolic pathways from BioCarta',
+                  idName: 'View Pathway',
+                  idRegExpFlag: 'i',
+                  baseUrl: 'http://cgap.nci.nih.gov/Pathways/BioCarta/',
+                  homepage: 'http://cgap.nci.nih.gov/Pathways/BioCarta/'
         '400': 
           $ref: '#/components/responses/400'
         '404': 
