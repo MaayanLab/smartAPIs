@@ -64,7 +64,7 @@ paths:
           EITHER userListId OR dataset.
         schema:
           type: integer
-        example: 363320
+          example: 363320
       - name: dataset
         in: query
         description: | 
@@ -72,6 +72,7 @@ paths:
           use EITHER userListId OR dataset.
         schema: 
           type: string
+          example: 591h
       responses:
         '200': 
           description: Successful response
@@ -138,19 +139,19 @@ paths:
         required: true
         schema: 
           type: string
-        example: AKT1
+          example: AKT1
       - name: json
         in: query
         description: Set true to return JSON rather than plaintext
         schema: 
           type: boolean
-        example: true
+          example: true
       - name: setup
         in: query
         description: Set true to return category information for the libraries
         schema: 
           type: boolean
-        example: true
+          example: true
       responses: 
         '200': 
           description: Successful response
@@ -184,7 +185,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: example_enrichment
+          example: example_enrichment
       responses: 
         '200': 
           description: A text file
@@ -214,9 +215,7 @@ paths:
                   type: array
                   items: 
                     type: integer
-              example: 
-              - [2013,2,26,3]
-              - [2013,2,27,5]
+                example: [[2013,2,26,3], [2013,2,27,5]]
         '400': 
           $ref: '#/components/responses/400'
         '404': 
@@ -236,7 +235,7 @@ paths:
             text/plain: 
               schema: 
                 type: string
-              example: '9881737  238875  129'
+                example: '9881737  238875  129'
         '400': 
           $ref: '#/components/responses/400'
         '404': 
@@ -275,14 +274,14 @@ paths:
               schema: 
                 type: object
                 additionalProperties: {}
-              example:  
-                BioCarta 2016: 
-                  description: Metabolic pathways from BioCarta,
-                  idName: View Pathway,
-                  idRegExp: h_[a-zA-Z0-9]*,
-                  idRegExpFlag: i,
-                  baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/,
-                  homepage: http://cgap.nci.nih.gov/Pathways/BioCarta/
+                example:  
+                  BioCarta 2016: 
+                    description: Metabolic pathways from BioCarta,
+                    idName: View Pathway,
+                    idRegExp: h_[a-zA-Z0-9]*,
+                    idRegExpFlag: i,
+                    baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/,
+                    homepage: http://cgap.nci.nih.gov/Pathways/BioCarta/
         '400': 
           $ref: '#/components/responses/400'
         '404': 
@@ -317,10 +316,10 @@ components:
       name: userListId
       in: query
       description: Unique ID for a specific gene list. 
+      required: true
       schema: 
         type: integer
-      required: true
-      example: 363320
+        example: 363320
     backgroundType: 
       name: backgroundType
       in: query
@@ -328,7 +327,7 @@ components:
       required: true
       schema: 
         type: string
-      example: KEGG_2015
+        example: KEGG_2015
   responses:
     '400': 
       description: Bad request
@@ -393,23 +392,21 @@ components:
               database (PMID:22110038). The database contains gene lists 
               extracted manually from the supporting tables of thousands of 
               publications; most are from cancer related studies.
-    libraries:
-      type: array
-      items: 
-        type: object
-        properties: 
-          name: 
-            type: string
-            example: ChEA_2015
-          isFuzzy: 
-            type: boolean
-            example: true
-          hasGrid: 
-            type: boolean
-            example: true
-          format:
-            type: string
-            example: '{1} binds to the promoter region of {0}'
+    library:
+      type: object
+      properties: 
+        name: 
+          type: string
+          example: ChEA_2015
+        isFuzzy: 
+          type: boolean
+          example: true
+        hasGrid: 
+          type: boolean
+          example: true
+        format:
+          type: string
+          example: '{1} binds to the promoter region of {0}'
     categories:
       type: array
       items: 
@@ -419,7 +416,9 @@ components:
             type: string
             example: Transcription
           libraries:
-            $ref: '#/components/schemas/libraries'
+            type: array
+            items:
+              $ref: '#/components/schemas/library'
     statistics:
       type: array
       items: 
@@ -439,7 +438,7 @@ components:
             example: 275.0
           link: 
             type: string
-            example: http://hgdownload.cse.ucsc.edu/
+            example: http://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/
 
 x-externalResources: 
 - x-url: http://amp.pharm.mssm.edu/Enrichr/help#api
