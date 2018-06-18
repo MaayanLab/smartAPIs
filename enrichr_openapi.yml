@@ -15,7 +15,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html 
-  version: 1.0.1
+  version: 1.0.3
 
 tags:
 - name: Maayanlab
@@ -274,13 +274,6 @@ paths:
               schema: 
                 type: object
                 additionalProperties: {}
-              example:  
-                BioCarta 2016: 
-                  description: 'Metabolic pathways from BioCarta',
-                  idName: 'View Pathway',
-                  idRegExpFlag: 'i',
-                  baseUrl: 'http://cgap.nci.nih.gov/Pathways/BioCarta/',
-                  homepage: 'http://cgap.nci.nih.gov/Pathways/BioCarta/'
         '400': 
           $ref: '#/components/responses/400'
         '404': 
