@@ -1,0 +1,194 @@
+openapi: 3.0.1
+
+info:
+  title: X2K API
+  description: | 
+    X2K Web infers upstream regulatory networks from signatures of 
+    differentially expressed genes. By combining transcription factor enrichment
+    analysis, protein-protein interaction network expansion, with kinase 
+    enrichment analysis, X2K Web produces inferred networks of transcription 
+    factors, proteins, and kinases predicted to regulate the expression of the 
+    inputted gene list. The results are provided as tables and interactive 
+    vector graphic figures that can be readily embedded within publications.
+  termsOfService: https://amp.pharm.mssm.edu/X2K/#about
+  contact: 
+    name: Ma'ayan Lab
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    email: avi.maayan@mssm.edu
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+  license: 
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+  
+tags:
+- name: Maayanlab
+  
+servers: 
+- url: https://amp.pharm.mssm.edu/X2K
+
+paths: 
+  /api:
+    post:
+      summary: | 
+        Returns transcription factors, protein-protein interactions, overlapping
+        kinases, and a complete upstream pathway for a specified gene list
+      requestBody: 
+        description: List of gene symbols and optional settings
+        content: 
+          multipart/form-data: 
+            schema: 
+              type: object
+              properties: 
+                text-genes:
+                  type: string
+                  example: | 
+                    Nsun3
+                    Polrmt
+                    Nlrx1
+                    Sfxn5
+                    Zc3h12c
+                included organisms in the background database: 
+                  type: string
+                  enum: [human, mouse, both]
+                  default: both
+                TF-target gene background database used for enrichment: 
+                  type: string
+                  enum: [ChEA 2015, ENCODE 2015, ChEA & ENCODE Consensus,
+                    Transfac and Jaspar, ChEA 2016, ARCHS4 TFs Coexp, CREEDS,
+                    Enrichr Submissions TF-Gene Coocurrence]
+                  default: 'ChEA & ENCODE Consensus'
+                kinase interactions to include: 
+                  type: string
+                  enum: [kea 2018, ARCHS4, iPTMnet, NetworkIN, Phospho.ELM,
+                    Phosphopoint, PhosphoPlus, MINT]
+                  default: kea 2018
+                enable_Biocarta: 
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_BioGRID:
+                  type: string
+                  enum: [true, false]
+                  default: 'true'
+                enable_BioPlex:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_DIP: 
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_huMAP:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_InnateDB:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_IntAct:
+                  type: string
+                  enum: [true, false]
+                  default: 'true'
+                enable_KEGG:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_MINT:
+                  type: string
+                  enum: [true, false]
+                  default: 'true'
+                enable_ppid:
+                  type: string
+                  enum: [true, false]
+                  default: 'true'
+                enable_SNAVI:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_iREF:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_Stelzl:
+                  type: string
+                  enum: [true, false]
+                  default: 'true'
+                enable_vidal:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_BIND:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_figeys:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                enable_HPRD:
+                  type: string
+                  enum: [true, false]
+                  default: 'false'
+                max_number_of_interactions_per_article: 
+                  type: string
+                  default: '1000000'
+                max_number_of_interactions_per_protein: 
+                  type: string
+                  default: '200'
+                min_network_size: 
+                  type: string
+                  default: '10'
+                min_number_of_articles_supporting_interaction: 
+                  type: string
+                  default: '0'
+                path_length: 
+                  type: string
+                  default: '2'
+              required: 
+              - text-genes
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  X2K: 
+                    type: string
+                  ChEA:
+                    type: string
+                  KEA: 
+                    type: string
+                  G2N:
+                    type: string
+                  input: 
+                    type: array
+                    items: 
+                      type: string
+        '400': 
+          description: Bad request
+        '404': 
+          description: Page not found
+        '500': 
+          description: Unexpected error
+
+x-externalResources: 
+- x-url: | 
+    http://nbviewer.jupyter.org/urls/storage.googleapis.com/jupyter-reports
+    /x2k_api_notebook.ipynb
+  x-type: api documentation
+- x-url: https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3244772/
+  x-type: publication
+  x-description: | 
+    Expression2Kinases: mRNA profiling linked to multiple upstream regulatory 
+    layers
+- x-url: | 
+    https://academic.oup.com/nar/advance-article/doi/10.1093/nar/gky458/5003452
+  x-type: publication
+  x-description: | 
+    eXpression2Kinases (X2K) Web: linking expression signatures to upstream cell 
+    signaling networks
