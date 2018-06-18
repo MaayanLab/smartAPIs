@@ -215,7 +215,7 @@ paths:
                   type: array
                   items: 
                     type: integer
-                example: [[2013,2,26,3], [2013,2,27,5]]
+              example: [[2013,2,26,3], [2013,2,27,5]]
         '400': 
           $ref: '#/components/responses/400'
         '404': 
@@ -235,7 +235,7 @@ paths:
             text/plain: 
               schema: 
                 type: string
-                example: '9881737  238875  129'
+              example: '9881737  238875  129'
         '400': 
           $ref: '#/components/responses/400'
         '404': 
@@ -274,14 +274,14 @@ paths:
               schema: 
                 type: object
                 additionalProperties: {}
-                example:  
-                  BioCarta 2016: 
-                    description: Metabolic pathways from BioCarta,
-                    idName: View Pathway,
-                    idRegExp: h_[a-zA-Z0-9]*,
-                    idRegExpFlag: i,
-                    baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/,
-                    homepage: http://cgap.nci.nih.gov/Pathways/BioCarta/
+              example:  
+                BioCarta 2016: 
+                  description: Metabolic pathways from BioCarta,
+                  idName: View Pathway,
+                  idRegExp: h_[a-zA-Z0-9]*,
+                  idRegExpFlag: i,
+                  baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/,
+                  homepage: http://cgap.nci.nih.gov/Pathways/BioCarta/
         '400': 
           $ref: '#/components/responses/400'
         '404': 
