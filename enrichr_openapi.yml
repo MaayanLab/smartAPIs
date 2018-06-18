@@ -64,7 +64,7 @@ paths:
           EITHER userListId OR dataset.
         schema:
           type: integer
-          example: 363320
+        example: 363320
       - name: dataset
         in: query
         description: | 
@@ -72,7 +72,7 @@ paths:
           use EITHER userListId OR dataset.
         schema: 
           type: string
-          example: 591h
+        example: 591h
       responses:
         '200': 
           description: Successful response
@@ -139,19 +139,19 @@ paths:
         required: true
         schema: 
           type: string
-          example: AKT1
+        example: AKT1
       - name: json
         in: query
         description: Set true to return JSON rather than plaintext
         schema: 
           type: boolean
-          example: true
+        example: true
       - name: setup
         in: query
         description: Set true to return category information for the libraries
         schema: 
           type: boolean
-          example: true
+        example: true
       responses: 
         '200': 
           description: Successful response
@@ -185,7 +185,7 @@ paths:
         required: true
         schema: 
           type: string
-          example: example_enrichment
+        example: example_enrichment
       responses: 
         '200': 
           description: A text file
