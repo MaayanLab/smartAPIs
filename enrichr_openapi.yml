@@ -45,7 +45,7 @@ paths:
                     example: 363320
                   shortId: 
                     type: string
-                    example: 591h
+                    example: '591h'
         '400':
           description: Bad request. Missing or invalid gene list.
         '404': 
@@ -72,7 +72,7 @@ paths:
           use EITHER userListId OR dataset.
         schema: 
           type: string
-        example: 591h
+        example: '591h'
       responses:
         '200': 
           description: Successful response
@@ -85,10 +85,10 @@ paths:
                     type: array
                     items:
                       type: string
-                    example: [PHF14,RBM3,MSL1,PHF21A,ARL10,INSR,JADE2]
+                    example: ['PHF14','RBM3','MSL1','PHF21A','ARL10','INSR','JADE2']
                   description: 
                     type: string
-                    example: Example gene list
+                    example: 'Example gene list'
         '400': 
           description: Bad request. Missing or invalid ID.
         '404':
@@ -139,7 +139,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: AKT1
+        example: 'AKT1'
       - name: json
         in: query
         description: Set true to return JSON rather than plaintext
@@ -185,7 +185,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: example_enrichment
+        example: 'example_enrichment'
       responses: 
         '200': 
           description: A text file
@@ -275,13 +275,13 @@ paths:
                 type: object
                 additionalProperties: {}
               example:  
-                BioCarta 2016: 
-                  description: Metabolic pathways from BioCarta,
-                  idName: View Pathway,
-                  idRegExp: h_[a-zA-Z0-9]*,
-                  idRegExpFlag: i,
-                  baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/,
-                  homepage: http://cgap.nci.nih.gov/Pathways/BioCarta/
+                'BioCarta 2016': 
+                  'description': 'Metabolic pathways from BioCarta',
+                  'idName': 'View Pathway',
+                  'idRegExp': 'h_[a-zA-Z0-9]*',
+                  'idRegExpFlag': 'i',
+                  'baseUrl': 'http://cgap.nci.nih.gov/Pathways/BioCarta/',
+                  'homepage': 'http://cgap.nci.nih.gov/Pathways/BioCarta/'
         '400': 
           $ref: '#/components/responses/400'
         '404': 
@@ -310,7 +310,7 @@ components:
                   JADE2
               description:
                 type: string
-                example: Example gene list
+                example: 'Example gene list'
   parameters: 
     userListId: 
       name: userListId
@@ -327,7 +327,7 @@ components:
       required: true
       schema: 
         type: string
-        example: KEGG_2015
+        example: 'KEGG_2015'
   responses:
     '400': 
       description: Bad request
@@ -341,7 +341,7 @@ components:
       example: 1
     term: 
       type: string
-      example: ubiquitin mediated proteolysis
+      example: 'ubiquitin mediated proteolysis'
     pval: 
       type: number
       format: float
@@ -358,7 +358,7 @@ components:
       type: array
       items: 
         type: string
-      example: [CUL2]
+      example: ['CUL2']
     adjpval: 
       type: number
       format: float
@@ -376,7 +376,7 @@ components:
         items: 
           type: string
       example: 
-        GeneSigDB: [18535662-TableS2b,17671232-TableS2a]
+        GeneSigDB: ['18535662-TableS2b','17671232-TableS2a']
     descriptions:
       type: array
       items: 
@@ -384,7 +384,7 @@ components:
         properties: 
           name: 
             type: string
-            example: GeneSigDB
+            example: 'GeneSigDB'
           description: 
             type: string
             example: | 
@@ -397,7 +397,7 @@ components:
       properties: 
         name: 
           type: string
-          example: ChEA_2015
+          example: 'ChEA_2015'
         isFuzzy: 
           type: boolean
           example: true
@@ -414,7 +414,7 @@ components:
         properties: 
           name: 
             type: string
-            example: Transcription
+            example: 'Transcription'
           libraries:
             type: array
             items:
@@ -426,7 +426,7 @@ components:
         properties:
           libraryName: 
             type: string
-            example: Genome_Browser_PWMs
+            example: 'Genome_Browser_PWMs'
           numTerms:
             type: integer
             example: 615
@@ -438,7 +438,7 @@ components:
             example: 275.0
           link: 
             type: string
-            example: http://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/
+            example: 'http://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/'
 
 x-externalResources: 
 - x-url: http://amp.pharm.mssm.edu/Enrichr/help#api
