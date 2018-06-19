@@ -167,11 +167,11 @@ components:
       - symbol: LOC105377912, 
         href: /api/1.0/gene/LOC105377912
 
-  x-externalResources:
-  - x-url: http://amp.pharm.mssm.edu/Harmonizome/documentation
-    x-type: api documentation
-  - x-url: https://academic.oup.com/database/article/doi/10.1093/database/baw100/2630482
-    x-type: publication
-    x-description: | 
-      The harmonizome: a collection of processed datasets gathered to serve and 
-      mine knowledge about genes and proteins
+x-externalResources:
+- x-url: http://amp.pharm.mssm.edu/Harmonizome/documentation
+  x-type: api documentation
+- x-url: https://academic.oup.com/database/article/doi/10.1093/database/baw100/2630482
+  x-type: publication
+  x-description: | 
+    The harmonizome: a collection of processed datasets gathered to serve and 
+    mine knowledge about genes and proteins
