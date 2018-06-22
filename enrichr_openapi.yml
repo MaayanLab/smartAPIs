@@ -57,7 +57,6 @@ paths:
           EITHER this OR dataset.
         in: query
         schema:
-          example: 363320
           type: integer
       - name: dataset
         description: | 
@@ -66,7 +65,6 @@ paths:
         in: query
         schema:
           type: string
-          example: 591h
       responses:
         '200':
           description: Successful response
@@ -124,19 +122,16 @@ paths:
         required: true
         schema: 
           type: string
-          example: AKT1
       - name: json
         description: Set true to return JSON rather than plaintext
         in: query
         schema: 
           type: boolean
-          example: true
       - name: setup
         description: Set true to return category information for the libraries
         in: query
         schema: 
           type: boolean
-          example: false
       responses:
         '200':
           description: Successful response
@@ -164,7 +159,6 @@ paths:
         required: true
         schema:
           type: string
-          example: example_enrichment
       responses:
         '200':
           description: Successful response
