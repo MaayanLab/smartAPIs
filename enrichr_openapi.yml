@@ -182,15 +182,6 @@ paths:
                   type: array
                   items:
                     type: integer
-                example:
-                - - 2013
-                  - 2
-                  - 26
-                  - 3
-                - - 2013
-                  - 2
-                  - 27
-                  - 5
   /count: 
     get:
       summary: | 
@@ -204,7 +195,6 @@ paths:
             application/json:
               schema:
                 type: string
-                example: '9899710  238875  129'
   /datasetStatistics:
     get:
       summary: Returns statistic information on all gene libraries
@@ -233,14 +223,6 @@ paths:
               schema: 
                 type: object
                 additionalProperties: {}
-                example: 
-                  BioCarta 2016: 
-                    baseUrl: http://cgap.nci.nih.gov/Pathways/BioCarta/
-                    description: Metabolic pathways from BioCarta.
-                    homepage: http://cgap.nci.nih.gov/Pathways/Biocarta/,
-                    idName: View Pathway
-                    idRegExp: 'h_[a-zA-Z0-9]*'
-                    idRegExpFlag: i
         '400':
           $ref: '#/components/responses/400'
         '404': 
