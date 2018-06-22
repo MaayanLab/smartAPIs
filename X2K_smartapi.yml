@@ -10,7 +10,7 @@ info:
     factors, proteins, and kinases predicted to regulate the expression of the 
     inputted gene list. The results are provided as tables and interactive 
     vector graphic figures that can be readily embedded within publications.
-  termsOfService: https://amp.pharm.mssm.edu/X2K/#about
+  termsOfService: http://amp.pharm.mssm.edu/X2K/#about
   contact: 
     name: Ma'ayan Lab
     url: http://labs.icahn.mssm.edu/maayanlab/contact/
@@ -27,7 +27,7 @@ tags:
 - name: NIHdatacommons
   
 servers: 
-- url: https://amp.pharm.mssm.edu
+- url: http://amp.pharm.mssm.edu
 
 paths: 
   /X2K/api:
