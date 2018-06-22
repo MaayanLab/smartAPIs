@@ -19,7 +19,7 @@ info:
 
 tags: 
 - name: Maayanlab
-- name: gene
+- name: NIHdatacommons
 
 servers: 
 - url: http://amp.pharm.mssm.edu/Harmonizome
