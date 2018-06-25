@@ -10,7 +10,7 @@ info:
     factors, proteins, and kinases predicted to regulate the expression of the 
     inputted gene list. The results are provided as tables and interactive 
     vector graphic figures that can be readily embedded within publications.
-  termsOfService: https://amp.pharm.mssm.edu/X2K/#about
+  termsOfService: http://amp.pharm.mssm.edu/X2K/#about
   contact: 
     name: Ma'ayan Lab
     url: http://labs.icahn.mssm.edu/maayanlab/contact/
@@ -24,12 +24,13 @@ info:
   
 tags:
 - name: Maayanlab
+- name: NIHdatacommons
   
 servers: 
-- url: https://amp.pharm.mssm.edu/X2K
+- url: http://amp.pharm.mssm.edu
 
 paths: 
-  /api:
+  /X2K/api:
     post:
       summary: | 
         Returns transcription factors, protein-protein interactions, overlapping
@@ -51,129 +52,155 @@ paths:
                     Zc3h12c
                 included organisms in the background database: 
                   type: string
-                  enum: [human, mouse, both]
+                  enum: 
+                  - human
+                  - mouse
+                  - both
                   default: both
-                  example: both
                 TF-target gene background database used for enrichment: 
                   type: string
-                  enum: [ChEA 2015, ENCODE 2015, ChEA & ENCODE Consensus,
-                    Transfac and Jaspar, ChEA 2016, ARCHS4 TFs Coexp, CREEDS,
-                    Enrichr Submissions TF-Gene Coocurrence]
-                  default: 'ChEA & ENCODE Consensus'
-                  example: 'ChEA & ENCODE Consensus'
+                  enum: 
+                  - ChEA 2015
+                  - ENCODE 2015
+                  - ChEA & ENCODE Consensus
+                  - Transfac and Jaspar
+                  - ChEA 2016
+                  - ARCHS4 TFs Coexp
+                  - CREEDS
+                  - Enrichr Submissions TF-Gene Coocurrence
+                  default: ChEA & ENCODE Consensus
                 kinase interactions to include: 
                   type: string
-                  enum: [kea 2018, ARCHS4, iPTMnet, NetworkIN, Phospho.ELM,
-                    Phosphopoint, PhosphoPlus, MINT]
+                  enum: 
+                  - kea 2018
+                  - ARCHS4
+                  - iPTMnet
+                  - NetworkIN
+                  - Phospho.ELM
+                  - Phosphopoint
+                  - PhosphoPlus
+                  - MINT
                   default: kea 2018
-                  example: kea 2018
                 enable_Biocarta: 
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_BioGRID:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'true'
-                  example: 'true'
                 enable_BioPlex:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_DIP: 
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_huMAP:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_InnateDB:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_IntAct:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'true'
-                  example: 'true'
                 enable_KEGG:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_MINT:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'true'
-                  example: 'true'
                 enable_ppid:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'true'
-                  example: 'true'
                 enable_SNAVI:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_iREF:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_Stelzl:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'true'
-                  example: 'true'
                 enable_vidal:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_BIND:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_figeys:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 enable_HPRD:
                   type: string
-                  enum: [true, false]
+                  enum: 
+                  - 'true'
+                  - 'false'
                   default: 'false'
-                  example: 'false'
                 max_number_of_interactions_per_article: 
                   type: string
                   default: '1000000'
-                  example: '1000000'
                 max_number_of_interactions_per_protein: 
                   type: string
                   default: '200'
-                  example: '200'
                 min_network_size: 
                   type: string
                   default: '10'
-                  example: '10'
                 min_number_of_articles_supporting_interaction: 
                   type: string
                   default: '0'
-                  example: '0'
                 path_length: 
                   type: string
-                  default: '2'
                   example: '2'
               required: 
               - text-genes
+              - path_length
       responses: 
         '200': 
           description: Successful response
@@ -184,10 +211,91 @@ paths:
                 properties: 
                   X2K: 
                     type: string
-        '400': 
+                  ChEA:
+                    type: string
+                  KEA: 
+                    type: string
+                  G2N:
+                    type: string
+                  input: 
+                    type: array
+                    items: 
+                      type: string
+                    example: 
+                    - Nsun3
+                    - Polrmt
+                    - Nlrx1
+                    - Sfxn5
+                    - Zc3h12c
+        '400':
           description: Bad request
         '404': 
           description: Page not found
+        '500': 
+          description: Unexpected error
+          
+components:
+  schemas:
+    nodes:
+      type: array
+      items: 
+        type: object
+        properties: 
+          name: 
+            type: string
+          type: 
+            type: string
+            enum:
+            - tf
+            - kinase
+            - other
+          pvalue: 
+            type: number
+    interactions:
+      type: object
+      properties: 
+        source: 
+          type: integer
+        target:
+          type: integer
+    ChEA: 
+      type: array
+      items: 
+        type: object
+        properties: 
+          name: 
+            type: string
+          simpleName:
+            type: string
+          meta:
+            type: object
+          pvalue:
+            type: number
+          zscore:
+            type: number
+          combinedScore:
+            type: number
+          enrichedTargets:
+            type: array
+            items:
+              type: string
+    KEA:
+      type: array
+      items: 
+        type: object
+        properties:
+          name: 
+            type: string
+          pvalue: 
+            type: number
+          zscore:
+            type: number
+          combinedScore:
+            type: number
+          enrichedSubstrates:
+            type: array
+            items: 
+              type: string
 
 x-externalResources: 
 - x-url: | 

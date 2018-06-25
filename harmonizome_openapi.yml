@@ -1,17 +1,28 @@
 openapi: 3.0.1
 
 info:
-  version: '1.0.0'
   title: Harmonizome API
-  description: |
-    Search for genes or proteins and their functional terms, extracted and organized from over a hundred publicly available resources.
-  termsOfService: 'http://amp.pharm.mssm.edu/Harmonizome/terms'
+  description: | 
+    Harmonizome is a web-based tool that allows users to search for genes or 
+    proteins and their functional terms, extracted and organized from over a 
+    hundred publicly available resources.
+  termsOfService: http://amp.pharm.mssm.edu/Harmonizome/terms
   contact: 
     name: Ma'ayan Lab
-    url: http://labs.icahn.mssm.edu/maayanlab/
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html 
+  version: 1.0.1
+
+tags: 
+- name: Maayanlab
+- name: NIHdatacommons
 
 servers: 
-  - url: http://amp.pharm.mssm.edu/Harmonizome
+- url: http://amp.pharm.mssm.edu/Harmonizome
 
 paths:
   /api/1.0:
@@ -20,16 +31,18 @@ paths:
       operationId: getEntities
       responses: 
         '200': 
-          description: 'Successful response'
+          description: Successful response
           content: 
-            application/json: 
+            application/octet-stream: 
               schema: 
                 type: object
                 properties:
-                  version:
-                    $ref: '#/components/schemas/version'
+                  version: 
+                    type: number
+                    format: float
+                    example: 1.0
                   entities:
-                    $ref: '#/components/schemas/entitieslist'
+                    $ref: '#/components/schemas/entities'
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -38,18 +51,37 @@ paths:
           $ref: '#/components/responses/5XX'
   /{href}:
     get: 
-      summary: Request more information from any entity's href property
+      summary: Returns more information from any entity's href property
       operationId: href
       parameters:
-        - $ref: '#/components/parameters/href'
-        - $ref: '#/components/parameters/cursor'
+      - $ref: '#/components/parameters/href'
+      - name: cursor
+        description: View the selection of data starting at a certain
+        in: query
+        schema: 
+          type: integer
+          default: 0
       responses: 
         '200':
           description: Successful response
           content: 
-            application/json: 
+            application/octet-stream: 
               schema: 
-                $ref: '#/components/schemas/hrefresponse'
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                    example: 56720
+                  selection: 
+                    type: array
+                    items:
+                      type: integer
+                    example: [0,100]
+                  next: 
+                    type: string
+                    example: /api/1.0/gene?cursor=100
+                  entities: 
+                    $ref: '#/components/schemas/hrefentities' 
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -58,19 +90,36 @@ paths:
           $ref: '#/components/responses/5XX'
   /{href}/{symbol}:
     get: 
-      summary: Access data from any entity
+      summary: Returns data from any entity
       operationId: showAssociations
       parameters:
-        - $ref: '#/components/parameters/href'
-        - $ref: '#/components/parameters/symbol'
-        - $ref: '#/components/parameters/showAssociations'
+      - $ref: '#/components/parameters/href'
+      - name: symbol
+        description: Symbol used to access data in an entity
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: NANOG
+      - name: showAssociations
+        description: Display a gene's functional associations
+        in: query
+        schema: 
+          type: boolean
+          default: false
       responses:
         '200':
           description: Successful response
           content: 
-            application/json: 
+            application/octet-stream: 
               schema: 
-                $ref: '#/components/schemas/symbolresponse'
+                type: object
+                additionalProperties: {}
+                example: 
+                  symbol: NANOG, 
+                  name: Nanog homeobox, 
+                  ncbiEntrezGeneId: 79923, 
+                  ncbiEntrezGeneUrl: http://www.ncbi.nlm.nih.gov/gene/79923
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -87,85 +136,42 @@ components:
       required: true
       schema: 
         type: string
-      example: '/api/1.0/gene'
-    cursor: 
-      name: cursor
-      description: View the selection of data starting at a certain
-      in: query
-      schema: 
-        type: integer
-        default: 0
-    symbol: 
-      name: symbol
-      description: Symbol used to access data in an entity
-      in: path
-      required: true
-      schema: 
-        type: string
-      example: 'NANOG'
-    showAssociations: 
-      description: Display a gene's functional associations
-      name: showAssociations
-      in: query
-      schema: 
-        type: boolean
-        default: false
-      example: false
+      example: /api/1.0/gene
   responses:
     '400':
-      description: 'Bad request'
+      description: Bad request'
     '404':
-      description: 'Page not found'
+      description: Page not found
     '5XX':
-      description: 'Unexpected error'
+      description: Unexpected error
   schemas: 
-    version: 
-      type: number
-      format: float
-      example: 1.0
     entities: 
-      type: object
-      properties: 
-        entity: 
-          type: string
-          example: gene
-        href:
-          type: string
-          example: '/api/1.0/gene'
-    entitieslist: 
       type: array
       items: 
-        $ref: '#/components/schemas/entities'
+        type: object
+        properties: 
+          entity: 
+            type: string
+            example: gene
+          href:
+            type: string
+            example: /api/1.0/gene
     hrefentities: 
       type: array
       items: 
         type: object
         additionalProperties: true
       example: 
-      - {symbol: 'LOC105377913', href: '/api/1.0/gene/LOC105377913'}
-      - {symbol: 'LOC105377912', href: '/api/1.0/gene/LOC105377912'}
-    hrefresponse:
-      type: object
-      properties: 
-        count: 
-          type: integer
-          example: 56720
-        selection: 
-          type: array
-          items:
-            type: integer
-          example: [0,100]
-        next: 
-          type: string
-          example: '/api/1.0/gene?cursor=100'
-        hrefentities: 
-          $ref: '#/components/schemas/hrefentities'  
-    symbolresponse: 
-      type: object
-      additionalProperties: true
-      example: 
-        {symbol: 'NANOG', name: 'Nanog homeobox', ncbiEntrezGeneId: 79923, ncbiEntrezGeneUrl: 'http://www.ncbi.nlm.nih.gov/gene/79923'}
+      - symbol: LOC105377913, 
+        href: /api/1.0/gene/LOC105377913
+      - symbol: LOC105377912, 
+        href: /api/1.0/gene/LOC105377912
 
-externalDocs:
-  description: Learn more about Harmonizome
-  url: http://amp.pharm.mssm.edu/Harmonizome/about
+x-externalResources:
+- x-url: http://amp.pharm.mssm.edu/Harmonizome/documentation
+  x-type: api documentation
+- x-url: https://academic.oup.com/database/article/doi/10.1093/database/baw100/2630482
+  x-type: publication
+  x-description: | 
+    The harmonizome: a collection of processed datasets gathered to serve and 
+    mine knowledge about genes and proteins
