@@ -6,16 +6,20 @@ info:
     Datasets2Tools is a platform for the discovery and evaluation of biomedical 
     digital objects. It indexes over 30,000 bioinformatics analyses, over 6,000 
     biological datasets and over 4,000 computational tools. These include a wide
-    variety of enrichment analyses, gene interaction networks, interactive data 
-    visualizations; datasets and computational tools spanning technologies such 
-    as microarray, RNA-seq, proteomics, and many others.
+    variety of enrichment analyses; gene interaction networks; interactive data 
+    visualizations; and datasets and computational tools spanning technologies 
+    such as microarray, RNA-seq, proteomics and many others.
   termsOfService: http://amp.pharm.mssm.edu/datasets2tools/help
   contact: 
     name: Ma'ayan Lab
     url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    email: avi.maayan@mssm.edu
     x-role: responsible organization
     x-id: http://labs.icahn.mssm.edu/maayanlab/
   version: 1.0.0
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html 
   
 tags: 
 - name: Maayanlab
@@ -26,12 +30,12 @@ servers:
   
 paths: 
   /search: 
-    post: 
+    get: 
       operationId: search
-      summary: Type of object to be searched
+      summary: Search a canned analysis, dataset, or tool
       parameters: 
       - name: object_type
-        description: ''
+        description: Type of object to be searched
         in: query
         schema: 
           type: string
@@ -65,19 +69,6 @@ paths:
         schema: 
           type: string
         example: Enrichr  
-      - name: disease_name
-        description: Use this disease name in a canned analysis search
-        in: query
-        allowReserved: true
-        schema: 
-          type: string
-        example: colon cancer
-      - name: geneset
-        description: ''
-        in: query
-        schema: 
-          type: string
-        example: upregulated
       - name: page_size
         description: Number of search results to display
         in: query
@@ -93,11 +84,15 @@ paths:
                 type: array
                 items: 
                   type: object
+        '400':
+          description: Bad request - one or more search parameters invalid
+        '404':
+          description: Page not found
         '500': 
           description: Unexpected error
 
 x-externalResources:
-- x-url: http://amp.pharm.mssm.edu/datasets2tools/api
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/datasets2tools_smartapi.yml
   x-type: api documentation
 - x-url: https://www.nature.com/articles/sdata201823
   x-type: publication
