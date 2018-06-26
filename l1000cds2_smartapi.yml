@@ -326,6 +326,9 @@ x-externalResources:
 - x-url: http://amp.pharm.mssm.edu/L1000CDS2/help/#api
   x-type: api documentation
   x-description: Original API
+- x-url: https://raw.githubusercontent.com/MaayanLab/smartAPIs/master/l1000cds2_smartapi.yml
+  x-type: api documentation
+  x-description: SmartAPI
 - x-url: https://www.nature.com/articles/npjsba201615
   x-type: publication
   x-description: 'L1000CDS²: LINCS L1000 characteristic direction signatures search engine'
