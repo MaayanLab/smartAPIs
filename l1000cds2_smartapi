@@ -1,0 +1,331 @@
+openapi: 3.0.1
+
+info:
+  version: 1.0.0
+  title: L1000CDS² API
+  description: | 
+    L1000CDS² is a LINCS L1000 characteristic direction signature search engine.
+    It enables users to find consensus L1000 small molecule signatures that
+    match user input signatures. The underlying dataset for the search engine is
+    a portion of the LINCS L1000 small molecule expression profiles generated at
+    the Broad Institute by the Connectivity Map team. Depending on the user's 
+    input, L1000CDS² uses either a gene-set method or cosine distance method to 
+    compare the input signatures and perform the search. 
+  contact: 
+    name: Ma'ayan Lab
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    email: avi.maayan@mssm.edu
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+  termsOfService: http://amp.pharm.mssm.edu/L1000CDS2/help/
+  license: 
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+    
+servers:
+- url: http://amp.pharm.mssm.edu/L1000CDS2
+    
+paths: 
+  /query: 
+    post: 
+      summary: Search L1000 small molecule signatures
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              type: object
+              properties: 
+                data:
+                  oneOf:
+                  - $ref: '#/components/schemas/genesetdata'
+                  - $ref: '#/components/schemas/cosdistancedata'
+                  example: 
+                    upGenes:
+                    - KDM5A
+                    - EGR1
+                    - RELB
+                    dnGenes:
+                    - USP22
+                    - PHGDH
+                    - HADH
+                config: 
+                  $ref: '#/components/schemas/config'
+                metadata:
+                  $ref: '#/components/schemas/metadata'
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                oneOf:
+                - $ref: '#/components/schemas/genesetresponse'
+                - $ref: '#/components/schemas/cosdistanceresponse'
+        '400': 
+          description: Bad request
+        '404': 
+          description: Page not found
+        '500': 
+          description: Unexpected error
+
+components: 
+  schemas:
+    genesetdata:
+      type: object
+      properties: 
+        upGenes: 
+          type: array
+          items: 
+            type: string
+          example: 
+          - KDM5A
+          - EGR1
+          - RELB
+        dnGenes:
+          type: array
+          items: 
+            type: string
+          example:
+          - USP22
+          - PHGDH
+          - HADH
+    cosdistancedata:
+      type: object
+      properties: 
+        genes: 
+          type: array
+          items: 
+            type: string
+          example: 
+          - DDIT4
+          - HIG2
+          - FLT1
+          - ADM
+          - SLC2A3
+          - ZNF331
+        vals: 
+          type: array
+          items: 
+            type: number
+          example: 
+          - 9.97
+          - 10.16
+          - 7.66
+          - 17.80
+          - 20.29
+          - 15.22
+    config: 
+      type: object
+      properties: 
+        aggravate: 
+          type: boolean
+          example: true
+        searchMethod:
+          type: string
+          enum: 
+          - geneSet
+          - CD
+          example: geneSet
+        share:
+          type: boolean
+          example: true
+        combination:
+          type: boolean
+          example: true
+        db-version:
+          type: string
+          enum:
+          - latest
+          - 'cpcd-gse70138-v1.0'
+          - 'cpcd-v1.0'
+          example: latest
+    metadata:
+      type: array
+      items: 
+        type: object
+        properties: 
+          key: 
+            type: string
+            example: tag
+          value: 
+            type: string
+            example: example geneSet search
+    genesetresponse:
+      type: object
+      properties:
+        shareId: 
+          type: string
+          example: 5b3258c78dcbbe0700f24237
+        combinations:
+          $ref: '#/components/schemas/combinations'
+        topMeta:
+          $ref: '#/components/schemas/topMeta'
+    cosdistanceresponse: 
+      type: object
+      properties: 
+        shareId: 
+          type: string
+          example: 5b3258c78dcbbe0700f24237
+        uniqInput: 
+          $ref: '#/components/schemas/uniqInput'
+        combinations: 
+          $ref: '#/components/schemas/combinations'
+        topMeta: 
+          $ref: '#/components/schemas/topMeta'
+    uniqInput: 
+      type: object
+      properties: 
+        up: 
+          type: object
+          properties: 
+            genes: 
+              type: array
+              items:
+                type: string
+              example: 
+              - SLC2A3
+              - ADM
+              - ZNF331
+            vals:
+              type: array
+              items: 
+                type: number
+              example: 
+              - 20.29
+              - 17.8
+              - 15.22
+        dn:
+          type: object
+          properties: 
+            genes:
+              type: array
+              items: 
+                type: string
+              example: 
+              - DDIT4
+              - FLT1
+            vals: 
+              type: array
+              items: 
+                type: number
+              example:
+              - 9.97
+              - 7.66
+    combinations: 
+      type: array
+      items: 
+        type: object
+        properties: 
+          X1: 
+            type: string
+            example: 'CPC002_HA1E_24H:BRD-A71459254:10.0'
+          X2: 
+            type: string
+            example: 'CPC004_HA1E_24H:BRD-A68930007:10.0'
+          value: 
+            type: number
+            example: 0.8333
+    topMeta: 
+      type: array
+      items: 
+        type: object
+        properties: 
+          score: 
+            type: number
+            format: double
+            example: 0.8333
+          cell_id: 
+            type: string
+            example: HA1E
+          pert_desc:
+            type: string
+            example: CYMARIN
+          pert_id:
+            type: string
+            example: BRD-A71459254
+          pubchem_id:
+            type: string
+            example: '6708764'
+          DEGcount:
+            type: integer
+            example: 397
+          pert_time: 
+            type: string
+            example: '24.0'
+          pert_time_unit: 
+            type: string
+            example: h
+          pert_dose: 
+            type: string
+            example: '10.0'
+          pert_dose_unit: 
+            type: string
+            example: um
+          sig_id:
+            type: string
+            example: 'CPC002_HA1E_24H:BRD-A71459254:10.0'
+          overlap: 
+            oneOf: 
+            - $ref: '#/components/schemas/genesetoverlap'
+            - $ref: '#/components/schemas/cosdistanceoverlap'
+    genesetoverlap:
+      type: object 
+      properties: 
+        up/dn: 
+          type: array
+          items: 
+            type: string
+          example:
+          - EGR1
+          - RELB
+        dn/up: 
+          type: array
+          items:
+            type: string
+          example: 
+          - PHGDH
+        up/up:
+          type: array
+          items: 
+            type: string
+          example: 
+          - EGR1
+          - KDM5A
+          - RELB
+        dn/dn:
+          type: array
+          items:
+            type: string
+          example: 
+          - HADH
+          - PHGDH
+    cosdistanceoverlap: 
+      type: object
+      properties:
+        up: 
+          type: array
+          items:
+            type: number
+          example:
+          - -0.0148
+          - -0.0138
+          - -0.0096
+        dn:
+          type: array
+          items: 
+            type: number
+          example: 
+          - -0.0081
+          - -0.0078
+
+x-externalResources: 
+- x-url: http://amp.pharm.mssm.edu/L1000CDS2/help/#api
+  x-type: api documentation
+  x-description: Original API
+- x-url: https://www.nature.com/articles/npjsba201615
+  x-type: publication
+  x-description: 'L1000CDS²: LINCS L1000 characteristic direction signatures search engine'
