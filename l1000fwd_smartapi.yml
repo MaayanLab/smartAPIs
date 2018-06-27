@@ -236,4 +236,6 @@ x-externalResources:
   x-type: publication
   x-description: 'L1000FWD: fireworks visualization of drug-induced transcriptomic signatures'
 - x-url: http://amp.pharm.mssm.edu/L1000FWD/api_page
-  x-type: publication
+  x-type: api documentation
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/l1000fwd_smartapi.yml
+  x-type: api documentation
