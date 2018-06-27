@@ -1,0 +1,267 @@
+openapi: 3.0.1
+
+info:
+  version: 1.0.0
+  title: CREEDS
+  description: | 
+    The CRowd Extracted Expression of Differential Signatures (CREEDS) web 
+    portal allows for the querying, downloading, and visualization of unique and 
+    valid single-gene perturbation signatures, disease vs normal signatures, and 
+    drug perturbation signatures extracted from a crowdsourcing project to 
+    annotate and reanalyze gene expression profiles from Gene Expression Omnibus 
+    (GEO).
+  contact: 
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+  termsOfService: http://amp.pharm.mssm.edu/CREEDS/
+  license: 
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+
+servers:
+- url: http://amp.pharm.mssm.edu/CREEDS
+  
+paths: 
+  /search: 
+    get: 
+      summary: Search signatures using texts
+      parameters:
+      - name: q
+        description: A string of the search term
+        in: query
+        schema: 
+          type: string
+        example: STAT3
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/sig_objects'
+                example: 
+                - cell_type: type II alveolar cells
+                  pert_ids:
+                  - GSM157806
+                  - GSM157807
+                  - GSM157834
+                  hs_gene_symbol: STAT3
+                  curator: cadimo
+                  geo_id: GSE6846
+                  platform: GPL1261
+                  ctrl_ids:
+                  - GSM157835
+                  - GSM157836
+                  - GSM157837
+                  mm_gene_symbol: Stat3
+                  organism: mouse
+                  id: 'gene:85'
+                  pert_type: deficiency
+                - cell_type: Esophagus cell line OE33
+                  pert_ids:
+                  - GSM1156632
+                  - GSM1156633
+                  - GSM1156634
+                  hs_gene_symbol: STAT3
+                  curator: gszeto
+                  geo_id: GSE47763
+                  platform: GPL10558
+                  ctrl_ids:
+                  - GSM1156629
+                  - GSM1156630
+                  - GSM1156631
+                  mm_gene_symbol: Stat3
+                  organism: human
+                  id: 'gene:1790'
+                  pert_type: KD
+    post:
+      summary: Query the CREEDS database using up/down gene sets
+      requestBody:
+        $ref: '#/components/requestBodies/search_input'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    signed_jaccard:
+                      type: number
+                    id: 
+                      type: string
+                    geo_id:
+                      type: string
+                    name:
+                      type: array
+                      items: 
+                        type: string
+                example:
+                - signed_jaccard: 0.00289
+                  id: 'gene:2008'
+                  geo_id: GSE8747
+                  name:
+                  - Met
+                  - http://www.ncbi.nlm.nih.gov/gene/17295
+                - signed_jaccard: 0.00251
+                  id: 'gene:84'
+                  geo_id: GSE10516
+                  name:
+                  - Lmx1b
+                  - http://www.ncbi.nlm.nih.gov/gene/16917
+  /api: 
+    get: 
+      summary: Retrieve a signature from CREEDS
+      parameters: 
+      - name: id
+        description: ID of a signature in CREEDS
+        in: query
+        required: true
+        schema:
+          type: string
+        example: 'gene:84'
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json: 
+              schema: 
+                allOf:
+                - $ref: '#/components/schemas/sig_objects'
+                - type: object
+                  properties: 
+                    up_genes:
+                      type: array
+                      items: 
+                        type: array
+                        items:
+                          anyOf:
+                          - type: string
+                          - type: number
+                    down_genes:
+                      type: array
+                      items: 
+                        type: array
+                        items: 
+                          anyOf:
+                          - type: string
+                          - type: number
+                example: 
+                  cell_type: embryonic (e11.5) proximal hindlimb bud tissues
+                  pert_ids:
+                  - GSM264692
+                  - GSM264693
+                  - GSM264694
+                  hs_gene_symbol: LMX1B
+                  curator: cadimo
+                  id: 'gene:84'
+                  geo_id: GSE10516
+                  platform: GPL1261
+                  ctrl_ids:
+                  - GSM264689
+                  - GSM264690
+                  - GSM264691
+                  mm_gene_symbol: Lmx1b
+                  organism: mouse
+                  pert_type: KO
+                  up_genes:
+                  - - Xist
+                    - 0.154816
+                  - - Klk1b9
+                    - 0.055247
+                  down_genes:
+                  - - Calb2
+                    - -0.170945
+                  - LOC100505027
+                    - -0.130858
+
+components: 
+  requestBodies:
+    search_input:
+      content:
+        application/json:
+          schema: 
+            type: object
+            properties:
+              up_genes:
+                type: array
+                items: 
+                  type: string
+              dn_genes:
+                type: array
+                items:
+                  type: string
+              direction: 
+                type: string
+                enum:
+                - similar
+                - opposite
+              db_version:
+                oneOf:
+                - type: string
+                - type: array
+                  items: 
+                    type: string
+            example:
+              up_genes:
+              - KIAA0907
+              - KDM5A
+              - CDC25A
+              - EGR1
+              - GADD45B
+              down_genes:
+              - SCCPDH
+              - KIF20A
+              - FZD7
+              - USP22
+              - PIP4K2B
+              direction: similar
+              db_version: v1.0
+  schemas:
+    sig_objects: 
+      type: object
+      properties:
+        cell_type: 
+          type: string
+        pert_ids:
+          type: array
+          items:
+            type: string
+        hs_gene_symbol:
+          type: string
+        curator:
+          type: string
+        geo_id:
+          type: string
+        platform:
+          type: string
+        ctrl_ids:
+          type: array
+          items:
+            type: string
+        mm_gene_symbol:
+          type: string
+        organism: 
+          type: string
+        id:
+          type: string
+        pert_type: 
+          type: string
+
+x-externalResources:
+- x-url: http://amp.pharm.mssm.edu/CREEDS/#help/#api-doc
+  x-type: api documentation
+- x-url: https://www.nature.com/articles/ncomms12846
+  x-type: publication
+  x-description: Extraction and analysis of signatures from the Gene Expression Omnibus by the crowd
