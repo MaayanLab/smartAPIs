@@ -220,7 +220,7 @@ components:
               - CDC25A
               - EGR1
               - GADD45B
-              down_genes:
+              dn_genes:
               - SCCPDH
               - KIF20A
               - FZD7
