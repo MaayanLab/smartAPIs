@@ -3,8 +3,8 @@ openapi: 3.0.1
 info:
   title: Harmonizome API
   description: | 
-    Harmonizome is a web-based tool that allows users to search for genes or 
-    proteins and their functional terms, extracted and organized from over a 
+    Harmonizome is a web-based tool that allows users to search for genes or
+    proteins and their functional terms, extracted and organized from over a
     hundred publicly available resources.
   termsOfService: http://amp.pharm.mssm.edu/Harmonizome/terms
   contact: 
@@ -15,7 +15,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html 
-  version: 1.0.1
+  version: 1.0.0
 
 tags: 
 - name: Maayanlab
@@ -40,27 +40,34 @@ paths:
                   version: 
                     type: number
                     format: float
-                    example: 1.0
                   entities:
-                    $ref: '#/components/schemas/entities'
-        '400':
+                    type: array
+                    items: 
+                      type: object
+                      properties: 
+                        entity: 
+                          type: string
+                        href:
+                          type: string
+                example: 
+                  version: 1.0
+                  entities: 
+                  - entity: attribute
+                    href: '/api/1.0/attribute'
+                  - entity: gene
+                    href: '/api/1.0/gene'
+        '400': 
           $ref: '#/components/responses/400'
         '404': 
           $ref: '#/components/responses/404'
         '5XX': 
           $ref: '#/components/responses/5XX'
-  /{href}:
+  /api/1.0/attribute:
     get: 
-      summary: Returns more information from any entity's href property
-      operationId: href
+      summary: Returns information on attributes
+      operationId: attribute
       parameters:
-      - $ref: '#/components/parameters/href'
-      - name: cursor
-        description: View the selection of data starting at a certain
-        in: query
-        schema: 
-          type: integer
-          default: 0
+      - $ref: '#/components/parameters/cursor'
       responses: 
         '200':
           description: Successful response
@@ -71,42 +78,113 @@ paths:
                 properties: 
                   count: 
                     type: integer
-                    example: 56720
                   selection: 
-                    type: array
-                    items:
-                      type: integer
-                    example: [0,100]
+                    $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                    example: /api/1.0/gene?cursor=100
                   entities: 
-                    $ref: '#/components/schemas/hrefentities' 
+                    $ref: '#/components/schemas/names'
+                example: 
+                  count: 295496
+                  selection: 
+                  - 0
+                  - 100
+                  next: '/api/1.0/attribute?cursor\u003d100'
+                  entities: 
+                  - name: '\u0026alpha;-bungarotoxin'
+                    href: '/api/1.0/attribute/%26alpha%3B-bungarotoxin'
+                  - name: '\u0026alpha;\u0026beta;-meATP'
+                    href: '/api/1.0/attribute/%26alpha%3B%26beta%3B-meATP'
         '400':
           $ref: '#/components/responses/400'
         '404': 
           $ref: '#/components/responses/404'
         '5XX': 
           $ref: '#/components/responses/5XX'
-  /{href}/{symbol}:
-    get: 
-      summary: Returns data from any entity
-      operationId: showAssociations
+  /api/1.0/dataset: 
+    get:
+      summary: Returns information on datasets
+      operationId: dataset
       parameters:
-      - $ref: '#/components/parameters/href'
-      - name: symbol
-        description: Symbol used to access data in an entity
-        in: path
-        required: true
-        schema: 
-          type: string
-        example: NANOG
-      - name: showAssociations
-        description: Display a gene's functional associations
-        in: query
-        schema: 
-          type: boolean
-          default: false
+      - $ref: '#/components/parameters/cursor'
+      responses: 
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    $ref: '#/components/schemas/names'
+                example: 
+                  count: 114
+                  selection: 
+                  - 0 
+                  - 100
+                  next: '/api/1.0/dataset?cursor\u003d100'
+                  entities: 
+                  - name: Biocarta Pathways
+                    href: '/api/1.0/dataset/Biocarta+Pathways'
+                  - name: CTD Gene-Disease Associations
+                    href: '/api/1.0/dataset/CTD+Gene-Disease+Associations'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/gene:
+    get:
+      summary: Returns information on genes
+      operationId: gene
+      parameters:
+      - $ref: '#/components/parameters/cursor'
+      responses: 
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    $ref: '#/components/schemas/symbols'
+                example: 
+                  count: 56720
+                  selection: 
+                  - 0 
+                  - 100
+                  next: '/api/1.0/gene?cursor\u003d100'
+                  entities: 
+                  - symbol: ITGA8
+                    href: '/api/1.0/gene/ITGA8'
+                  - symbol: ITGA9
+                    href: '/api/1.0/gene/ITGA9'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'  
+  /api/1.0/gene_set:
+    get:
+      summary: Returns information on gene sets
+      operationId: gene_set
+      parameters:
+      - $ref: '#/components/parameters/cursor'
       responses:
         '200':
           description: Successful response
@@ -114,12 +192,617 @@ paths:
             application/octet-stream: 
               schema: 
                 type: object
-                additionalProperties: {}
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/names'
                 example: 
-                  symbol: NANOG, 
-                  name: Nanog homeobox, 
-                  ncbiEntrezGeneId: 79923, 
-                  ncbiEntrezGeneUrl: http://www.ncbi.nlm.nih.gov/gene/79923
+                  count: 332715
+                  selection: 
+                  - 0 
+                  - 100
+                  next: '/api/1.0/gene_set?cursor\u003d100'
+                  entities: 
+                  - name: 'HS683/Achilles Cell Line'
+                    href: '/api/1.0/gene_set/HS683/Achilles+Cell+Line'
+                  - name: 'OV7/Achilles Cell Line'
+                    href: '/api/1.0/gene_set/OV7/Achilles+Cell+Line'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'          
+  /api/1.0/gene_family:
+    get:
+      summary: Returns information on gene families
+      operationId: gene_family
+      parameters:
+      - $ref: '#/components/parameters/cursor'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    $ref: '#/components/schemas/names'
+                example: 
+                  count: 309
+                  selection: 
+                  - 0
+                  - 100
+                  next: '/api/1.0/gene_family?cursor\u003d100'
+                  entities: 
+                  - name: Annexins (ANXA)
+                    href: '/api/1.0/gene_family/Annexins+%28ANXA%29'
+                  - name: Butyrophilins (BTN)
+                    href: '/api/1.0/gene_family/Butyrophilins+%28BTN%29'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'  
+  /api/1.0/naming_authority:
+    get:
+      summary: Returns information on naming authorities
+      operationId: naming_authority
+      parameters:
+      - $ref: '#/components/parameters/cursor'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    $ref: '#/components/schemas/names'
+                example:
+                  count: 89
+                  selection: 
+                  - 0
+                  - 89
+                  next: ''
+                  entities: 
+                  - name: Cell Ontology
+                    href: '/api/1.0/naming_authority/Cell+Ontology'
+                  - name: Gene Ontology
+                    href: '/api/1.0/naming_authority/Gene+Ontology'
+        '400': 
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'          
+  /api/1.0/protein:
+    get:
+      summary: Returns information on proteins
+      operationId: protein
+      parameters:
+      - $ref: '#/components/parameters/cursor'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    $ref: '#/components/schemas/symbols'
+                example:
+                  count: 19673
+                  selection:
+                  - 0
+                  - 100
+                  next: '/api/1.0/protein?cursor\u003d100'
+                  entities:
+                  - symbol: A1BG_HUMAN
+                    href: '/api/1.0/protein/A1BG_HUMAN'
+                  - symbol: A1CF_HUMAN
+                    href: '/api/1.0/protein/A1CF_HUMAN'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'          
+  /api/1.0/resource:
+    get:
+      summary: Returns information on resources
+      operationId: resource
+      parameters:
+      - $ref: '#/components/parameters/cursor'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  count: 
+                    type: integer
+                  selection: 
+                    $ref: '#/components/schemas/selection'
+                  next: 
+                    type: string
+                  entities: 
+                    $ref: '#/components/schemas/names'
+                example:
+                  count: 66
+                  selection: 
+                  - 0
+                  - 66
+                  next: ''
+                  entities:
+                  - name: Achilles
+                    href: '/api/1.0/resource/Achilles'
+                  - name: Biocarta
+                    href: '/api/1.0/resource/Biocarta'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'          
+  /api/1.0/attribute/{endpoint}:
+    get: 
+      summary: Returns data from a specified attribute
+      operationId: name
+      parameters:
+      - name: endpoint
+        description: Endpoint of an attribute href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: '%26alpha%3B-bungarotoxin'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  name: 
+                    type: string
+                  nameFromNamingAuthority:
+                    type: string
+                  idFromNamingAuthority: 
+                    type: string
+                  descriptionFromNamingAuthority:
+                    type: string
+                  urlFromNamingAuthority:
+                    type: string
+                  geneSets:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/names'
+                  namingAuthority:
+                    $ref: '#/components/schemas/names'
+                example: 
+                  name: '\u0026alpha;-bungarotoxin'
+                  nameFromNamingAuthority: '\u0026alpha;-bungarotoxin'
+                  nameFromDataset: '\u0026alpha;-bungarotoxin'
+                  idFromNamingAuthority: ''
+                  descriptionFromNamingAuthority: ''
+                  urlFromNamingAuthority: ''
+                  geneSets: 
+                  - name: '\u0026alpha;-bungarotoxin/Guide' 
+                    href: '/api/1.0/gene_set/%26alpha%3B-bungarotoxin/Guide'
+                  namingAuthority: 
+                    name: 'Guide to Pharmacology'
+                    href: '/api/1.0/naming_authority/Guide+to+Pharmacology'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/dataset/{endpoint}:
+    get: 
+      summary: Returns data from a specified dataset
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a dataset href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: 'Biocarta+Pathways'
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/octet-stream:
+              schema: 
+                type: object
+                properties: 
+                  name: 
+                    type: string
+                  resource: 
+                    $ref: '#/components/schemas/names'
+                  association: 
+                    type: string
+                  datasetGroup: 
+                    type: string
+                  measurement: 
+                    type: string
+                  attributeGroup: 
+                    type: string
+                  attributeType:
+                    type: string
+                  pubMedIds:
+                    type: array
+                  geneSets:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/names'
+                example: 
+                  name: Biocarta Pathways
+                  resource: 
+                    name: Biocarta
+                    href: '/api/1.0/resource/Biocarta'
+                  association: protein-pathway associations
+                  description: sets of proteins participating in pathways
+                  datasetGroup: structural or functional annotations
+                  measurement: association by literature curation
+                  attributeGroup: functional term, phrase or reference
+                  attributeType: pathway
+                  pubMedIds: []
+                  geneSets:
+                  - name: acetylation and deacetylation of rela
+                    href: '/api/1.0/gene_set/acetylation+and+deacetylation'
+                  - name: actions of nitric oxide
+                    href: '/api/1.0/gene_set/actions+of+nitric+oxide'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'      
+  /api/1.0/gene/{endpoint}:
+    get:
+      summary: Returns data from a specified gene
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a gene href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: ITGA9
+      - name: showAssociations
+        description: Display functional associations for a gene
+        in: query
+        schema: 
+          type: boolean
+          default: false
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/octet-stream:
+              schema: 
+                type: object
+                properties: 
+                  symbol: 
+                    type: string
+                  synonyms: 
+                    type: array
+                    items: 
+                      type: string
+                  name: 
+                    type: string
+                  description: 
+                    type: string
+                  ncbiEntrezGeneId:
+                    type: integer
+                  ncbiEntrezGeneUrl:
+                    type: string
+                  proteins: 
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/symbols'
+                  hgncRootFamilies: 
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/names'
+                example: 
+                  symbol: ITGA9
+                  synonyms: 
+                  - ALPHA-RLC
+                  - RLC
+                  - ITGA4L
+                  name: integrin, alpha 9
+                  description: This gene encodes an alpha integrin
+                  ncbiEntrezGeneId: 3680
+                  proteins: 
+                  - symbol: ITA9_HUMAN
+                    href: '/api/1.0/protein/ITA9_HUMAN'
+                  hgncRootFamilies: 
+                  - name: Integrins (ITG)
+                    href: '/api/1.0/gene_family/Integrins+%28ITG%29'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/gene_set/{endpoint}:
+    get: 
+      summary: Returns data from a specified gene set
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a gene set href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: 'HS683/Achilles+Cell+Line+Gene+Essentiality+Profiles'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  attribute: 
+                    $ref: '#/components/schemas/names'
+                  dataset:
+                    $ref: '#/components/schemas/names'
+                  associations: 
+                    type: array
+                    items: 
+                      type: object
+                      properties: 
+                        gene: 
+                          $ref: '#/components/schemas/symbols'
+                        thresholdValue:
+                          type: number
+                        standardizedValue:
+                          type: number
+                example: 
+                  attribute: 
+                    name: HS-683 cell
+                    href: '/api/1.0/attribute/HS-683+cell'
+                  dataset: 
+                    name: Achilles Cell Line Gene Essentiality Profiles
+                    href: '/api/1.0/dataset/Achilles+Cell+Line'
+                  associations:
+                  - gene: 
+                      symbol: CD36
+                      href: '/api/1.0/gene/CD36'
+                    thresholdValue: 1.0
+                    standardizedValue: 1.00344
+                  - gene: 
+                      symbol: RBM10
+                      href: '/api/1.0/gene/RBM10'
+                    thresholdValue: 1.0
+                    standardizedValue: 1.24312
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/gene_family/{endpoint}:
+    get: 
+      summary: Returns data from a specified gene family
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a gene family href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: 'Annexins+%28ANXA%29'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  name: 
+                    type: string
+                  familyId:
+                    type: integer
+                  url: 
+                    type: string
+                  genes: 
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/symbols'
+                example:
+                  name: Annexins (ANXA)
+                  familyId: 404
+                  url: 'http://www.genenames.org/cgi-bin/genefamilies/set/404'
+                  genes:
+                  - symbol: ANXA8L1
+                    href: '/api/1.0/gene/ANXA8L1'
+                  - symbol: ANXA1
+                    href: '/api/1.0/gene/ANXA1'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/naming_authority/{endpoint}:
+    get: 
+      summary: Returns data from a specified resource
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a resource href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: 'Cell+Ontology'
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  name: 
+                    type: string
+                  acronym: 
+                    type: string
+                  description: 
+                    type: string
+                  url: 
+                    type: string
+                  publication: 
+                    type: string
+                example:
+                  name: Cell Ontology
+                  acronym: CL
+                  description: The Cell Ontology is designed as a structured controlled vocabulary for cell types.
+                  url: 'http://bioportal.bioontology.org/ontologies/CL'
+                  publication: 'dx.doi.org/10.1186/1471-2105-12-6'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/protein/{endpoint}:
+    get: 
+      summary: Returns data from a specified resource
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a resource href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: A1BG_HUMAN
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  symbol: 
+                    type: string
+                  uniprotId:
+                    type: string
+                  name: 
+                    type: string
+                  description: 
+                    type: string
+                  uniprotUrl: 
+                    type: string
+                  gene: 
+                    $ref: '#/components/schemas/symbols'
+                example:
+                  symbol: A1BG_HUMAN
+                  uniprotId: P04217
+                  description: This is a protein.
+                  uniprotUrl: http://www.uniprot.org/uniprot/P04217'
+                  gene: 
+                    symbol: A1BG
+                    href: '/api/1.0/gene/A1BG'
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX': 
+          $ref: '#/components/responses/5XX'
+  /api/1.0/resource/{endpoint}:
+    get: 
+      summary: Returns data from a specified resource
+      operationId: endpoint
+      parameters:
+      - name: endpoint
+        description: Endpoint of a resource href
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: Achilles
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/octet-stream: 
+              schema: 
+                type: object
+                properties: 
+                  name: 
+                    type: string
+                  acronym: 
+                    type: string
+                  datasets: 
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/names'
+                  pubMedIds:
+                    type: array
+                    items: 
+                      type: integer
+                  description: 
+                    type: string
+                  url: 
+                    type: string
+                example:
+                  name: Achilles
+                  acronym: ''
+                  datasets:
+                  - name: Achilles Cell Line
+                    href: '/api/1.0/dataset/Achilles+Cell+Line'
+                  pubMedIds: 
+                  - 25984343
+                  - 20829323
+                  - 21746896
+                  description: This is a resource.
+                  url: 'http://www.broadinstitute.org/achilles'
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -128,15 +811,14 @@ paths:
           $ref: '#/components/responses/5XX'
 
 components: 
-  parameters:
-    href: 
-      name: href
-      description: Specifies the endpoint of the entity
-      in: path
-      required: true
+  parameters: 
+    cursor: 
+      name: cursor
+      in: query
+      description: See the selection of data starting here
       schema: 
-        type: string
-      example: /api/1.0/gene
+        type: integer
+        default: 0
   responses:
     '400':
       description: Bad request'
@@ -144,31 +826,28 @@ components:
       description: Page not found
     '5XX':
       description: Unexpected error
-  schemas: 
-    entities: 
+  schemas:
+    selection: 
       type: array
       items: 
-        type: object
-        properties: 
-          entity: 
-            type: string
-            example: gene
-          href:
-            type: string
-            example: /api/1.0/gene
-    hrefentities: 
-      type: array
-      items: 
-        type: object
-        additionalProperties: true
-      example: 
-      - symbol: LOC105377913, 
-        href: /api/1.0/gene/LOC105377913
-      - symbol: LOC105377912, 
-        href: /api/1.0/gene/LOC105377912
+        type: integer
+    names:
+      type: object
+      properties: 
+        name: 
+          type: string
+        href: 
+          type: string
+    symbols:
+      type: object
+      properties: 
+        symbol: 
+          type: string
+        href: 
+          type: string
 
 x-externalResources:
-- x-url: http://amp.pharm.mssm.edu/Harmonizome/documentation
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/harmonizome_smartapi.yml
   x-type: api documentation
 - x-url: https://academic.oup.com/database/article/doi/10.1093/database/baw100/2630482
   x-type: publication
