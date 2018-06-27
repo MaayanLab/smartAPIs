@@ -262,6 +262,8 @@ components:
 x-externalResources:
 - x-url: http://amp.pharm.mssm.edu/CREEDS/#help/#api-doc
   x-type: api documentation
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/creeds_smartapi.yml
+  x-type: api documentation
 - x-url: https://www.nature.com/articles/ncomms12846
   x-type: publication
   x-description: Extraction and analysis of signatures from the Gene Expression Omnibus by the crowd
