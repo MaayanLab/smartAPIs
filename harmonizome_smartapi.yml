@@ -1,7 +1,7 @@
 openapi: 3.0.1
 
 info:
-  title: Harmonizome API
+  title: Harmonizome
   description: | 
     Harmonizome is a web-based tool that allows users to search for genes or
     proteins and their functional terms, extracted and organized from over a
@@ -15,7 +15,7 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html 
-  version: 1.0.1
+  version: 1.0.0
 
 tags: 
 - name: Maayanlab

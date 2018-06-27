@@ -1,7 +1,7 @@
 openapi: 3.0.1
 
 info:
-  title: Datasets2Tools API
+  title: Datasets2Tools
   description: | 
     Datasets2Tools is a platform for the discovery and evaluation of biomedical 
     digital objects. It indexes over 30,000 bioinformatics analyses, over 6,000 
@@ -26,10 +26,10 @@ tags:
 - name: NIHdatacommons
   
 servers: 
-- url: http://amp.pharm.mssm.edu/datasets2tools/api
+- url: http://amp.pharm.mssm.edu/datasets2tools
   
 paths: 
-  /search: 
+  /api/search: 
     get: 
       operationId: search
       summary: Search a canned analysis, dataset, or tool

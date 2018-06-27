@@ -1,7 +1,7 @@
 openapi: 3.0.1
 
 info:
-  title: X2K API
+  title: X2K
   description: | 
     X2K Web infers upstream regulatory networks from signatures of 
     differentially expressed genes. By combining transcription factor enrichment
@@ -27,10 +27,10 @@ tags:
 - name: NIHdatacommons
   
 servers: 
-- url: http://amp.pharm.mssm.edu
+- url: http://amp.pharm.mssm.edu/X2K
 
 paths: 
-  /X2K/api:
+  /api:
     post:
       summary: | 
         Returns transcription factors, protein-protein interactions, overlapping

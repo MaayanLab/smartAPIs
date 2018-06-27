@@ -2,7 +2,7 @@ openapi: 3.0.1
 
 info:
   version: 1.0.0
-  title: L1000CDS² API
+  title: L1000CDS²
   description: | 
     L1000CDS² is a LINCS L1000 characteristic direction signature search engine.
     It enables users to find consensus L1000 small molecule signatures that
