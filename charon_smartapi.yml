@@ -5,7 +5,8 @@ info:
   title: Charon
   description: | 
     Charon is an API that allows users to upload files to Amazon S3 
-    without an Amazon account. 
+    without an Amazon account. Alignment jobs may then be performed
+    in the cloud using the Elysium API. 
   contact:
     name: Ma'ayan Lab
     email: avi.maayan@mssm.edu
@@ -368,3 +369,7 @@ components:
 x-externalResources:
 - x-url: https://github.com/MaayanLab/smartAPIs/blob/master/charon_smartapi.yml
   x-type: api documentation
+- x-url: https://www.nature.com/articles/s41467-018-03751-6
+  x-type: publication
+  x-description: Massive mining of publicly available RNA-seq data from human and mouse
+  
