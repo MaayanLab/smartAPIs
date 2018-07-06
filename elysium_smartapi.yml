@@ -1,0 +1,341 @@
+openapi: 3.0.1
+
+info:
+  title: Elysium
+  description: | 
+    Elysium is an API that controls the submission and scheduling of alignment 
+    jobs, working with data uploaded through the Charon API. 
+  version: 1.0.0
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+  license: 
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: https://amp.pharm.mssm.edu/cloudalignment/flip.html
+  
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+
+servers:
+- url: http://amp.pharm.mssm.edu/cloudalignment
+
+paths: 
+  /version:
+    get:
+      summary: Returns version and date of last build
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties:
+                  version:
+                    type: string
+                  last_build: 
+                    type: string
+                example: 
+                  version: 1
+                  last_build: '2018-07-02'
+  /givejob: 
+    get: 
+      summary: Begin processing job and set status to "submitted"
+      parameters: 
+      - $ref: '#/components/parameters/pass'
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                oneOf:
+                - type: object
+                  properties: 
+                    id: 
+                      type: string
+                      enum: 
+                      - empty
+                - type: object
+                  properties: 
+                    id: 
+                      type: string
+                    uid: 
+                      type: string
+                    userid:
+                      type: string
+                    type: 
+                      type: string
+                    resultbucket: 
+                      type: string
+                    datalinks: 
+                      type: string
+                    outname: 
+                      type: string
+                    organism: 
+                      type: string
+              examples:
+                success:
+                  value: 
+                    id: 310
+                    uid: 66bc6ea9e4a68c2eef6c6e9070b0b81d
+                    userid: 1329449fed0aa7969400c3a485a80196
+                    type: sequencing
+                    resultbucket: biodos
+                    datalinks: https://s3.amazonaws.com/biodos/1329449fed0aa7969400c3a485a80196/example_file.rtf
+                    outname: example_outname
+                    organism: human
+                failure:
+                  value: 
+                    id: empty
+  /finishjob:
+    get: 
+      summary: Complete job and set status to "completed"
+      parameters: 
+      - $ref: '#/components/parameters/pass'
+      - name: uid
+        description: ''
+        in: query
+        schema: 
+          type: string
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  id: 
+                    type: string
+                  status: 
+                    type: string
+                    enum:
+                    - completed
+                    - failed
+                example:
+                  id: 66bc6ea9e4a68c2eef6c6e9070b0b81d
+                  status: completed
+  /createjob:
+    get: 
+      summary: Create a new job and set status to "waiting"
+      parameters: 
+      - $ref: '#/components/parameters/username'
+      - $ref: '#/components/parameters/password'
+      - name: file1
+        description: ''
+        in: query
+        schema: 
+          type: string
+      - name: file2
+        description: ''
+        in: query
+        schema: 
+          type: string
+      - name: organism
+        description: ''
+        in: query
+        schema: 
+          type: string
+      - name: outname
+        description: ''
+        in: query
+        schema: 
+          type: string
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties: 
+                  action: 
+                    type: string
+                  task: 
+                    type: string
+                  status: 
+                    type: string
+                  message: 
+                    type: string
+              examples: 
+                success:
+                  value:
+                    action: create job
+                    task: example_username
+                    status: success
+                    message: 66bc6ea9e4a68c2eef6c6e9070b0b81d
+                failure:
+                  value:
+                    action: create job
+                    task: example_username
+                    status: error
+                    message: files not found
+  /progress: 
+    get: 
+      summary: View jobs with the specified status
+      parameters: 
+      - $ref: '#/components/parameters/username'
+      - $ref: '#/components/parameters/password'
+      - name: status
+        description: ''
+        in: query
+        schema: 
+          type: string
+        example: completed
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                oneOf:
+                - type: object
+                  properties: 
+                    {id}: 
+                      type: object
+                      properties: 
+                        id: 
+                          type: string
+                        uid: 
+                          type: string
+                        user: 
+                          type: string
+                        datalink: 
+                          type: string
+                        outname: 
+                          type: string
+                        organism: 
+                          type: string
+                        status: 
+                          type: string
+                        creationdate: 
+                          type: string
+                        submissiondate: 
+                          type: string
+                        finishdate: 
+                          type: string
+                - type: object
+                  properties: 
+                    action: 
+                      type: string
+                    task: 
+                      type: string
+                    status: 
+                      type: string
+                    message: 
+                      type: string
+              examples:
+                success: 
+                  value: 
+                    310:
+                      id: 310
+                      uid: 66bc6ea9e4a68c2eef6c6e9070b0b81d
+                      user: 1329449fed0aa7969400c3a485a80196
+                      datalink: https://s3.amazonaws.com/biodos/1329449fed0aa7969400c3a485a80196/example_file.rtf
+                      outname: example_outname
+                      organism: human
+                      status: completed
+                      creationdate: '2018-07-06 16:17:32'
+                      submissiondate: '2018-07-06 16:17:38'
+                      finishdate: '2018-07-06 16:22:25'
+                failure:
+                  value: 
+                    action: list jobs
+                    task: example_username
+                    status: error
+                    message: login failed
+  /queueview:
+    get: 
+      summary: View jobs with status "waiting" or "submitted"
+      parameters: 
+      - $ref: '#/components/parameters/username'
+      - $ref: '#/components/parameters/password'
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                oneOf:
+                - type: object
+                  properties: 
+                    user: 
+                      type: array
+                      items: 
+                        type: integer
+                    submissionstatus: 
+                      type: array
+                      items: 
+                        type: integer
+                    files: 
+                      type: array
+                      items: 
+                        type: string
+                    outname: 
+                      type: array
+                      items: 
+                        type: string
+                    organism: 
+                      type: array
+                      items: 
+                        type: string
+                    status: 
+                      type: string
+                - type: object
+                  properties: 
+                    status: 
+                      type: string
+                    message: 
+                      type: string
+              examples:
+                success:
+                  value: 
+                    user: 
+                    - 1
+                    submissionstatus:
+                    - 2
+                    files: 
+                    - https://s3.amazonaws.com/biodos/1329449fed0aa7969400c3a485a80196/example_file.rtf
+                    outname: 
+                    - example_outname
+                    organism: 
+                    - human
+                    status: success
+                failure:
+                  value: 
+                    status: failed
+                    message: credential error
+
+components:
+  parameters:
+    pass:
+      name: pass
+      description: Password for a specific job
+      in: query
+      schema: 
+        type: string
+    username:
+      name: username
+      in: query
+      schema: 
+        type: string
+      example: maayanlab2018
+    password: 
+      name: password
+      in: query
+      schema: 
+        type: string
+      example: systemsbiology
+                      
+x-externalResources:
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/elysium_smartapi.yml
+  x-type: api documentation
+- x-url: https://www.nature.com/articles/s41467-018-03751-6
+  x-type: publication
+  x-description: Massive mining of publicly available RNA-seq data from human and mouse
