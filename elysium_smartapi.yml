@@ -29,6 +29,8 @@ paths:
     get:
       summary: Returns version and date of last build
       responses:
+        default:
+          description: Unexpected error
         '200':
           description: Successful response
           content: 
@@ -49,6 +51,8 @@ paths:
       parameters: 
       - $ref: '#/components/parameters/pass'
       responses:
+        default:
+          description: Unexpected error
         '200': 
           description: Successful response
           content: 
@@ -79,20 +83,15 @@ paths:
                       type: string
                     organism: 
                       type: string
-              examples:
-                success:
-                  value: 
-                    id: 310
-                    uid: 66bc6ea9e4a68c2eef6c6e9070b0b81d
-                    userid: 1329449fed0aa7969400c3a485a80196
-                    type: sequencing
-                    resultbucket: biodos
-                    datalinks: https://s3.amazonaws.com/biodos/1329449fed0aa7969400c3a485a80196/example_file.rtf
-                    outname: example_outname
-                    organism: human
-                failure:
-                  value: 
-                    id: empty
+                example:
+                  id: 310
+                  uid: 66bc6ea9e4a68c2eef6c6e9070b0b81d
+                  userid: 1329449fed0aa7969400c3a485a80196
+                  type: sequencing
+                  resultbucket: biodos
+                  datalinks: https://s3.amazonaws.com/biod  /1329449fed0aa7969400c3a485a80196/example_file.rtf
+                  outname: example_outname
+                  organism: human
   /finishjob:
     get: 
       summary: Complete job and set status to "completed"
@@ -104,6 +103,8 @@ paths:
         schema: 
           type: string
       responses:
+        default:
+          description: Unexpected error
         '200': 
           description: Successful response
           content: 
@@ -148,6 +149,8 @@ paths:
         schema: 
           type: string
       responses:
+        default:
+          description: Unexpected error
         '200': 
           description: Successful response
           content: 
@@ -189,37 +192,41 @@ paths:
           type: string
         example: completed
       responses:
+        default:
+          description: Unexpected error
         '200': 
           description: Successful response
           content: 
             application/json: 
               schema: 
                 oneOf:
-                - type: object
-                  properties: 
-                    {id}: 
-                      type: object
-                      properties: 
-                        id: 
-                          type: string
-                        uid: 
-                          type: string
-                        user: 
-                          type: string
-                        datalink: 
-                          type: string
-                        outname: 
-                          type: string
-                        organism: 
-                          type: string
-                        status: 
-                          type: string
-                        creationdate: 
-                          type: string
-                        submissiondate: 
-                          type: string
-                        finishdate: 
-                          type: string
+                - type: array
+                  items: 
+                    type: object
+                    properties: 
+                      {id}: 
+                        type: object
+                        properties: 
+                          id: 
+                            type: string
+                          uid: 
+                            type: string
+                          user: 
+                            type: string
+                          datalink: 
+                            type: string
+                          outname: 
+                            type: string
+                          organism: 
+                            type: string
+                          status: 
+                            type: string
+                          creationdate: 
+                            type: string
+                          submissiondate: 
+                            type: string
+                          finishdate: 
+                            type: string
                 - type: object
                   properties: 
                     action: 
@@ -233,17 +240,17 @@ paths:
               examples:
                 success: 
                   value: 
-                    310:
-                      id: 310
-                      uid: 66bc6ea9e4a68c2eef6c6e9070b0b81d
-                      user: 1329449fed0aa7969400c3a485a80196
-                      datalink: https://s3.amazonaws.com/biodos/1329449fed0aa7969400c3a485a80196/example_file.rtf
-                      outname: example_outname
-                      organism: human
-                      status: completed
-                      creationdate: '2018-07-06 16:17:32'
-                      submissiondate: '2018-07-06 16:17:38'
-                      finishdate: '2018-07-06 16:22:25'
+                    - 310:
+                        id: 310
+                        uid: 66bc6ea9e4a68c2eef6c6e9070b0b81d
+                        user: 1329449fed0aa7969400c3a485a80196
+                        datalink: https://s3.amazonaws.com/biodos  /1329449fed0aa7969400c3a485a80196/example_file.rtf
+                        outname: example_outname
+                        organism: human
+                        status: completed
+                        creationdate: '2018-07-06 16:17:32'
+                        submissiondate: '2018-07-06 16:17:38'
+                        finishdate: '2018-07-06 16:22:25'
                 failure:
                   value: 
                     action: list jobs
@@ -257,6 +264,8 @@ paths:
       - $ref: '#/components/parameters/username'
       - $ref: '#/components/parameters/password'
       responses:
+        default:
+          description: Unexpected error
         '200': 
           description: Successful response
           content: 
