@@ -2,7 +2,7 @@ openapi: 3.0.1
 
 info:
   title: YeastEnrichr
-  version: "1.0.0"
+  version: 1.0.0
   description: | 
     YeastEnrichr is the adaptation of Enrichr - a web-based tool for enrichment 
     analysis providing users with interactive displays and visual summaries of 
@@ -148,18 +148,17 @@ paths:
             application/json:
               schema: 
                 type: object
-                properties: 
-                  {backgroundType}: 
+                additionalProperties: 
+                  type: array
+                  items: 
                     type: array
                     items: 
-                      type: array
-                      items: 
-                        anyOf:
-                        - type: number
-                        - type: array
-                          items: 
-                            type: string
-                        - type: string
+                      anyOf:
+                      - type: number
+                      - type: array
+                        items: 
+                          type: string
+                      - type: string
                 example:
                   Wikipathways_2018:
                   - - 1
