@@ -301,7 +301,6 @@ paths:
             application/json:
               schema:
                 type: string
-                example: '16   7557    6'
         '404':
           description: Page not found
         default:
