@@ -118,16 +118,16 @@ paths:
                 example: 
                   description: Example gene list
                   genes:
-                  - MED2
-                  - NCE103
-                  - FAA3
-                  - YPT10
-                  - RTC4
-                  - RPL2A
-                  - UPS2
-                  - FLX1
-                  - HNT3
-                  - LCB2
+                    - MED2
+                    - NCE103
+                    - FAA3
+                    - YPT10
+                    - RTC4
+                    - RPL2A
+                    - UPS2
+                    - FLX1
+                    - HNT3
+                    - LCB2
         '400':
           description: Bad request
         '404': 
@@ -161,30 +161,30 @@ paths:
                       - type: string
                 example:
                   Wikipathways_2018:
-                  - - 1
-                    - nucleus (GO:0005634)
-                    - 1.6496356704525663E-17
-                    - -1.565555682925976
-                    - 60.49838214594032
-                    - - DET1
-                      - SPO12
-                      - SDA1
-                    - 3.0353296336327222e-15
-                    - 0.9238402310655702
-                    - 0.9339923215168402
-                  - - 2
-                    - mitochondrion (GO:0005739)
-                    - 8.655739032784751e-14
-                    - -1.5418027137366643
-                    - 46.374293810019964
-                    - - NUT1
-                      - OLI1
-                      - MAM33
-                      - HEM15
-                      - MRPS35
-                    - 7.963279910161971e-12
-                    - 0.702389696316316
-                    - 0.797650783926161
+                    - - 1
+                      - nucleus (GO:0005634)
+                      - 1.6496356704525663E-17
+                      - -1.565555682925976
+                      - 60.49838214594032
+                      - - DET1
+                        - SPO12
+                        - SDA1
+                      - 3.0353296336327222e-15
+                      - 0.9238402310655702
+                      - 0.9339923215168402
+                    - - 2
+                      - mitochondrion (GO:0005739)
+                      - 8.655739032784751e-14
+                      - -1.5418027137366643
+                      - 46.374293810019964
+                      - - NUT1
+                        - OLI1
+                        - MAM33
+                        - HEM15
+                        - MRPS35
+                      - 7.963279910161971e-12
+                      - 0.702389696316316
+                      - 0.797650783926161
         '400':
           description: Bad request
         '404':
@@ -301,6 +301,7 @@ paths:
             application/json:
               schema:
                 type: string
+                example: '16   7557    6'
         '404':
           description: Page not found
         default:
@@ -334,16 +335,16 @@ paths:
                           type: integer
                 example:
                   statistics: 
-                  - libraryName: GO_Cellular_Component_2018A
-                    numTerms: 307
-                    geneCoverage: 4504
-                    genesPerTerm: 44
-                    link: http://www.geneontology.org/
-                  - libraryName: Wikipathways_2018
-                    numTerms: 81
-                    geneCoverage: 847
-                    genesPerTerm: 17
-                    link: https://www.wikipathways.org
+                    - libraryName: GO_Cellular_Component_2018A
+                      numTerms: 307
+                      geneCoverage: 4504
+                      genesPerTerm: 44
+                      link: http://www.geneontology.org/
+                    - libraryName: Wikipathways_2018
+                      numTerms: 81
+                      geneCoverage: 847
+                      genesPerTerm: 17
+                      link: https://www.wikipathways.org
         '404':
           description: Page not found
         default:
@@ -380,7 +381,6 @@ paths:
                     idRegExpFlag: i
                     baseUrl: http://www.genome.jp/kegg-bin/show_pathway?
                     homepage: ''
-
         '404':
           description: Page not found
         default:
@@ -404,34 +404,6 @@ components:
       schema: 
         type: string
       example: GO_Cellular_Component_2018A
-  requestBodies:
-    addListInput:
-      content: 
-        multipart/form-data:
-          schema:
-            type: object
-            properties:
-              list:
-                description: Newline- or space-delineated list of gene symbols
-                type: string
-              description: 
-                description: String describing what the gene symbols represent
-                type: string
-            example:
-              list: | 
-                C49C8 
-                atg-5 
-                hop-1 
-                mom-4 
-                lsm-8 
-                ggtb-1 
-                acr-7 
-                str-169 
-                rps-6 
-                sptf-1 
-                sek-4 
-                T13H5
-              description: Example gene list
   schemas:
     setupfalse:
       type: object
@@ -454,18 +426,18 @@ components:
       example:
         gene:
           GO_Biological_Process_2018A:
-          - organic anion transport (GO:0015711)
-          - coenzyme transport (GO:0051182)
-          - nucleotide transport (GO:0006862)
+            - organic anion transport (GO:0015711)
+            - coenzyme transport (GO:0051182)
+            - nucleotide transport (GO:0006862)
           Gene_Interaction_Hubs_BioGRID_2018:
-          - SWD1
-          - ELP6
-          - GIC2
-          - MSB3
-          - CHS6
+            - SWD1
+            - ELP6
+            - GIC2
+            - MSB3
+            - CHS6
         descriptions:
-        - name: GO_Cellular_Component_2018A
-        - name: GO_Molecular_Function_2018A
+          - name: GO_Cellular_Component_2018A
+          - name: GO_Molecular_Function_2018A
     setuptrue:
       type: object
       properties: 
@@ -507,35 +479,35 @@ components:
       example:
         gene:
           GO_Biological_Process_2018A:
-          - organic anion transport (GO:0015711)
-          - coenzyme transport (GO:0051182)
-          - nucleotide transport (GO:0006862)
+            - organic anion transport (GO:0015711)
+            - coenzyme transport (GO:0051182)
+            - nucleotide transport (GO:0006862)
           Gene_Interaction_Hubs_BioGRID_2018:
-          - SWD1
-          - ELP6
-          - GIC2
-          - MSB3
-          - CHS6
+            - SWD1
+            - ELP6
+            - GIC2
+            - MSB3
+            - CHS6
         descriptions:
-        - name: GO_Cellular_Component_2018A
-        - name: GO_Molecular_Function_2018A
-        categories:
-        - name: Ontologies
-          libraries:
           - name: GO_Cellular_Component_2018A
-            isFuzzy: false
-            hasGrid: false
-            format: '{0} is found in {1}.'
           - name: GO_Molecular_Function_2018A
-            isFuzzy: false
-            hasGrid: false
-            format: '{0} has the molecular function of {1}.'
-        - name: Pathways
-          libraries:
-          - name: PPI_Hubs_BioGRID_2018
-            isFuzzy: false
-            hasGrid: false
-            format: '{0} directly interacts with the hub protein {1}.'
+        categories:
+          - name: Ontologies
+            libraries:
+              - name: GO_Cellular_Component_2018A
+                isFuzzy: false
+                hasGrid: false
+                format: '{0} is found in {1}.'
+              - name: GO_Molecular_Function_2018A
+                isFuzzy: false
+                hasGrid: false
+                format: '{0} has the molecular function of {1}.'
+          - name: Pathways
+            libraries:
+              - name: PPI_Hubs_BioGRID_2018
+                isFuzzy: false
+                hasGrid: false
+                format: '{0} directly interacts with the hub protein {1}.'
           
 x-externalResources:
 - x-url: http://amp.pharm.mssm.edu/YeastEnrichr/help#api
