@@ -203,30 +203,29 @@ paths:
                 - type: array
                   items: 
                     type: object
-                    properties: 
-                      {id}: 
-                        type: object
-                        properties: 
-                          id: 
-                            type: string
-                          uid: 
-                            type: string
-                          user: 
-                            type: string
-                          datalink: 
-                            type: string
-                          outname: 
-                            type: string
-                          organism: 
-                            type: string
-                          status: 
-                            type: string
-                          creationdate: 
-                            type: string
-                          submissiondate: 
-                            type: string
-                          finishdate: 
-                            type: string
+                    additionalProperties:
+                      type: object
+                      properties: 
+                        id: 
+                          type: string
+                        uid: 
+                          type: string
+                        user: 
+                          type: string
+                        datalink: 
+                          type: string
+                        outname: 
+                          type: string
+                        organism: 
+                          type: string
+                        status: 
+                          type: string
+                        creationdate: 
+                          type: string
+                        submissiondate: 
+                          type: string
+                        finishdate: 
+                          type: string
                 - type: object
                   properties: 
                     action: 
