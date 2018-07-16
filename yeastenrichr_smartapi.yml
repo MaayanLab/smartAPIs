@@ -1,0 +1,552 @@
+openapi: 3.0.1
+
+info:
+  title: YeastEnrichr
+  version: "1.0.0"
+  description: | 
+    YeastEnrichr is the adaptation of Enrichr - a web-based tool for enrichment 
+    analysis providing users with interactive displays and visual summaries of 
+    collective functions of gene lists - for yeast. 
+  contact:
+    email: avi.maayan@mssm.edu
+    name: Ma'ayan Lab 
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+    x-role: responsible organization
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  termsOfService: http://amp.pharm.mssm.edu/YeastEnrichr/help#terms
+  
+servers:
+- url: http://amp.pharm.mssm.edu/YeastEnrichr
+
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+
+paths:
+  /addList:
+    post:
+      summary: Submit a gene list for analysis
+      operationId: addList
+      requestBody:
+        content: 
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                list:
+                  description: Newline- or space-delineated list of gene symbols
+                  type: string
+                description: 
+                  description: String describing what the gene symbols represent
+                  type: string
+              example:
+                list: | 
+                  RLI1
+                  YBL010C
+                  ICE2
+                  OST6
+                  TIM18
+                  VPS75
+                  FLO5
+                  UGO1
+                  CIS3
+                  SKP1
+                  ATG38
+                  MRPS35
+                  BFA1
+                  PEX30
+                  ROK1
+                description: Example gene list
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties:
+                  shortId:
+                    type: string
+                  userListId:
+                    type: integer
+                example:
+                  shortId: g
+                  userListId: 16
+        '400':
+          description: Bad request
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /view:
+    get:
+      summary: Returns a specific gene list
+      operationId: view
+      parameters: 
+      - name: userListId
+        description: | 
+          Unique ID for a specific gene list. If the short ID is also known, use 
+          EITHER this OR dataset.
+        in: query
+        schema:
+          type: integer
+        example: 10
+      - name: dataset
+        description: | 
+          Short ID for a specific gene list. If the full ID is also known, use
+          EITHER this OR userListId.
+        in: query
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  description: 
+                    type: string
+                  genes: 
+                    type: array
+                    items:
+                      type: string
+                example: 
+                  description: Example gene list
+                  genes:
+                  - MED2
+                  - NCE103
+                  - FAA3
+                  - YPT10
+                  - RTC4
+                  - RPL2A
+                  - UPS2
+                  - FLX1
+                  - HNT3
+                  - LCB2
+        '400':
+          description: Bad request
+        '404': 
+          description: Page not found
+        default:
+          description: Unexpected error
+  /enrich: 
+    get: 
+      summary: Returns enrichment analysis results for a specific gene list
+      operationId: enrich
+      parameters: 
+      - $ref: '#/components/parameters/userListId'
+      - $ref: '#/components/parameters/backgroundType'
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties: 
+                  {backgroundType}: 
+                    type: array
+                    items: 
+                      type: array
+                      items: 
+                        anyOf:
+                        - type: number
+                        - type: array
+                          items: 
+                            type: string
+                        - type: string
+                example:
+                  Wikipathways_2018:
+                  - - 1
+                    - nucleus (GO:0005634)
+                    - 1.6496356704525663E-17
+                    - -1.565555682925976
+                    - 60.49838214594032
+                    - - DET1
+                      - SPO12
+                      - SDA1
+                    - 3.0353296336327222e-15
+                    - 0.9238402310655702
+                    - 0.9339923215168402
+                  - - 2
+                    - mitochondrion (GO:0005739)
+                    - 8.655739032784751e-14
+                    - -1.5418027137366643
+                    - 46.374293810019964
+                    - - NUT1
+                      - OLI1
+                      - MAM33
+                      - HEM15
+                      - MRPS35
+                    - 7.963279910161971e-12
+                    - 0.702389696316316
+                    - 0.797650783926161
+        '400':
+          description: Bad request
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /genemap: 
+    get:
+      summary: Returns enrichment terms that contain a given gene
+      operationId: genemap
+      parameters:
+      - name: gene
+        description: Gene to use in search for terms
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: FLX1
+      - name: json
+        description: Set true to return JSON rather than plaintext
+        in: query
+        schema: 
+          type: boolean
+          default: false
+        example: true
+      - name: setup
+        description: Set true to return category information for the libraries
+        in: query
+        schema: 
+          type: boolean
+          default: false
+        example: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: 
+              schema: 
+                oneOf:
+                - $ref: '#/components/schemas/setupfalse'
+                - $ref: '#/components/schemas/setuptrue'
+        '400':
+          description: Bad request
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /export:
+    get: 
+      summary: Download enrichment analysis results for a specific gene list
+      operationId: export
+      parameters:
+      - $ref: '#/components/parameters/userListId'
+      - $ref: '#/components/parameters/backgroundType'
+      - name: filename
+        description: Name of text file download
+        in: query
+        required: true
+        schema:
+          type: string
+        example: example_file
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/text:
+              schema:
+                format: binary
+                type: string
+        '400':
+          description: Bad request
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /calendar: 
+    get:
+      summary: Returns usage statistics for Enrichr website
+      operationId: calendar
+      responses:
+        '200':
+          description: Successful response
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  type: array
+                  items:
+                    type: integer
+                example: 
+                  - - 2018
+                    - 6
+                    - 26
+                    - 2
+                  - - 2018
+                    - 6
+                    - 20
+                    - 1
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /count: 
+    get:
+      summary: | 
+        Returns total number of lists analyzed, number of terms, and number of
+        libraries.
+      operationId: count
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+                example: 16   7557    6
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /datasetStatistics:
+    get:
+      summary: Returns statistic information on all gene libraries
+      operationId: datasetStatistics
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  statistics:
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        geneCoverage:
+                          type: integer
+                        genesPerTerm:
+                          type: number
+                        libraryName:
+                          type: string
+                        link:
+                          type: string
+                        numTerms:
+                          type: integer
+                example:
+                  statistics: 
+                  - libraryName: GO_Cellular_Component_2018A
+                    numTerms: 307
+                    geneCoverage: 4504
+                    genesPerTerm: 44
+                    link: http://www.geneontology.org/
+                  - libraryName: Wikipathways_2018
+                    numTerms: 81
+                    geneCoverage: 847
+                    genesPerTerm: 17
+                    link: https://www.wikipathways.org
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+  /json/libraries.json:
+    get: 
+      summary: Returns descriptive information on all gene libraries in JSON
+      operationId: libraries.json
+      responses:
+        '200': 
+          description: 'Successful response'
+          content:
+            application/json: 
+              schema: 
+                type: object
+                additionalProperties: 
+                  type: object
+                  additionalProperties: 
+                    type: string
+                example:
+                  Achilles fitness decrease:
+                    description: Knockdown genes from the Achilles project
+                    idName: ''
+                    idRegExp: ''
+                    idRegExpFlag: ''
+                    baseUrl: ''
+                    homepage: ''
+                  Aging Perturbations from GEO up:
+                    description: Gene expression signatures extracted from GEO
+                  KEGG 2013:
+                    description: KEGG's cell signaling pathway database
+                    idName: View on KEGG Website
+                    idRegExp: 'hsa[0-9]{5}'
+                    idRegExpFlag: i
+                    baseUrl: http://www.genome.jp/kegg-bin/show_pathway?
+                    homepage: ''
+
+        '404':
+          description: Page not found
+        default:
+          description: Unexpected error
+
+components:
+  parameters:
+    userListId:
+      name: userListId
+      description: Unique ID for a specific gene list
+      in: query
+      required: true
+      schema: 
+        type: integer
+      example: 10
+    backgroundType: 
+      name: backgroundType
+      description: Gene set library for which to download results
+      in: query
+      required: true
+      schema: 
+        type: string
+      example: GO_Cellular_Component_2018A
+  requestBodies:
+    addListInput:
+      content: 
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              list:
+                description: Newline- or space-delineated list of gene symbols
+                type: string
+              description: 
+                description: String describing what the gene symbols represent
+                type: string
+            example:
+              list: | 
+                C49C8 
+                atg-5 
+                hop-1 
+                mom-4 
+                lsm-8 
+                ggtb-1 
+                acr-7 
+                str-169 
+                rps-6 
+                sptf-1 
+                sek-4 
+                T13H5
+              description: Example gene list
+  schemas:
+    setupfalse:
+      type: object
+      properties:
+        gene: 
+          type: object
+          additionalProperties:
+            type: array
+            items: 
+              type: string
+        descriptions: 
+          type: array
+          items:
+            type: object
+            properties:
+              name: 
+                type: string
+              description: 
+                type: string
+      example:
+        gene:
+          GO_Biological_Process_2018A:
+          - organic anion transport (GO:0015711)
+          - coenzyme transport (GO:0051182)
+          - nucleotide transport (GO:0006862)
+          Gene_Interaction_Hubs_BioGRID_2018:
+          - SWD1
+          - ELP6
+          - GIC2
+          - MSB3
+          - CHS6
+        descriptions:
+        - name: GO_Cellular_Component_2018A
+        - name: GO_Molecular_Function_2018A
+    setuptrue:
+      type: object
+      properties: 
+        gene:
+          type: object
+          additionalProperties:
+            type: array
+            items: 
+              type: string
+        descriptions:
+          type: array
+          items:
+            type: object
+            properties:
+              name: 
+                type: string
+              description: 
+                type: string
+        categories:
+          type: array
+          items: 
+            type: object
+            properties: 
+              name: 
+                type: string
+              libraries:
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    name: 
+                      type: string
+                    format:
+                      type: string
+                    hasGrid:
+                      type: boolean
+                    isFuzzy: 
+                      type: boolean
+      example:
+        gene:
+          GO_Biological_Process_2018A:
+          - organic anion transport (GO:0015711)
+          - coenzyme transport (GO:0051182)
+          - nucleotide transport (GO:0006862)
+          Gene_Interaction_Hubs_BioGRID_2018:
+          - SWD1
+          - ELP6
+          - GIC2
+          - MSB3
+          - CHS6
+        descriptions:
+        - name: GO_Cellular_Component_2018A
+        - name: GO_Molecular_Function_2018A
+        categories:
+        - name: Ontologies
+          libraries:
+          - name: GO_Cellular_Component_2018A
+            isFuzzy: false
+            hasGrid: false
+            format: '{0} is found in {1}.'
+          - name: GO_Molecular_Function_2018A
+            isFuzzy: false
+            hasGrid: false
+            format: '{0} has the molecular function of {1}.'
+        - name: Pathways
+          libraries:
+          - name: PPI_Hubs_BioGRID_2018
+            isFuzzy: false
+            hasGrid: false
+            format: '{0} directly interacts with the hub protein {1}.'
+          
+x-externalResources:
+- x-url: http://amp.pharm.mssm.edu/YeastEnrichr/help#api
+  x-type: api documentation
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/yeastenrichr_smartapi.yml
+  x-type: api documentation
+- x-url: https://www.ncbi.nlm.nih.gov/pubmed/23586463
+  x-type: publication
+  x-description: 'Enrichr: interactive and collaborative HTML5 gene list enrichment analysis tool.'
+- x-url: https://www.ncbi.nlm.nih.gov/pubmed/27141961
+  x-type: publication
+  x-description: 'Enrichr: a comprehensive gene set enrichment analysis web server 2016 update.'
