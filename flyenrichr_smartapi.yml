@@ -148,18 +148,17 @@ paths:
             application/json:
               schema: 
                 type: object
-                properties: 
-                  {backgroundType}: 
+                additionalProperties: 
+                  type: array
+                  items: 
                     type: array
                     items: 
-                      type: array
-                      items: 
-                        anyOf:
-                        - type: number
-                        - type: array
-                          items: 
-                            type: string
-                        - type: string
+                      anyOf:
+                      - type: number
+                      - type: array
+                        items: 
+                          type: string
+                      - type: string
         '400':
           description: Bad request
         '404':
