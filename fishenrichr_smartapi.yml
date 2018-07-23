@@ -266,7 +266,6 @@ paths:
             application/json:
               schema:
                 type: string
-                example: 44   3968    4
         '404':
           description: Page not found
         default:
