@@ -379,7 +379,7 @@ paths:
   /api/1.0/attribute/{endpoint}:
     get: 
       summary: Returns data from a specified attribute
-      operationId: name
+      operationId: attribute_data
       parameters:
       - name: endpoint
         description: Endpoint of an attribute href
@@ -434,7 +434,7 @@ paths:
   /api/1.0/dataset/{endpoint}:
     get: 
       summary: Returns data from a specified dataset
-      operationId: endpoint
+      operationId: dataset_data
       parameters:
       - name: endpoint
         description: Endpoint of a dataset href
@@ -497,7 +497,7 @@ paths:
   /api/1.0/gene/{endpoint}:
     get:
       summary: Returns data from a specified gene
-      operationId: endpoint
+      operationId: gene_data
       parameters:
       - name: endpoint
         description: Endpoint of a gene href
@@ -566,7 +566,7 @@ paths:
   /api/1.0/gene_set/{endpoint}:
     get: 
       summary: Returns data from a specified gene set
-      operationId: endpoint
+      operationId: gene_set_data
       parameters:
       - name: endpoint
         description: Endpoint of a gene set href
@@ -625,7 +625,7 @@ paths:
   /api/1.0/gene_family/{endpoint}:
     get: 
       summary: Returns data from a specified gene family
-      operationId: endpoint
+      operationId: gene_family_data
       parameters:
       - name: endpoint
         description: Endpoint of a gene family href
@@ -670,7 +670,7 @@ paths:
   /api/1.0/naming_authority/{endpoint}:
     get: 
       summary: Returns data from a specified resource
-      operationId: endpoint
+      operationId: naming_authority_data
       parameters:
       - name: endpoint
         description: Endpoint of a resource href
@@ -712,7 +712,7 @@ paths:
   /api/1.0/protein/{endpoint}:
     get: 
       summary: Returns data from a specified resource
-      operationId: endpoint
+      operationId: protein_data
       parameters:
       - name: endpoint
         description: Endpoint of a resource href
@@ -758,7 +758,7 @@ paths:
   /api/1.0/resource/{endpoint}:
     get: 
       summary: Returns data from a specified resource
-      operationId: endpoint
+      operationId: resource_data
       parameters:
       - name: endpoint
         description: Endpoint of a resource href
@@ -832,14 +832,14 @@ components:
       items: 
         type: integer
     names:
-      type: object
+      type: array
       properties: 
         name: 
           type: string
         href: 
           type: string
     symbols:
-      type: object
+      type: array
       properties: 
         symbol: 
           type: string
