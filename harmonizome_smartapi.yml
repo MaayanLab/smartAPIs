@@ -82,8 +82,10 @@ paths:
                     $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                  entities: 
-                    $ref: '#/components/schemas/names'
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/names'
                 example: 
                   count: 295496
                   selection: 
@@ -121,8 +123,10 @@ paths:
                     $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                  entities: 
-                    $ref: '#/components/schemas/names'
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/names'
                 example: 
                   count: 114
                   selection: 
@@ -199,9 +203,9 @@ paths:
                     $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                  entities: 
+                  entities:
                     type: array
-                    items: 
+                    items:
                       $ref: '#/components/schemas/names'
                 example: 
                   count: 332715
@@ -240,8 +244,10 @@ paths:
                     $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                  entities: 
-                    $ref: '#/components/schemas/names'
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/names'
                 example: 
                   count: 309
                   selection: 
@@ -279,8 +285,10 @@ paths:
                     $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                  entities: 
-                    $ref: '#/components/schemas/names'
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/names'
                 example:
                   count: 89
                   selection: 
@@ -357,8 +365,10 @@ paths:
                     $ref: '#/components/schemas/selection'
                   next: 
                     type: string
-                  entities: 
-                    $ref: '#/components/schemas/names'
+                  entities:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/names'
                 example:
                   count: 66
                   selection: 
@@ -379,7 +389,7 @@ paths:
   /api/1.0/attribute/{endpoint}:
     get: 
       summary: Returns data from a specified attribute
-      operationId: name
+      operationId: attribute_data
       parameters:
       - name: endpoint
         description: Endpoint of an attribute href
@@ -408,7 +418,7 @@ paths:
                     type: string
                   geneSets:
                     type: array
-                    items: 
+                    items:
                       $ref: '#/components/schemas/names'
                   namingAuthority:
                     $ref: '#/components/schemas/names'
@@ -434,7 +444,7 @@ paths:
   /api/1.0/dataset/{endpoint}:
     get: 
       summary: Returns data from a specified dataset
-      operationId: endpoint
+      operationId: dataset_data
       parameters:
       - name: endpoint
         description: Endpoint of a dataset href
@@ -469,7 +479,7 @@ paths:
                     type: array
                   geneSets:
                     type: array
-                    items: 
+                    items:
                       $ref: '#/components/schemas/names'
                 example: 
                   name: Biocarta Pathways
@@ -497,7 +507,7 @@ paths:
   /api/1.0/gene/{endpoint}:
     get:
       summary: Returns data from a specified gene
-      operationId: endpoint
+      operationId: gene_data
       parameters:
       - name: endpoint
         description: Endpoint of a gene href
@@ -538,9 +548,9 @@ paths:
                     type: array
                     items: 
                       $ref: '#/components/schemas/symbols'
-                  hgncRootFamilies: 
+                  hgncRootFamilies:
                     type: array
-                    items: 
+                    items:
                       $ref: '#/components/schemas/names'
                 example: 
                   symbol: ITGA9
@@ -566,7 +576,7 @@ paths:
   /api/1.0/gene_set/{endpoint}:
     get: 
       summary: Returns data from a specified gene set
-      operationId: endpoint
+      operationId: gene_set_data
       parameters:
       - name: endpoint
         description: Endpoint of a gene set href
@@ -625,7 +635,7 @@ paths:
   /api/1.0/gene_family/{endpoint}:
     get: 
       summary: Returns data from a specified gene family
-      operationId: endpoint
+      operationId: gene_family_data
       parameters:
       - name: endpoint
         description: Endpoint of a gene family href
@@ -670,7 +680,7 @@ paths:
   /api/1.0/naming_authority/{endpoint}:
     get: 
       summary: Returns data from a specified resource
-      operationId: endpoint
+      operationId: naming_authority_data
       parameters:
       - name: endpoint
         description: Endpoint of a resource href
@@ -712,7 +722,7 @@ paths:
   /api/1.0/protein/{endpoint}:
     get: 
       summary: Returns data from a specified resource
-      operationId: endpoint
+      operationId: protein_data
       parameters:
       - name: endpoint
         description: Endpoint of a resource href
@@ -758,7 +768,7 @@ paths:
   /api/1.0/resource/{endpoint}:
     get: 
       summary: Returns data from a specified resource
-      operationId: endpoint
+      operationId: resource_data
       parameters:
       - name: endpoint
         description: Endpoint of a resource href
@@ -779,9 +789,9 @@ paths:
                     type: string
                   acronym: 
                     type: string
-                  datasets: 
+                  datasets:
                     type: array
-                    items: 
+                    items:
                       $ref: '#/components/schemas/names'
                   pubMedIds:
                     type: array
@@ -833,7 +843,7 @@ components:
         type: integer
     names:
       type: object
-      properties: 
+      properties:
         name: 
           type: string
         href: 
