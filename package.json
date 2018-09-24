@@ -1,0 +1,24 @@
+{
+  "name": "smartapis",
+  "version": "1.0.0",
+  "description": "Smart API specifications for various Ma'ayan Lab Tools. Testable versions of these specifications can be found at http://smart-api.info/registry, using the \"Maayanlab\" tag.",
+  "main": "test.js",
+  "scripts": {
+    "test": "node test.js *.yml"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/MaayanLab/smartAPIs.git"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/MaayanLab/smartAPIs/issues"
+  },
+  "homepage": "https://github.com/MaayanLab/smartAPIs#readme",
+  "devDependencies": {
+    "glob": "^7.1.3",
+    "openapi-schema-validation": "^0.4.2",
+    "yamljs": "^0.3.0"
+  }
+}
