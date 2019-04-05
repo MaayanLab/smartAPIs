@@ -12,10 +12,9 @@ process.argv.slice(2).map(function(arg) {
         var data = yamljs.load(file)
         var result = validateSchema(data, 3)
         if(result.errors.length > 0) {
-          console.log('[ ERROR ]: ' + file)
-          result.errors.forEach(console.error)
+          console.log(`[ ERROR ] ${file}: ${result.errors}`)
         } else {
-          console.log('[ OK ]: ' + file)
+          console.log(`[ OK ] ${file}`)
         }
       })
     }
