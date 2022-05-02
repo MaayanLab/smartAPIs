@@ -590,7 +590,7 @@ components:
 servers:
   - url: https://maayanlab.cloud/data-api/api/v1
 x-externalResources:
-  - x-url: https://maayanlab.cloud/sigcom-lincs/metadata-api/openapi.json
+  - x-url: https://maayanlab.cloud/sigcom-lincs/data-api/swagger.yml
     x-type: api documentation
   - x-url: https://maayanlab.cloud/sigcom-lincs/#/
     x-type: website
