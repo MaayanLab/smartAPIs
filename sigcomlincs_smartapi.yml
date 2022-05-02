@@ -1,0 +1,4389 @@
+openapi: 3.0.0
+info:
+  title: SigCom LINCS Metadata API
+  description: SigCom LINCS is a web-based search engine that serves over 1.5 million gene 
+    expression signatures processed, analyzed, and visualized from LINCS, GTEx, and GEO.
+  termsOfService: https://lincsproject.org/LINCS/data/release-policy
+  version: 1.13.12
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+paths:
+  /sigcom-lincs/metadata-api/bulk:
+    post:
+      summary: Execute multiple operations at once 
+      x-controller-name: BulkController
+      x-operation-name: bulk
+      tags:
+        - BulkController
+      operationId: bulk
+      responses:
+        '200':
+          description: Execute multiple operations at once and get all the results
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - type: object
+                      description: The response for the given operation
+                    - type: object
+                      description: An error response for the operation
+                      properties:
+                        error:
+                          type: string
+                          description: A message representing the error that occured
+      requestBody:
+        description: Updated object to replace the object with
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+                properties:
+                  operationId:
+                    type: string
+                    description: The full operationId as described in the swagger (i.e. `Signature.find`)
+                  parameters:
+                    type: object
+                    description: The parameters of the operation (as defined by the Swagger doc)
+                  requestBody:
+                    description: The request body for the operation (as defined by the Swagger doc)
+                    oneOf:
+                      - type: object
+                      - type: array
+  /sigcom-lincs/metadata-api/counter/{type}/{id}:
+    post:
+      summary: Get download counter for an object type by ID
+      x-controller-name: CounterController
+      x-operation-name: updateCounter
+      tags:
+        - UserInput
+      operationId: Counters.update.id
+      responses:
+        '200':
+          description: Counters model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IGenericEntity'
+      parameters:
+        - name: type
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/counter:
+    post:
+      summary: Update counters matching query
+      x-controller-name: CounterController
+      x-operation-name: updateCounterPost
+      tags:
+        - UserInput
+      operationId: Counters.update.post
+      responses:
+        '200':
+          description: Counters model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IGenericEntity'
+      requestBody:
+        description: JSON of the find GET parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                type:
+                  type: string
+                  description: type to update
+                id:
+                  type: string
+                  description: id of the entity to update
+                clicktype:
+                  type: string
+                  description: type of the click
+        x-parameter-index: 5
+    get:
+      summary: Return download counters for all datasets
+      x-controller-name: CounterController
+      x-operation-name: getCounter
+      tags:
+        - Counter
+      operationId: Counter.getCount
+      responses:
+        '200':
+          description: Get the number of times a user submitted a query of given type
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IGenericEntity'
+  /sigcom-lincs/metadata-api/entities/count:
+    get:
+      summary: Number of all entities
+      x-controller-name: Entity
+      x-operation-name: count
+      tags:
+        - Entity
+      operationId: Entity.count
+      responses:
+        '200':
+          description: Entity model count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/entities/dbck:
+    get:
+      summary: Get ajv errors experienced while validating entities
+      x-controller-name: Entity
+      x-operation-name: dbck
+      tags:
+        - Entity
+      operationId: Entity.dbck
+      responses:
+        '200':
+          description: Check model instances and report errors
+          content:
+            application/json:
+              schema:
+                description: ajv errors experienced while validating database entries
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/entities/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for all entities
+      x-controller-name: Entity
+      x-operation-name: distinct_value_count
+      tags:
+        - Entity
+      operationId: Entity.distinct_value_count
+      responses:
+        '200':
+          description: Entity model distinct_value_count (number of unique values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/entities/find:
+    post:
+      summary: Filter and return entities matching metadata query
+      x-controller-name: Entity
+      x-operation-name: find
+      tags:
+        - Entity
+      operationId: Entity.find
+      responses:
+        '200':
+          description: Array of Entity model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+      requestBody:
+        description: JSON of the find GET parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: filter rules for entity
+                contentRange:
+                  type: boolean
+                  description: whether or not to compute the contentRange header
+  /sigcom-lincs/metadata-api/entities/find_or_create:
+    post:
+      summary: Find entity based on input metadata, or create a new entity if not already existing
+      x-controller-name: Entity
+      x-operation-name: find_or_create
+      tags:
+        - Entity
+      operationId: Entity.find_or_create
+      responses:
+        '200':
+          description: Array of Entitymodel instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Entity'
+                    - type: object
+                      description: Error object
+        '401':
+          description: Access denied
+      requestBody:
+        description: Array of partial objects to be found or created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+  /sigcom-lincs/metadata-api/entities/key_count:
+    get:
+      summary: Count number of unique metadata keys for entities
+      x-controller-name: Entity
+      x-operation-name: key_count
+      tags:
+        - Entity
+      operationId: Entity.key_count
+      responses:
+        '200':
+          description: Entity model key_count (number of unique keys which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/entities/value_count:
+    get:
+      summary: Count number of unique metadata key-value pairs for entities
+      x-controller-name: Entity
+      x-operation-name: value_count
+      tags:
+        - Entity
+      operationId: Entity.value_count
+      responses:
+        '200':
+          description: Entity model value_count (number of unique keys and values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/entities/{id}/signatures/count:
+    get:
+      summary: Get number of signatures where the input entity is up/down-regulated
+      x-controller-name: ManyToMany
+      x-operation-name: getEntitySignaturesCount
+      tags:
+        - Entity
+      operationId: ManyToMany.getEntitySignaturesCount
+      responses:
+        '200':
+          description: Entity model signature count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/entities/{id}/signatures/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for signatures associated with given entity
+      x-controller-name: ManyToMany
+      x-operation-name: getEntitySignaturesDistinctValueCount
+      tags:
+        - Entity
+      operationId: ManyToMany.getEntitySignaturesDistinctValueVount
+      responses:
+        '200':
+          description: Entity model signature distinct value count
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/entities/{id}/signatures/key_count:
+    get:
+      summary: Get number of unique metadata keys for signatures associated with given entity
+      x-controller-name: ManyToMany
+      x-operation-name: getEntitySignaturesKeyCount
+      tags:
+        - Entity
+      operationId: ManyToMany.getEntitySignaturesKeyCount
+      responses:
+        '200':
+          description: Entity model signature key count
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/entities/{id}/signatures/value_count:
+    get:
+      summary: Get number of unique metadata key-value pairs for signatures associated with given entity
+      x-controller-name: ManyToMany
+      x-operation-name: getEntitySignaturesValueCount
+      tags:
+        - Entity
+      operationId: ManyToMany.getEntitySignaturesValueCount
+      responses:
+        '200':
+          description: Entity model signature value count
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/entities/{id}/signatures:
+    get:
+      summary: Get signatures where given entity is up/down-regulated
+      x-controller-name: ManyToMany
+      x-operation-name: getEntitySignatures
+      tags:
+        - Entity
+      operationId: ManyToMany.getEntitySignatures
+      responses:
+        '200':
+          description: Get the signatures that contains the given entity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Signature'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity Signatures.Filter
+            properties:
+              where:
+                title: Entity Signatures.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity Signatures.Fields
+                type: object
+                properties: {}
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/entities/{id}:
+    patch:
+      summary: Update metadata associated with a given entity ID
+      x-controller-name: Entity
+      x-operation-name: updateById
+      tags:
+        - Entity
+      operationId: Entity.updateById
+      responses:
+        '204':
+          description: Entity PATCH success
+        '401':
+          description: Access denied
+        '422':
+          description: ajv validation error
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Updated object to replace the object with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+        x-parameter-index: 1
+    get:
+      summary: Get metadata for given entity ID
+      x-controller-name: Entity
+      x-operation-name: findById
+      tags:
+        - Entity
+      operationId: Entity.findById
+      responses:
+        '200':
+          description: Entity model instance
+          content:
+            application/json: {}
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+    delete:
+      summary: Delete metadata associated with given entity ID
+      x-controller-name: Entity
+      x-operation-name: deleteById
+      tags:
+        - Entity
+      operationId: Entity.deleteById
+      responses:
+        '204':
+          description: Entity DELETE success
+        '401':
+          description: Access denied
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/entities:
+    post:
+      summary: Submit new entities to be created
+      x-controller-name: Entity
+      x-operation-name: create
+      tags:
+        - Entity
+      operationId: Entity.create
+      responses:
+        '200':
+          description: Entity model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Entity'
+        '401':
+          description: Access denied
+        '422':
+          description: validation of model instance failed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: ajv validation error
+      requestBody:
+        description: Full object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+    patch:
+      summary: Update all entities matching query
+      x-controller-name: Entity
+      x-operation-name: updateAll
+      tags:
+        - Entity
+      operationId: Entity.updateAll
+      responses:
+        '200':
+          description: Entity PATCH success count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+        '401':
+          description: Access denied
+        '422':
+          description: validation error during update
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Error object
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      requestBody:
+        description: Object to replace all objects which match the `where` query with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Entity'
+    get:
+      summary: Get all entities
+      x-controller-name: Entity
+      x-operation-name: find_get
+      tags:
+        - Entity
+      operationId: Entity.find_get
+      responses:
+        '200':
+          description: Array of Entity model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/explorer:
+    get:
+      summary: Redirect request
+      x-controller-name: HomePageController
+      x-operation-name: explorer
+      tags: []
+      responses:
+        '302':
+          description: API Explorer
+      operationId: HomePageController.explorer
+  /sigcom-lincs/metadata-api/libraries/count:
+    get:
+      summary: Number of all libraries
+      x-controller-name: Library
+      x-operation-name: count
+      tags:
+        - Library
+      operationId: Library.count
+      responses:
+        '200':
+          description: Library model count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/libraries/dbck:
+    get:
+      summary: Get ajv errors experienced while validating libraries
+      x-controller-name: Library
+      x-operation-name: dbck
+      tags:
+        - Library
+      operationId: Library.dbck
+      responses:
+        '200':
+          description: Check model instances and report errors
+          content:
+            application/json:
+              schema:
+                description: ajv errors experienced while validating database entries
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.Filter
+            properties:
+              where:
+                title: Library.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Library.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  resource:
+                    type: boolean
+                  dataset:
+                    type: boolean
+                  dataset_type:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/libraries/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for all libraries
+      x-controller-name: Library
+      x-operation-name: distinct_value_count
+      tags:
+        - Library
+      operationId: Library.distinct_value_count
+      responses:
+        '200':
+          description: Library model distinct_value_count (number of unique values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.Filter
+            properties:
+              where:
+                title: Library.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Library.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  resource:
+                    type: boolean
+                  dataset:
+                    type: boolean
+                  dataset_type:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/libraries/find:
+    post:
+      summary: Filter and return libraries matching metadata query
+      x-controller-name: Library
+      x-operation-name: find
+      tags:
+        - Library
+      operationId: Library.find
+      responses:
+        '200':
+          description: Array of Library model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Library'
+      requestBody:
+        description: JSON of the find GET parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: filter rules for entity
+                contentRange:
+                  type: boolean
+                  description: whether or not to compute the contentRange header
+  /sigcom-lincs/metadata-api/libraries/find_or_create:
+    post:
+      summary: Find library based on input metadata, or create a new library if not already existing
+      x-controller-name: Library
+      x-operation-name: find_or_create
+      tags:
+        - Library
+      operationId: Library.find_or_create
+      responses:
+        '200':
+          description: Array of Librarymodel instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Library'
+                    - type: object
+                      description: Error object
+        '401':
+          description: Access denied
+      requestBody:
+        description: Array of partial objects to be found or created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+  /sigcom-lincs/metadata-api/libraries/key_count:
+    get:
+      summary: Count number of unique metadata keys for libraries
+      x-controller-name: Library
+      x-operation-name: key_count
+      tags:
+        - Library
+      operationId: Library.key_count
+      responses:
+        '200':
+          description: Library model key_count (number of unique keys which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.Filter
+            properties:
+              where:
+                title: Library.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Library.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  resource:
+                    type: boolean
+                  dataset:
+                    type: boolean
+                  dataset_type:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/libraries/value_count:
+    get:
+      summary: Count number of unique metadata key-value pairs for libraries
+      x-controller-name: Library
+      x-operation-name: value_count
+      tags:
+        - Library
+      operationId: Library.value_count
+      responses:
+        '200':
+          description: Library model value_count (number of unique keys and values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.Filter
+            properties:
+              where:
+                title: Library.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Library.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  resource:
+                    type: boolean
+                  dataset:
+                    type: boolean
+                  dataset_type:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/libraries/{id}/resource:
+    get:
+      summary: Get resources that generated data in given library
+      x-controller-name: Library
+      x-operation-name: getLibrary
+      tags:
+        - Library
+      responses:
+        '200':
+          description: Return value of Library.getLibrary
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      operationId: Library.getLibrary
+  /sigcom-lincs/metadata-api/libraries/{id}/signatures/count:
+    get:
+      summary: Get number of signatures in given library
+      x-controller-name: Library
+      x-operation-name: signatures_count
+      tags:
+        - Library
+      responses:
+        '200':
+          description: Return value of Library.signatures_count
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      operationId: Library.signatures_count
+  /sigcom-lincs/metadata-api/libraries/{id}/signatures/key_count:
+    get:
+      summary: Get number of unique metadata keys for signatures in given library
+      x-controller-name: Library
+      x-operation-name: signatures_key_counts
+      tags:
+        - Library
+      responses:
+        '200':
+          description: Return value of Library.signatures_key_counts
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+      operationId: Library.signatures_key_counts
+  /sigcom-lincs/metadata-api/libraries/{id}/signatures/value_count:
+    get:
+      summary: Get number of unique metadata key-value pairs for signatures in given library
+      x-controller-name: Library
+      x-operation-name: signatures_value_counts
+      tags:
+        - Library
+      responses:
+        '200':
+          description: Return value of Library.signatures_value_counts
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+      operationId: Library.signatures_value_counts
+  /sigcom-lincs/metadata-api/libraries/{id}/signatures:
+    get:
+      summary: Get all signatures in given library
+      x-controller-name: Library
+      x-operation-name: signatures
+      tags:
+        - Library
+      responses:
+        '200':
+          description: Return value of Library.signatures
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+      operationId: Library.signatures
+  /sigcom-lincs/metadata-api/libraries/{id}:
+    patch:
+      summary: Update metadata associated with a given library ID
+      x-controller-name: Library
+      x-operation-name: updateById
+      tags:
+        - Library
+      operationId: Library.updateById
+      responses:
+        '204':
+          description: Library PATCH success
+        '401':
+          description: Access denied
+        '422':
+          description: ajv validation error
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Updated object to replace the object with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Library'
+        x-parameter-index: 1
+    get:
+      summary: Get metadata for given library ID
+      x-controller-name: Library
+      x-operation-name: findById
+      tags:
+        - Library
+      operationId: Library.findById
+      responses:
+        '200':
+          description: Library model instance
+          content:
+            application/json: {}
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+    delete:
+      summary: Delete metadata associated with given library ID
+      x-controller-name: Library
+      x-operation-name: deleteById
+      tags:
+        - Library
+      operationId: Library.deleteById
+      responses:
+        '204':
+          description: Library DELETE success
+        '401':
+          description: Access denied
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/libraries:
+    post:
+      summary: Submit new libraries to be created
+      x-controller-name: Library
+      x-operation-name: create
+      tags:
+        - Library
+      operationId: Library.create
+      responses:
+        '200':
+          description: Library model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Library'
+        '401':
+          description: Access denied
+        '422':
+          description: validation of model instance failed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: ajv validation error
+      requestBody:
+        description: Full object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Library'
+    patch:
+      summary: Update all libraries matching query
+      x-controller-name: Library
+      x-operation-name: updateAll
+      tags:
+        - Library
+      operationId: Library.updateAll
+      responses:
+        '200':
+          description: Library PATCH success count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+        '401':
+          description: Access denied
+        '422':
+          description: validation error during update
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Error object
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      requestBody:
+        description: Object to replace all objects which match the `where` query with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Library'
+    get:
+      summary: Get all libraries
+      x-controller-name: Library
+      x-operation-name: find_get
+      tags:
+        - Library
+      operationId: Library.find_get
+      responses:
+        '200':
+          description: Array of Library model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Library'
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.Filter
+            properties:
+              where:
+                title: Library.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Library.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  resource:
+                    type: boolean
+                  dataset:
+                    type: boolean
+                  dataset_type:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/optimize/index:
+    get:
+      summary: Ensure index is present on field `table_name.deep.field`
+      x-controller-name: OptimizationController
+      x-operation-name: index
+      tags:
+        - Optimization
+      operationId: Optimize.index
+      responses:
+        '200':
+          description: Ensure index is present on field `table_name.deep.field`
+      parameters:
+        - name: field
+          in: query
+          schema:
+            type: string
+        - name: method
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/optimize/refresh:
+    get: 
+      summary: Refresh materialized view
+      x-controller-name: OptimizationController
+      x-operation-name: refresh
+      tags:
+        - Optimization
+      operationId: Optimize.refresh
+      responses:
+        '200':
+          description: Refresh materialized views
+      parameters:
+        - name: view
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/optimize/status:
+    get: 
+      summary: Get status of last optimization request
+      x-controller-name: OptimizationController
+      x-operation-name: status
+      tags:
+        - Optimization
+      operationId: Optimize.status
+      responses:
+        '200':
+          description: The status of the last optimization request
+          content:
+            application/json:
+              schema:
+                description: A human readable description of the status. "Ready" will be used when it is done.
+                type: string
+  /sigcom-lincs/metadata-api/resources/count:
+    get:
+      summary: Number of all resources
+      x-controller-name: Resource
+      x-operation-name: count
+      tags:
+        - Resource
+      operationId: Resource.count
+      responses:
+        '200':
+          description: Resource model count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/resources/dbck:
+    get:
+      summary: Get ajv errors experienced while validating resources
+      x-controller-name: Resource
+      x-operation-name: dbck
+      tags:
+        - Resource
+      operationId: Resource.dbck
+      responses:
+        '200':
+          description: Check model instances and report errors
+          content:
+            application/json:
+              schema:
+                description: ajv errors experienced while validating database entries
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.Filter
+            properties:
+              where:
+                title: Resource.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Resource.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/resources/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for all resources
+      x-controller-name: Resource
+      x-operation-name: distinct_value_count
+      tags:
+        - Resource
+      operationId: Resource.distinct_value_count
+      responses:
+        '200':
+          description: Resource model distinct_value_count (number of unique values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.Filter
+            properties:
+              where:
+                title: Resource.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Resource.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/resources/find:
+    post: 
+      summary: Filter and return resources matching metadata query
+      x-controller-name: Resource
+      x-operation-name: find
+      tags:
+        - Resource
+      operationId: Resource.find
+      responses:
+        '200':
+          description: Array of Resource model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+      requestBody:
+        description: JSON of the find GET parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: filter rules for entity
+                contentRange:
+                  type: boolean
+                  description: whether or not to compute the contentRange header
+  /sigcom-lincs/metadata-api/resources/find_or_create:
+    post:
+      summary: Find resource based on input metadata, or create a new library if not already existing
+      x-controller-name: Resource
+      x-operation-name: find_or_create
+      tags:
+        - Resource
+      operationId: Resource.find_or_create
+      responses:
+        '200':
+          description: Array of Resourcemodel instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Resource'
+                    - type: object
+                      description: Error object
+        '401':
+          description: Access denied
+      requestBody:
+        description: Array of partial objects to be found or created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+  /sigcom-lincs/metadata-api/resources/key_count:
+    get:
+      summary: Count number of unique metadata keys for resources
+      x-controller-name: Resource
+      x-operation-name: key_count
+      tags:
+        - Resource
+      operationId: Resource.key_count
+      responses:
+        '200':
+          description: Resource model key_count (number of unique keys which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.Filter
+            properties:
+              where:
+                title: Resource.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Resource.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/resources/value_count:
+    get:
+      summary: Count number of unique metadata key-value pairs for resources
+      x-controller-name: Resource
+      x-operation-name: value_count
+      tags:
+        - Resource
+      operationId: Resource.value_count
+      responses:
+        '200':
+          description: Resource model value_count (number of unique keys and values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.Filter
+            properties:
+              where:
+                title: Resource.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Resource.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/resources/{id}/libraries/count:
+    get:
+      summary: Get number of libraries generated from given resource
+      x-controller-name: Resource
+      x-operation-name: libraries_count
+      tags:
+        - Resource
+      responses:
+        '200':
+          description: Return value of Resource.libraries_count
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      operationId: Resource.libraries_count
+  /sigcom-lincs/metadata-api/resources/{id}/libraries:
+    get:
+      summary: Get all libraries generated from given resource
+      x-controller-name: Resource
+      x-operation-name: libraries
+      tags:
+        - Resource
+      responses:
+        '200':
+          description: Return value of Resource.libraries
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.Filter
+            properties:
+              where:
+                title: Library.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Library.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  resource:
+                    type: boolean
+                  dataset:
+                    type: boolean
+                  dataset_type:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+      operationId: Resource.libraries
+  /sigcom-lincs/metadata-api/resources/{id}/signatures/count:
+    get:
+      summary: Get number of signatures generated from given resource
+      x-controller-name: Resource
+      x-operation-name: signatures_count
+      tags:
+        - Resource
+      responses:
+        '200':
+          description: Return value of Resource.signatures_count
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Library.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      operationId: Resource.signatures_count
+  /sigcom-lincs/metadata-api/resources/{id}/signatures:
+    get:
+      summary: Get all signatures generated from given resource
+      x-controller-name: Resource
+      x-operation-name: signatures
+      tags:
+        - Resource
+      responses:
+        '200':
+          description: Return value of Resource.signatures
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+      operationId: Resource.signatures
+  /sigcom-lincs/metadata-api/resources/{id}:
+    patch:
+      summary: Update metadata associated with a given resource ID
+      x-controller-name: Resource
+      x-operation-name: updateById
+      tags:
+        - Resource
+      operationId: Resource.updateById
+      responses:
+        '204':
+          description: Resource PATCH success
+        '401':
+          description: Access denied
+        '422':
+          description: ajv validation error
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Updated object to replace the object with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+        x-parameter-index: 1
+    get:
+      summary: Get metadata for given resource ID
+      x-controller-name: Resource
+      x-operation-name: findById
+      tags:
+        - Resource
+      operationId: Resource.findById
+      responses:
+        '200':
+          description: Resource model instance
+          content:
+            application/json: {}
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+    delete:
+      summary: Delete metadata associated with given resource ID
+      x-controller-name: Resource
+      x-operation-name: deleteById
+      tags:
+        - Resource
+      operationId: Resource.deleteById
+      responses:
+        '204':
+          description: Resource DELETE success
+        '401':
+          description: Access denied
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/resources:
+    post:
+      summary: Submit new libraries to be created
+      x-controller-name: Resource
+      x-operation-name: create
+      tags:
+        - Resource
+      operationId: Resource.create
+      responses:
+        '200':
+          description: Resource model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Resource'
+        '401':
+          description: Access denied
+        '422':
+          description: validation of model instance failed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: ajv validation error
+      requestBody:
+        description: Full object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+    patch:
+      summary: Update all resources matching query 
+      x-controller-name: Resource
+      x-operation-name: updateAll
+      tags:
+        - Resource
+      operationId: Resource.updateAll
+      responses:
+        '200':
+          description: Resource PATCH success count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+        '401':
+          description: Access denied
+        '422':
+          description: validation error during update
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Error object
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      requestBody:
+        description: Object to replace all objects which match the `where` query with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Resource'
+    get:
+      summary: Get all resources
+      x-controller-name: Resource
+      x-operation-name: find_get
+      tags:
+        - Resource
+      operationId: Resource.find_get
+      responses:
+        '200':
+          description: Array of Resource model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Resource'
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Resource.Filter
+            properties:
+              where:
+                title: Resource.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Resource.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/schemas/count:
+    get:
+      summary: Number of all schemas
+      x-controller-name: Schema
+      x-operation-name: count
+      tags:
+        - Schema
+      operationId: Schema.count
+      responses:
+        '200':
+          description: Schema model count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/schemas/dbck:
+    get:
+      summary: Get ajv errors experienced while validating schemas
+      x-controller-name: Schema
+      x-operation-name: dbck
+      tags:
+        - Schema
+      operationId: Schema.dbck
+      responses:
+        '200':
+          description: Check model instances and report errors
+          content:
+            application/json:
+              schema:
+                description: ajv errors experienced while validating database entries
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.Filter
+            properties:
+              where:
+                title: Schema.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Schema.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/schemas/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for all schemas
+      x-controller-name: Schema
+      x-operation-name: distinct_value_count
+      tags:
+        - Schema
+      operationId: Schema.distinct_value_count
+      responses:
+        '200':
+          description: Schema model distinct_value_count (number of unique values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.Filter
+            properties:
+              where:
+                title: Schema.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Schema.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/schemas/find:
+    post:
+      summary: Filter and return schemas matching metadata query
+      x-controller-name: Schema
+      x-operation-name: find
+      tags:
+        - Schema
+      operationId: Schema.find
+      responses:
+        '200':
+          description: Array of Schema model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schema'
+      requestBody:
+        description: JSON of the find GET parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: filter rules for entity
+                contentRange:
+                  type: boolean
+                  description: whether or not to compute the contentRange header
+  /sigcom-lincs/metadata-api/schemas/find_or_create:
+    post:
+      summary: Find schema based on input metadata, or create a new schema if not already existing
+      x-controller-name: Schema
+      x-operation-name: find_or_create
+      tags:
+        - Schema
+      operationId: Schema.find_or_create
+      responses:
+        '200':
+          description: Array of Schemamodel instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Schema'
+                    - type: object
+                      description: Error object
+        '401':
+          description: Access denied
+      requestBody:
+        description: Array of partial objects to be found or created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+  /sigcom-lincs/metadata-api/schemas/key_count:
+    get:
+      summary: Count number of unique metadata keys for schemas
+      x-controller-name: Schema
+      x-operation-name: key_count
+      tags:
+        - Schema
+      operationId: Schema.key_count
+      responses:
+        '200':
+          description: Schema model key_count (number of unique keys which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.Filter
+            properties:
+              where:
+                title: Schema.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Schema.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/schemas/value_count:
+    get:
+      summary: Count number of unique metadata key-value pairs for schemas
+      x-controller-name: Schema
+      x-operation-name: value_count
+      tags:
+        - Schema
+      operationId: Schema.value_count
+      responses:
+        '200':
+          description: Schema model value_count (number of unique keys and values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.Filter
+            properties:
+              where:
+                title: Schema.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Schema.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/schemas/{id}:
+    patch:
+      summary: Update metadata associated with a given schema ID
+      x-controller-name: Schema
+      x-operation-name: updateById
+      tags:
+        - Schema
+      operationId: Schema.updateById
+      responses:
+        '204':
+          description: Schema PATCH success
+        '401':
+          description: Access denied
+        '422':
+          description: ajv validation error
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Updated object to replace the object with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+        x-parameter-index: 1
+    get:
+      summary: Get metadata for given schema ID
+      x-controller-name: Schema
+      x-operation-name: findById
+      tags:
+        - Schema
+      operationId: Schema.findById
+      responses:
+        '200':
+          description: Schema model instance
+          content:
+            application/json: {}
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+    delete:
+      summary: Delete metadata associated with given schema ID
+      x-controller-name: Schema
+      x-operation-name: deleteById
+      tags:
+        - Schema
+      operationId: Schema.deleteById
+      responses:
+        '204':
+          description: Schema DELETE success
+        '401':
+          description: Access denied
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/schemas:
+    post:
+      summary: Submit new schemas to be created
+      x-controller-name: Schema
+      x-operation-name: create
+      tags:
+        - Schema
+      operationId: Schema.create
+      responses:
+        '200':
+          description: Schema model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Schema'
+        '401':
+          description: Access denied
+        '422':
+          description: validation of model instance failed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: ajv validation error
+      requestBody:
+        description: Full object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+    patch:
+      summary: Update all schemas matching query
+      x-controller-name: Schema
+      x-operation-name: updateAll
+      tags:
+        - Schema
+      operationId: Schema.updateAll
+      responses:
+        '200':
+          description: Schema PATCH success count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+        '401':
+          description: Access denied
+        '422':
+          description: validation error during update
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Error object
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      requestBody:
+        description: Object to replace all objects which match the `where` query with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Schema'
+    get:
+      summary: Get all schemas
+      x-controller-name: Schema
+      x-operation-name: find_get
+      tags:
+        - Schema
+      operationId: Schema.find_get
+      responses:
+        '200':
+          description: Array of Schema model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Schema'
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Schema.Filter
+            properties:
+              where:
+                title: Schema.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Schema.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/signatures/count:
+    get:
+      summary: Number of all signatures
+      x-controller-name: Signature
+      x-operation-name: count
+      tags:
+        - Signature
+      operationId: Signature.count
+      responses:
+        '200':
+          description: Signature model count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/signatures/dbck:
+    get:
+      summary: Get ajv errors experienced while validating signatures
+      x-controller-name: Signature
+      x-operation-name: dbck
+      tags:
+        - Signature
+      operationId: Signature.dbck
+      responses:
+        '200':
+          description: Check model instances and report errors
+          content:
+            application/json:
+              schema:
+                description: ajv errors experienced while validating database entries
+                type: array
+                items:
+                  type: object
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/signatures/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for all signatures
+      x-controller-name: Signature
+      x-operation-name: distinct_value_count
+      tags:
+        - Signature
+      operationId: Signature.distinct_value_count
+      responses:
+        '200':
+          description: Signature model distinct_value_count (number of unique values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/signatures/find:
+    post:
+      summary: Filter and return signatures matching metadata query
+      x-controller-name: Signature
+      x-operation-name: find
+      tags:
+        - Signature
+      operationId: Signature.find
+      responses:
+        '200':
+          description: Array of Signature model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Signature'
+      requestBody:
+        description: JSON of the find GET parameters
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                filter:
+                  type: object
+                  description: filter rules for entity
+                contentRange:
+                  type: boolean
+                  description: whether or not to compute the contentRange header
+  /sigcom-lincs/metadata-api/signatures/find_or_create:
+    post:
+      summary: Find signature based on input metadata, or create a new signature if not already existing
+      x-controller-name: Signature
+      x-operation-name: find_or_create
+      tags:
+        - Signature
+      operationId: Signature.find_or_create
+      responses:
+        '200':
+          description: Array of Signaturemodel instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  oneOf:
+                    - $ref: '#/components/schemas/Signature'
+                    - type: object
+                      description: Error object
+        '401':
+          description: Access denied
+      requestBody:
+        description: Array of partial objects to be found or created
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: object
+  /sigcom-lincs/metadata-api/signatures/key_count:
+    get:
+      summary: Count number of unique metadata keys for signatures
+      x-controller-name: Signature
+      x-operation-name: key_count
+      tags:
+        - Signature
+      operationId: Signature.key_count
+      responses:
+        '200':
+          description: Signature model key_count (number of unique keys which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/signatures/value_count:
+    get:
+      summary: Count number of unique metadata key-value pairs for signatures
+      x-controller-name: Signature
+      x-operation-name: value_count
+      tags:
+        - Signature
+      operationId: Signature.value_count
+      responses:
+        '200':
+          description: Signature model value_count (number of unique keys and values which appear in the query results)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+        '401':
+          description: Access denied
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: depth
+          in: query
+          schema:
+            type: number
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/signatures/{id}/entities/count:
+    get:
+      summary: Get number of entities up/down-regulated in given signature
+      x-controller-name: ManyToMany
+      x-operation-name: getSignatureEntitiesCount
+      tags:
+        - Signature
+      operationId: ManyToMany.getSignatureEntitiesCount
+      responses:
+        '200':
+          description: Signature model entity count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/signatures/{id}/entities/distinct_value_count:
+    get:
+      summary: Get number of unique metadata values for entities in the given signature
+      x-controller-name: ManyToMany
+      x-operation-name: getSignatureEntitiesDistinctValueCount
+      tags:
+        - Signature
+      operationId: ManyToMany.getSignatureEntitiesDistinctValueCount
+      responses:
+        '200':
+          description: Signature model entity distinct value count
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of disticting values for those keys
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/signatures/{id}/entities/key_count:
+    get:
+      summary: Get number of unique metadata keys for entities in the given signature
+      x-controller-name: ManyToMany
+      x-operation-name: getSignatureEntitiesKeyCount
+      tags:
+        - Signature
+      operationId: ManyToMany.getSignatureEntitiesKeyCount
+      responses:
+        '200':
+          description: Signature model entity key count
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key in the database paired with the number of those keys
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/signatures/{id}/entities/value_count:
+    get:
+      summary: Get number of unique metadata key-value pairs for entities in the given signature
+      x-controller-name: ManyToMany
+      x-operation-name: getSignatureEntitiesValueCount
+      tags:
+        - Signature
+      operationId: ManyToMany.getSignatureEntitiesValueCount
+      responses:
+        '200':
+          description: Signature model entity value count
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  description: The key-values in the database paired with the number of those key-values
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Entity.Filter
+            properties:
+              where:
+                title: Entity.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Entity.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  meta:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+  /sigcom-lincs/metadata-api/signatures/{id}/entities:
+    get:
+      summary: Get entities in the given signature
+      x-controller-name: ManyToMany
+      x-operation-name: getSignatureEntities
+      tags:
+        - ManyToMany
+      operationId: ManyToMany.getSignatureEntities
+      responses:
+        '200':
+          description: Get the entities of a signature
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Entity'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature Entities.Filter
+            properties:
+              where:
+                title: Signature Entities.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature Entities.Fields
+                type: object
+                properties: {}
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/signatures/{id}/library:
+    get:
+      summary: Get library where signature is contained
+      x-controller-name: Signature
+      x-operation-name: getLibrary
+      tags:
+        - Signature
+      responses:
+        '200':
+          description: Return value of Signature.getLibrary
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      operationId: Signature.getLibrary
+  /sigcom-lincs/metadata-api/signatures/{id}:
+    patch:
+      summary: Update metadata associated with a given signature ID
+      x-controller-name: Signature
+      x-operation-name: updateById
+      tags:
+        - Signature
+      operationId: Signature.updateById
+      responses:
+        '204':
+          description: Signature PATCH success
+        '401':
+          description: Access denied
+        '422':
+          description: ajv validation error
+          content:
+            application/json:
+              schema:
+                type: object
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+      requestBody:
+        description: Updated object to replace the object with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signature'
+        x-parameter-index: 1
+    get:
+      summary: Get metadata for given signature ID
+      x-controller-name: Signature
+      x-operation-name: findById
+      tags:
+        - Signature
+      operationId: Signature.findById
+      responses:
+        '200':
+          description: Signature model instance
+          content:
+            application/json: {}
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+    delete:
+      summary: Delete metadata associated with given signature ID
+      x-controller-name: Signature
+      x-operation-name: deleteById
+      tags:
+        - Signature
+      operationId: Signature.deleteById
+      responses:
+        '204':
+          description: Signature DELETE success
+        '401':
+          description: Access denied
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/signatures:
+    post:
+      summary: Submit new signatures to be created
+      x-controller-name: Signature
+      x-operation-name: create
+      tags:
+        - Signature
+      operationId: Signature.create
+      responses:
+        '200':
+          description: Signature model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Signature'
+        '401':
+          description: Access denied
+        '422':
+          description: validation of model instance failed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: ajv validation error
+      requestBody:
+        description: Full object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signature'
+    patch:
+      summary: Update all signatures matching query
+      x-controller-name: Signature
+      x-operation-name: updateAll
+      tags:
+        - Signature
+      operationId: Signature.updateAll
+      responses:
+        '200':
+          description: Signature PATCH success count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+        '401':
+          description: Access denied
+        '422':
+          description: validation error during update
+          content:
+            application/json:
+              schema:
+                type: object
+                description: Error object
+      parameters:
+        - name: where
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.WhereFilter
+            additionalProperties: true
+        - name: where_str
+          in: query
+          schema:
+            type: string
+      requestBody:
+        description: Object to replace all objects which match the `where` query with
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Signature'
+    get:
+      summary: Get all signatures
+      x-controller-name: Signature
+      x-operation-name: find_get
+      tags:
+        - Signature
+      operationId: Signature.find_get
+      responses:
+        '200':
+          description: Array of Signature model instances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Signature'
+      parameters:
+        - name: filter
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            title: Signature.Filter
+            properties:
+              where:
+                title: Signature.WhereFilter
+                type: object
+                additionalProperties: true
+              fields:
+                title: Signature.Fields
+                type: object
+                properties:
+                  id:
+                    type: boolean
+                  library:
+                    type: boolean
+                  meta:
+                    type: boolean
+                  direction:
+                    type: boolean
+                additionalProperties: true
+              offset:
+                type: integer
+                minimum: 0
+              limit:
+                type: integer
+                minimum: 1
+                example: 100
+              skip:
+                type: integer
+                minimum: 0
+              order:
+                type: array
+                items:
+                  type: string
+            additionalProperties: false
+        - name: filter_str
+          in: query
+          schema:
+            type: string
+        - name: contentRange
+          in: query
+          schema:
+            type: boolean
+  /sigcom-lincs/metadata-api/summary/refresh:
+    get:
+      summary: Compute summary 
+      x-controller-name: SummaryController
+      x-operation-name: refresh
+      tags:
+        - SummaryController
+      operationId: refresh
+      responses:
+        '200':
+          description: Compute the summary
+  /sigcom-lincs/metadata-api/summary/status:
+    get:
+      summary: Get status of last refresh summary request
+      x-controller-name: SummaryController
+      x-operation-name: status
+      tags:
+        - SummaryController
+      operationId: Summary.status
+      responses:
+        '200':
+          description: The status of the last refresh_summary request
+          content:
+            application/json:
+              schema:
+                description: A human readable description of the status. "Ready" will be used when it is done.
+                type: string
+  /sigcom-lincs/metadata-api/summary:
+    get:
+      summary: Get latest computed summary 
+      x-controller-name: SummaryController
+      x-operation-name: summary
+      tags:
+        - SummaryController
+      operationId: get
+      responses:
+        '200':
+          description: Get the latest computed summary
+          content:
+            application/json:
+              schema:
+                type: object
+  /sigcom-lincs/metadata-api/user_input/count:
+    get:
+      summary: Get total number of user inputs
+      x-controller-name: UserInputController
+      x-operation-name: getUserInputCount
+      tags:
+        - UserInput
+      operationId: UserInput.count
+      responses:
+        '200':
+          description: User input count
+          content:
+            application/json:
+              schema:
+                type: object
+                title: loopback.Count
+                properties:
+                  count:
+                    type: number
+  /sigcom-lincs/metadata-api/user_input/{id}:
+    get:
+      summary: Get user input associated with given ID
+      x-controller-name: UserInputController
+      x-operation-name: getUserInput
+      tags:
+        - UserInput
+      operationId: UserInput.getUserInput
+      responses:
+        '200':
+          description: Get the corresponding user input from the id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/IGenericEntity'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: string
+          required: true
+  /sigcom-lincs/metadata-api/user_input:
+    post:
+      summary: Get all user inputs matching the query
+      x-controller-name: UserInputController
+      x-operation-name: saveUserInput
+      tags:
+        - UserInput
+      operationId: UserInput.save
+      responses:
+        '200':
+          description: UserInput model instance
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserInput'
+        '422':
+          description: validation of model instance failed
+          content:
+            application/json:
+              schema:
+                type: object
+                description: ajv validation error
+      requestBody:
+        description: Full object to be created
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/IGenericEntity'
+        x-parameter-index: 2
+  /sigcom-lincs/metadata-api:
+    get:
+      summary: SigCom LINCS homepage
+      x-controller-name: HomePageController
+      x-operation-name: homePage
+      tags: []
+      responses:
+        '200':
+          description: Home Page
+          content:
+            text/html:
+              schema:
+                type: string
+      operationId: HomePageController.homePage
+components:
+  schemas:
+    Resource:
+      title: Resource
+      description: A table for storing validatable resources in the database
+      properties:
+        id:
+          type: string
+        meta:
+          type: object
+      required:
+        - id
+        - meta
+      additionalProperties: true
+    Library:
+      title: Library
+      description: Collections of related signatures
+      properties:
+        id:
+          type: string
+        resource:
+          type: string
+        dataset:
+          type: string
+        dataset_type:
+          type: string
+        meta:
+          type: object
+      required:
+        - id
+        - dataset
+        - dataset_type
+        - meta
+      additionalProperties: true
+    Signature:
+      title: Signature
+      description: A single signature consisting of weighted associations of entities
+      properties:
+        id:
+          type: string
+        library:
+          type: string
+        meta:
+          type: object
+        direction:
+          type: string
+      required:
+        - id
+        - library
+        - meta
+      additionalProperties: true
+    Entity:
+      title: Entity
+      description: Singular entities of a signature (e.g. Gene, Protein, Compound, etc..)
+      properties:
+        id:
+          type: string
+        meta:
+          type: object
+      required:
+        - id
+        - meta
+      additionalProperties: true
+    Schema:
+      title: Schema
+      description: A table for storing validatable schemas in the database
+      properties:
+        id:
+          type: string
+        meta:
+          type: object
+      required:
+        - id
+        - meta
+      additionalProperties: true
+    IGenericEntity: {}
+    CounterRepository: {}
+    ResourceRepository: {}
+    LibraryRepository: {}
+    SignatureRepository: {}
+    EntityRepository: {}
+    EntitySignaturesRepository: {}
+    SignatureEntitiesRepository: {}
+    UserInputRepository: {}
+    UserInput:
+      title: UserInput
+      description: A table for storing user input
+      properties:
+        id:
+          type: string
+      required:
+        - id
+      additionalProperties: true
+    UserInputExt:
+      title: UserInput
+      description: A table for storing user input
+      properties:
+        id:
+          type: string
+      required:
+        - id
+      additionalProperties: true
+servers:
+  - url: https://maayanlab.cloud
+x-externalResources:
+  - x-url: https://maayanlab.cloud/sigcom-lincs/metadata-api/openapi.json
+    x-type: api documentation
+  - x-url: https://maayanlab.cloud/sigcom-lincs/#/
+    x-type: website
