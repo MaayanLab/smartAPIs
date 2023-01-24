@@ -16,7 +16,7 @@ info:
   license:
     name: CC-BY-NC-SA-4.0
     url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-  termsOfService: https://maayanlab.cloud/FishEnrichr/help#terms
+  termsOfService: https://maayanlab.cloud/YeastEnrichr/help#terms
   
 servers:
 - url: https://maayanlab.cloud/YeastEnrichr
@@ -43,22 +43,7 @@ paths:
                   description: String describing what the gene symbols represent
                   type: string
               example:
-                list: | 
-                  RLI1
-                  YBL010C
-                  ICE2
-                  OST6
-                  TIM18
-                  VPS75
-                  FLO5
-                  UGO1
-                  CIS3
-                  SKP1
-                  ATG38
-                  MRPS35
-                  BFA1
-                  PEX30
-                  ROK1
+                list: RLI1\nYBL010C\nICE2\nOST6\nTIM18\nVPS75\nFLO5\nUGO1\nCIS3
                 description: Example gene list
       responses:
         '200':

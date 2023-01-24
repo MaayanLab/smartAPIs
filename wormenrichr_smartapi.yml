@@ -16,7 +16,7 @@ info:
   license:
     name: CC-BY-NC-SA-4.0
     url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
-  termsOfService: https://maayanlab.cloud/FishEnrichr/help#terms
+  termsOfService: https://maayanlab.cloud/WormEnrichr/help#terms
   
 servers:
 - url: https://maayanlab.cloud/WormEnrichr
@@ -43,19 +43,7 @@ paths:
                   description: String describing what the gene symbols represent
                   type: string
               example:
-                list: | 
-                  C49C8 
-                  atg-5 
-                  hop-1 
-                  mom-4 
-                  lsm-8 
-                  ggtb-1 
-                  acr-7 
-                  str-169 
-                  rps-6 
-                  sptf-1 
-                  sek-4 
-                  T13H5
+                list: C49C8\natg-5\nhop-1\nmom-4\nlsm-8\nggtb-1\nacr-7\nstr-169
                 description: Example gene list
       responses:
         '200':

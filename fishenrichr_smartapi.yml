@@ -43,22 +43,7 @@ paths:
                   description: String describing what the gene symbols represent
                   type: string
               example:
-                list: | 
-                  myt1a
-                  stk33
-                  rbm48
-                  vps13c
-                  rpl28
-                  clcn7
-                  npas4b
-                  cipca
-                  usp15
-                  grm3
-                  acvr2ab
-                  prpf3
-                  six2a
-                  cdk5r1a
-                  aldh3a2a
+                list: myt1a\nstk33\nrbm48\nvps13c\nrpl28\nclcn7\nnpas4b\ncipca
                 description: Example gene list
       responses:
         '200':
