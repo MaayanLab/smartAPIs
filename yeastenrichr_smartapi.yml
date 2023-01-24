@@ -2,7 +2,7 @@ openapi: 3.0.1
 
 info:
   title: YeastEnrichr
-  version: 1.0.0
+  version: 2.0.0
   description: | 
     YeastEnrichr is the adaptation of Enrichr - a web-based tool for enrichment 
     analysis providing users with interactive displays and visual summaries of 
@@ -10,16 +10,16 @@ info:
   contact:
     email: avi.maayan@mssm.edu
     name: Ma'ayan Lab 
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
     x-role: responsible organization
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://amp.pharm.mssm.edu/YeastEnrichr/help#terms
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/FishEnrichr/help#terms
   
 servers:
-- url: http://amp.pharm.mssm.edu/YeastEnrichr
+- url: https://maayanlab.cloud/YeastEnrichr
 
 tags:
 - name: Maayanlab
@@ -303,7 +303,7 @@ paths:
                       numTerms: 307
                       geneCoverage: 4504
                       genesPerTerm: 44
-                      link: http://www.geneontology.org/
+                      link: https://www.geneontology.org/
                     - libraryName: Wikipathways_2018
                       numTerms: 81
                       geneCoverage: 847
@@ -329,22 +329,15 @@ paths:
                   additionalProperties: 
                     type: string
                 example:
-                  Achilles fitness decrease:
-                    description: Knockdown genes from the Achilles project
-                    idName: ''
+                  GO Biological Process 2018A:
+                    description: Gene Ontology Biological Processes 
+                    idName: 'GO'
                     idRegExp: ''
                     idRegExpFlag: ''
                     baseUrl: ''
                     homepage: ''
-                  Aging Perturbations from GEO up:
-                    description: Gene expression signatures extracted from GEO
-                  KEGG 2013:
-                    description: KEGG's cell signaling pathway database
-                    idName: View on KEGG Website
-                    idRegExp: 'hsa[0-9]{5}'
-                    idRegExpFlag: i
-                    baseUrl: http://www.genome.jp/kegg-bin/show_pathway?
-                    homepage: ''
+                  Anatomy AutoRIF:
+                    description: For each term, PubMed was queried to extract PMIDs.
         '404':
           description: Page not found
         default:
@@ -474,7 +467,7 @@ components:
                 format: '{0} directly interacts with the hub protein {1}.'
           
 x-externalResources:
-- x-url: http://amp.pharm.mssm.edu/YeastEnrichr/help#api
+- x-url: https://maayanlab.cloud/YeastEnrichr/help#api
   x-type: api documentation
 - x-url: https://github.com/MaayanLab/smartAPIs/blob/master/yeastenrichr_smartapi.yml
   x-type: api documentation

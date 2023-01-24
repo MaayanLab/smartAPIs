@@ -2,7 +2,7 @@ openapi: 3.0.1
 
 info:
   title: FlyEnrichr
-  version: 1.0.0
+  version: 2.0.0
   description: | 
     FlyEnrichr is the adaptation of Enrichr - a web-based tool for enrichment 
     analysis  providing users with interactive displays and visual summaries of 
@@ -10,16 +10,16 @@ info:
   contact:
     email: avi.maayan@mssm.edu
     name: Ma'ayan Lab 
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
     x-role: responsible organization
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://amp.pharm.mssm.edu/FlyEnrichr/help#terms
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/FishEnrichr/help#terms
   
 servers:
-- url: http://amp.pharm.mssm.edu/FlyEnrichr
+- url: https://maayanlab.cloud/FlyEnrichr
 
 tags:
 - name: Maayanlab
@@ -316,12 +316,12 @@ paths:
                     numTerms: 64
                     geneCoverage: 1100
                     genesPerTerm: 27
-                    link: http://flybase.org/
+                    link: https://flybase.org/
                   - libraryName: Putative_Regulatory_miRNAs_from_DroID_2015
                     numTerms: 144
                     geneCoverage: 12098
                     genesPerTerm: 772
-                    link: http://www.droidb.org/
+                    link: http://droidb.org/
         '404':
           description: Page not found
         default:
@@ -342,23 +342,15 @@ paths:
                   additionalProperties: 
                     type: string
                 example:
-                  Achilles fitness decrease:
-                    description: Knockdown genes from the Achilles project
-                    idName: ''
+                  GO Biological Process 2018A:
+                    description: Gene Ontology Biological Processes 
+                    idName: 'GO'
                     idRegExp: ''
                     idRegExpFlag: ''
                     baseUrl: ''
                     homepage: ''
-                  Aging Perturbations from GEO up:
-                    description: Gene expression signatures extracted from GEO
-                  Human Phenotype Ontology:
-                    description: HPO is an effort to organize human phenotypes
-                    idName: View on HPO's Website
-                    idRegExp: 'HP:[0-9]{1,8}'
-                    idRegExpFlag: i
-                    baseUrl: http://compbio.charite.de/hpoweb/showterm?id=
-                    useTermName: true
-
+                  Anatomy AutoRIF:
+                    description: For each term, PubMed was queried to extract PMIDs.
         '404':
           description: Page not found
         default:
@@ -510,7 +502,7 @@ components:
             format: '{0} is part of the {1} pathways.'
           
 x-externalResources:
-- x-url: http://amp.pharm.mssm.edu/FlyEnrichr/help#api
+- x-url: https://maayanlab.cloud/FlyEnrichr/help#api
   x-type: api documentation
 - x-url: https://github.com/MaayanLab/smartAPIs/blob/master/flyenrichr_smartapi.yml
   x-type: api documentation

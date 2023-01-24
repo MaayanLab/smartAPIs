@@ -1,26 +1,25 @@
 openapi: 3.0.1
 
 info:
-  contact:
-    email: avi.maayan@mssm.edu
-    name: Ma'ayan Lab
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
-    x-role: responsible organization
+  title: Enrichr
+  version: 2.0.0
   description: | 
     Enrichr is a web-based tool for enrichment analysis, providing users with
     interactive displays and visual summaries of collective functions of gene
     lists.
+  contact:
+    email: avi.maayan@mssm.edu
+    name: Ma'ayan Lab
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+    x-role: responsible organization
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://amp.pharm.mssm.edu/Enrichr/help#terms
-  title: Enrichr
-  version: 1.0.0
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/FishEnrichr/help#terms
 
 servers:
-- url: http://amp.pharm.mssm.edu/Enrichr
-- url: http://localhost:8080/Enrichr
+- url: https://maayanlab.cloud/Enrichr
 
 tags:
 - name: Maayanlab
@@ -462,7 +461,7 @@ components:
           example: Genome_Browser_PWMs
         link:
           type: string
-          example: http://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/
+          example: https://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/
         numTerms:
           type: integer
           example: 615

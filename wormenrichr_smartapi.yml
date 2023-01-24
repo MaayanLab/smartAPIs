@@ -2,7 +2,7 @@ openapi: 3.0.1
 
 info:
   title: WormEnrichr
-  version: 1.0.0
+  version: 2.0.0
   description: | 
     WormEnrichr is the adaptation of Enrichr - a web-based tool for enrichment 
     analysis providing users with interactive displays and visual summaries of 
@@ -10,16 +10,16 @@ info:
   contact:
     email: avi.maayan@mssm.edu
     name: Ma'ayan Lab 
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
     x-role: responsible organization
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: http://amp.pharm.mssm.edu/WormEnrichr/help#terms
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/FishEnrichr/help#terms
   
 servers:
-- url: http://amp.pharm.mssm.edu/WormEnrichr
+- url: https://maayanlab.cloud/WormEnrichr
 
 tags:
 - name: Maayanlab
@@ -341,23 +341,15 @@ paths:
                   additionalProperties: 
                     type: string
                 example:
-                  Achilles fitness decrease:
-                    description: Knockdown genes from the Achilles project
-                    idName: ''
+                  GO Biological Process 2018A:
+                    description: Gene Ontology Biological Processes 
+                    idName: 'GO'
                     idRegExp: ''
                     idRegExpFlag: ''
                     baseUrl: ''
                     homepage: ''
-                  Aging Perturbations from GEO up:
-                    description: Gene expression signatures extracted from GEO
-                  Human Phenotype Ontology:
-                    description: HPO is an effort to organize human phenotypes
-                    idName: View on HPO's Website
-                    idRegExp: 'HP:[0-9]{1,8}'
-                    idRegExpFlag: i
-                    baseUrl: http://compbio.charite.de/hpoweb/showterm?id=
-                    useTermName: true
-
+                  Anatomy AutoRIF:
+                    description: For each term, PubMed was queried to extract PMIDs.
         '404':
           description: Page not found
         default:
@@ -507,7 +499,7 @@ components:
             format: '{0} directly interacts with the hub gene {1}.'
           
 x-externalResources:
-- x-url: http://amp.pharm.mssm.edu/WormEnrichr/help#api
+- x-url: https://maayanlab.cloud/WormEnrichr/help#api
   x-type: api documentation
 - x-url: https://github.com/MaayanLab/smartAPIs/blob/master/wormenrichr_smartapi.yml
   x-type: api documentation
