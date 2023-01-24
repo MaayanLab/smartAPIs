@@ -51,20 +51,7 @@ paths:
       summary: Returns a specific gene list
       operationId: view
       parameters: 
-      - name: userListId
-        description: | 
-          Unique ID for a specific gene list. If the short ID is also known, use 
-          EITHER this OR dataset.
-        in: query
-        schema:
-          type: integer
-      - name: dataset
-        description: | 
-          Short ID for a specific gene list. If the ful ID is also known, use
-          EITHER this OR userListId.
-        in: query
-        schema:
-          type: string
+      - $ref: '#/components/parameters/userListId'
       responses:
         '200':
           description: Successful response
@@ -122,6 +109,7 @@ paths:
         required: true
         schema: 
           type: string
+          example: 'AKT1'
       - name: json
         description: Set true to return JSON rather than plaintext
         in: query
@@ -159,6 +147,7 @@ paths:
         required: true
         schema:
           type: string
+          example: example_enrichment
       responses:
         '200':
           description: Successful response
@@ -358,7 +347,7 @@ components:
       required: true
       schema: 
         type: integer
-        example: 363320
+        example: 56519108
     backgroundType: 
       name: backgroundType
       description: Gene set library for which to download results
@@ -378,14 +367,7 @@ components:
                 $ref: '#/components/schemas/description'
               list:
                 type: string
-                example: | 
-                  PHF14
-                  RBM3
-                  MSL1
-                  PHF21A
-                  ARL10
-                  INSR
-                  JADE2
+                example: PHF14\nRBM3\nMSL1\nPHF21A\nARL10\nINSR\nJADE2
   responses:
     '400':
       description: Bad request
