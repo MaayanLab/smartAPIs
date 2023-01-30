@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
   title: FlyEnrichr
@@ -29,11 +29,13 @@ paths:
   /addList:
     post:
       summary: Submit a gene list for analysis
+      description: Submit a newline-delineated gene list for analysis
       operationId: addList
       requestBody:
         content: 
           multipart/form-data:
             schema:
+              required: [list, description]
               type: object
               properties:
                 list:
@@ -43,7 +45,17 @@ paths:
                   description: String describing what the gene symbols represent
                   type: string
               example:
-                list:  14-3-3epsilon\nAGO1\nAats-thr\nAkt1\nAmph\nArp10\nAtu\nBuffy
+                list: |
+                  14-3-3epsilon
+                  AGO1
+                  Aats-thr
+                  Akt1
+                  Amph
+                  Arp10
+                  Atu
+                  Buffy
+                  CG14715
+                  CG17048
                 description: Example gene list
       responses:
         '200':
@@ -69,6 +81,7 @@ paths:
   /view:
     get:
       summary: Returns a specific gene list
+      description: Returns the gene list corresponding to the input userListId
       operationId: view
       parameters: 
       - name: userListId
@@ -76,16 +89,10 @@ paths:
           Unique ID for a specific gene list. If the short ID is also known, use
           EITHER this OR dataset.
         in: query
+        required: true
         schema:
           type: integer
         example: 392800
-      - name: dataset
-        description: | 
-          Short ID for a specific gene list. If the full ID is also known, use
-          EITHER this OR userListId.
-        in: query
-        schema:
-          type: string
       responses:
         '200':
           description: Successful response
@@ -122,10 +129,26 @@ paths:
   /enrich: 
     get: 
       summary: Returns enrichment analysis results for a specific gene list
+      description: | 
+        Returns the ranked terms from the input backgroundType library when 
+        enrichment analysis is computed using the list corresponding to the 
+        input userListId
       operationId: enrich
       parameters: 
-      - $ref: '#/components/parameters/userListId'
-      - $ref: '#/components/parameters/backgroundType'
+      - name: userListId
+        description: Unique ID for a specific gene list
+        in: query
+        required: true
+        schema: 
+          type: integer
+        example: 392800
+      - name: backgroundType
+        description: Gene set library for which to download results
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: Human_Disease_from_Flybase_2017
       responses:
         '200': 
           description: Successful response
@@ -153,6 +176,10 @@ paths:
   /genemap: 
     get:
       summary: Returns enrichment terms that contain a given gene
+      description: | 
+        Returns all terms whose gene sets contain the input gene in either
+        json or plain-text form, with optional detailed library information
+        included
       operationId: genemap
       parameters:
       - name: gene
@@ -207,10 +234,26 @@ paths:
   /export:
     get: 
       summary: Download enrichment analysis results for a specific gene list
+      description: | 
+        Exports the enrichment analysis results for the gene list corresponding 
+        to the input userListId when compared to the input backgroundType as
+        a tab-delimited text file
       operationId: export
       parameters:
-      - $ref: '#/components/parameters/userListId'
-      - $ref: '#/components/parameters/backgroundType'
+      - name: userListId
+        description: Unique ID for a specific gene list
+        in: query
+        required: true
+        schema: 
+          type: integer
+        example: 392800
+      - name: backgroundType
+        description: Gene set library for which to download results
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: Human_Disease_from_Flybase_2017
       - name: filename
         description: Name of text file download
         in: query
@@ -235,6 +278,9 @@ paths:
   /calendar: 
     get:
       summary: Returns usage statistics for Enrichr website
+      description: |
+        Returns usage statistics for Enrichr website by day; may take a while 
+        to run 
       operationId: calendar
       responses:
         '200':
@@ -253,9 +299,10 @@ paths:
           description: Unexpected error
   /count: 
     get:
-      summary: | 
+      summary: Returns counts for lists, terms, and libraries
+      description: | 
         Returns total number of lists analyzed, number of terms, and number of
-        libraries.
+        libraries
       operationId: count
       responses:
         '200':
@@ -271,6 +318,9 @@ paths:
   /datasetStatistics:
     get:
       summary: Returns statistic information on all gene libraries
+      description: |
+        Returns detailed statistics for all gene libraries, including
+        number of terms, number of genes, genes per term, etc.
       operationId: datasetStatistics
       responses:
         '200': 
@@ -314,7 +364,8 @@ paths:
   /json/libraries.json:
     get: 
       summary: Returns descriptive information on all gene libraries in JSON
-      operationId: libraries.json
+      description: Returns information on all gene libraries in JSON format
+      operationId: libraries_json
       responses:
         '200': 
           description: 'Successful response'
@@ -342,51 +393,6 @@ paths:
           description: Unexpected error
 
 components:
-  parameters:
-    userListId:
-      name: userListId
-      description: Unique ID for a specific gene list
-      in: query
-      required: true
-      schema: 
-        type: integer
-      example: 392800
-    backgroundType: 
-      name: backgroundType
-      description: Gene set library for which to download results
-      in: query
-      required: true
-      schema: 
-        type: string
-      example: Human_Disease_from_Flybase_2017
-  requestBodies:
-    addListInput:
-      content: 
-        multipart/form-data:
-          schema:
-            type: object
-            properties:
-              list:
-                description: Newline- or space-delineated list of gene symbols
-                type: string
-              description: 
-                description: String describing what the gene symbols represent
-                type: string
-            example:
-              list: | 
-                C49C8 
-                atg-5 
-                hop-1 
-                mom-4 
-                lsm-8 
-                ggtb-1 
-                acr-7 
-                str-169 
-                rps-6 
-                sptf-1 
-                sek-4 
-                T13H5
-              description: Example gene list
   schemas:
     setupfalse:
       type: object

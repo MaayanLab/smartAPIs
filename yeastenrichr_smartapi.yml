@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
   title: YeastEnrichr
@@ -29,6 +29,7 @@ paths:
   /addList:
     post:
       summary: Submit a gene list for analysis
+      description: Submit a newline-delineated gene list for analysis
       operationId: addList
       requestBody:
         content: 
@@ -39,12 +40,11 @@ paths:
                 list:
                   description: Newline- or space-delineated list of gene symbols
                   type: string
+                  example: RLI1 YBL010C ICE2 OST6 TIM18 VPS75 FLO5 UGO1 CIS3
                 description: 
                   description: String describing what the gene symbols represent
                   type: string
-              example:
-                list: RLI1\nYBL010C\nICE2\nOST6\nTIM18\nVPS75\nFLO5\nUGO1\nCIS3
-                description: Example gene list
+                  example: Example gene list
       responses:
         '200':
           description: Successful response
@@ -69,6 +69,7 @@ paths:
   /view:
     get:
       summary: Returns a specific gene list
+      description: Returns the gene list corresponding to the input userListId
       operationId: view
       parameters: 
       - name: userListId
@@ -76,16 +77,10 @@ paths:
           Unique ID for a specific gene list. If the short ID is also known, use 
           EITHER this OR dataset.
         in: query
+        required: true
         schema:
           type: integer
         example: 10
-      - name: dataset
-        description: | 
-          Short ID for a specific gene list. If the full ID is also known, use
-          EITHER this OR userListId.
-        in: query
-        schema:
-          type: string
       responses:
         '200':
           description: Successful response
@@ -122,6 +117,10 @@ paths:
   /enrich: 
     get: 
       summary: Returns enrichment analysis results for a specific gene list
+      description: | 
+        Returns the ranked terms from the input backgroundType library when 
+        enrichment analysis is computed using the list corresponding to the 
+        input userListId
       operationId: enrich
       parameters: 
       - $ref: '#/components/parameters/userListId'
@@ -153,6 +152,10 @@ paths:
   /genemap: 
     get:
       summary: Returns enrichment terms that contain a given gene
+      description: | 
+        Returns all terms whose gene sets contain the input gene in either
+        json or plain-text form, with optional detailed library information
+        included
       operationId: genemap
       parameters:
       - name: gene
@@ -194,6 +197,10 @@ paths:
   /export:
     get: 
       summary: Download enrichment analysis results for a specific gene list
+      description: | 
+        Exports the enrichment analysis results for the gene list corresponding 
+        to the input userListId when compared to the input backgroundType as
+        a tab-delimited text file
       operationId: export
       parameters:
       - $ref: '#/components/parameters/userListId'
@@ -222,6 +229,9 @@ paths:
   /calendar: 
     get:
       summary: Returns usage statistics for Enrichr website
+      description: |
+        Returns usage statistics for Enrichr website by day; may take a while 
+        to run 
       operationId: calendar
       responses:
         '200':
@@ -240,9 +250,10 @@ paths:
           description: Unexpected error
   /count: 
     get:
-      summary: | 
+      summary: Returns counts for lists, terms, and libraries
+      description: | 
         Returns total number of lists analyzed, number of terms, and number of
-        libraries.
+        libraries
       operationId: count
       responses:
         '200':
@@ -258,6 +269,9 @@ paths:
   /datasetStatistics:
     get:
       summary: Returns statistic information on all gene libraries
+      description: |
+        Returns detailed statistics for all gene libraries, including
+        number of terms, number of genes, genes per term, etc.
       operationId: datasetStatistics
       responses:
         '200': 
@@ -301,7 +315,8 @@ paths:
   /json/libraries.json:
     get: 
       summary: Returns descriptive information on all gene libraries in JSON
-      operationId: libraries.json
+      description: Returns information on all gene libraries in JSON format
+      operationId: libraries_json
       responses:
         '200': 
           description: 'Successful response'
@@ -314,7 +329,7 @@ paths:
                   additionalProperties: 
                     type: string
                 example:
-                  GO Biological Process 2018A:
+                  GO Biological Process 2018:
                     description: Gene Ontology Biological Processes 
                     idName: 'GO'
                     idRegExp: ''
@@ -345,7 +360,7 @@ components:
       required: true
       schema: 
         type: string
-      example: GO_Cellular_Component_2018A
+      example: GO_Cellular_Component_2018
   schemas:
     setupfalse:
       type: object
@@ -367,7 +382,7 @@ components:
                 type: string
       example:
         gene:
-          GO_Biological_Process_2018A:
+          GO_Biological_Process_2018:
             - organic anion transport (GO:0015711)
             - coenzyme transport (GO:0051182)
             - nucleotide transport (GO:0006862)
@@ -378,8 +393,8 @@ components:
             - MSB3
             - CHS6
         descriptions:
-          - name: GO_Cellular_Component_2018A
-          - name: GO_Molecular_Function_2018A
+          - name: GO_Cellular_Component_2018
+          - name: GO_Molecular_Function_2018
     setuptrue:
       type: object
       properties: 
@@ -420,7 +435,7 @@ components:
                       type: boolean
       example:
         gene:
-          GO_Biological_Process_2018A:
+          GO_Biological_Process_2018:
             - organic anion transport (GO:0015711)
             - coenzyme transport (GO:0051182)
             - nucleotide transport (GO:0006862)
@@ -431,16 +446,16 @@ components:
             - MSB3
             - CHS6
         descriptions:
-          - name: GO_Cellular_Component_2018A
-          - name: GO_Molecular_Function_2018A
+          - name: GO_Cellular_Component_2018
+          - name: GO_Molecular_Function_2018
         categories:
           - name: Ontologies
             libraries:
-              - name: GO_Cellular_Component_2018A
+              - name: GO_Cellular_Component_2018
                 isFuzzy: false
                 hasGrid: false
                 format: '{0} is found in {1}.'
-              - name: GO_Molecular_Function_2018A
+              - name: GO_Molecular_Function_2018
                 isFuzzy: false
                 hasGrid: false
                 format: '{0} has the molecular function of {1}.'
