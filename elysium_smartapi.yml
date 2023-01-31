@@ -1,33 +1,35 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
   title: Elysium
   description: | 
     Elysium is an API that controls the submission and scheduling of alignment 
     jobs, working with data uploaded through the Charon API. 
-  version: 1.0.0
+  version: 2.0.0
   contact:
     name: Ma'ayan Lab
     email: avi.maayan@mssm.edu
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
     x-role: responsible organization
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
-  license: 
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: https://amp.pharm.mssm.edu/cloudalignment/flip.html
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/cloudalignment/flip.html
   
 tags:
 - name: Maayanlab
 - name: NIHdatacommons
 
 servers:
-- url: http://amp.pharm.mssm.edu/cloudalignment
+- url: https://maayanlab.cloud/cloudalignment
 
 paths: 
   /version:
     get:
       summary: Returns version and date of last build
+      description: Returns version and date of last build
+      operationId: version
       responses:
         default:
           description: Unexpected error
@@ -48,8 +50,18 @@ paths:
   /givejob: 
     get: 
       summary: Begin processing job and set status to "submitted"
+      description: | 
+        Initiates processing of a given job, sets the status for the job to 
+        "submitted", and returns the job details
+      operationId: givejob
       parameters: 
-      - $ref: '#/components/parameters/pass'
+      - name: pass
+        description: Token for a specific job
+        required: true
+        in: query
+        schema: 
+          type: string
+        example: password
       responses:
         default:
           description: Unexpected error
@@ -89,19 +101,29 @@ paths:
                   userid: 1329449fed0aa7969400c3a485a80196
                   type: sequencing
                   resultbucket: biodos
-                  datalinks: https://s3.amazonaws.com/biod  /1329449fed0aa7969400c3a485a80196/example_file.rtf
+                  datalinks: https://s3.amazonaws.com/biod/1329449fed0aa7969400c3a485a80196/example_file.rtf
                   outname: example_outname
                   organism: human
   /finishjob:
     get: 
       summary: Complete job and set status to "completed"
+      description: | 
+        Finishes the given job, sets the status to "completed", and returns
+        the finished job ID
+      operationId: finishjob
       parameters: 
-      - $ref: '#/components/parameters/pass'
-      - name: uid
-        description: ''
+      - name: pass
+        description: Token for a specific job
         in: query
         schema: 
           type: string
+        example: password
+      - name: uid
+        description: ID for a given job
+        in: query
+        schema: 
+          type: string
+        example: 66bc6ea9e4a68c2eef6c6e9070b0b81d
       responses:
         default:
           description: Unexpected error
@@ -125,29 +147,49 @@ paths:
   /createjob:
     get: 
       summary: Create a new job and set status to "waiting"
+      description: | 
+        Creates a new job based on the input credentials and job information, 
+        sets the job status to "waiting", and returns the status
+      operationId: createjob
       parameters: 
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Username
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: username
+      - name: password
+        description: Password
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: password
       - name: file1
-        description: ''
+        description: File to align (single or first paired-end read)
         in: query
         schema: 
           type: string
+        example: file1.fastq
       - name: file2
-        description: ''
+        description: File to align (second paired-end read)
         in: query
         schema: 
           type: string
+        example: file2.fastq
       - name: organism
-        description: ''
+        description: Reference genome to use
         in: query
         schema: 
           type: string
+        example: Homo
       - name: outname
-        description: ''
+        description: Output file name
         in: query
         schema: 
           type: string
+        example: example_output
       responses:
         default:
           description: Unexpected error
@@ -182,11 +224,27 @@ paths:
   /progress: 
     get: 
       summary: View jobs with the specified status
+      description: | 
+        View all jobs associated with the given user credentials that have the
+        given status
+      operationId: progress
       parameters: 
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Username
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: username
+      - name: password
+        description: Password
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: password
       - name: status
-        description: ''
+        description: Status term to search for jobs
         in: query
         schema: 
           type: string
@@ -259,9 +317,25 @@ paths:
   /queueview:
     get: 
       summary: View jobs with status "waiting" or "submitted"
+      description: | 
+        View any jobs in the queue associated with the given user account that 
+        have status "waiting" or "submitted"
+      operationId: queueview
       parameters: 
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Username
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: username
+      - name: password
+        description: Password
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: password
       responses:
         default:
           description: Unexpected error
@@ -319,27 +393,6 @@ paths:
                   value: 
                     status: failed
                     message: credential error
-
-components:
-  parameters:
-    pass:
-      name: pass
-      description: Password for a specific job
-      in: query
-      schema: 
-        type: string
-    username:
-      name: username
-      in: query
-      schema: 
-        type: string
-      example: maayanlab2018
-    password: 
-      name: password
-      in: query
-      schema: 
-        type: string
-      example: systemsbiology
                       
 x-externalResources:
 - x-url: https://github.com/MaayanLab/smartAPIs/blob/master/elysium_smartapi.yml
