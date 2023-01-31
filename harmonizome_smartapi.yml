@@ -471,7 +471,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: %26alpha%3B-bungarotoxin
+        example: ABL1_knockdown_100_GSE27869
       responses:
         '200':
           description: Successful response
@@ -552,6 +552,8 @@ paths:
                     type: string
                   pubMedIds:
                     type: array
+                    items: 
+                      type: string
                   geneSets:
                     type: array
                     items:
