@@ -1,7 +1,7 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
-  version: 1.0.0
+  version: 2.0.0
   title: L1000FWD
   description: | 
     L1000 fireworks display (L1000FWD) is a web application that provides 
@@ -10,25 +10,27 @@ info:
   contact:
     name: Ma'ayan Lab
     email: avi.maayan@mssm.edu
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
     x-role: responsible organization
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
-  termsOfService: http://amp.pharm.mssm.edu/l1000fwd/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  termsOfService: https://maayanlab.cloud/l1000fwd/
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
   
 tags:
 - name: Maayanlab
 - name: NIHdatacommons
   
 servers:
-- url: http://amp.pharm.mssm.edu/L1000FWD
+- url: https://maayanlab.cloud/L1000FWD
   
 paths: 
   /synonyms/{query_string}:
     get:
       summary: Search drugs using names or synonyms
+      description: Search for any drugs that match the input string
+      operationId: synonyms
       parameters:
       - name: query_string
         description: Name or synonym for drug
@@ -36,7 +38,7 @@ paths:
         required: true
         schema:
           type: string
-        example: dex
+        example: Dex
       responses:
         '200': 
           description: Successful response
@@ -59,6 +61,10 @@ paths:
   /sig/{sig_id}:
     get:
       summary: Get a single signature by ID
+      description: | 
+        Returns the full L1000 signature corresponding to the input L1000 
+        sig_id identifier
+      operationId: sig
       parameters:
       - name: sig_id
         description: Signature ID
@@ -66,7 +72,7 @@ paths:
         required: true
         schema:
           type: string
-        example: 'CPC006_HA1E_24H:BRD-A70155556-001-04-4:40'
+        example: CPC006_HA1E_24H:BRD-A70155556-001-04-4:40
       responses:
         '200':
           description: Successful response
@@ -136,8 +142,28 @@ paths:
   /sig_search: 
     post: 
       summary: Query the L1000 signatures using up/down gene sets
+      description: | 
+        Submit lists of up and down genes to get an ID representing the top 
+        L1000 signatures that match the input up/down gene query
+      operationId: sig_search
       requestBody:
-        $ref: '#/components/requestBodies/sig_search_input'
+        required: true
+        content: 
+          application/json: 
+            schema: 
+              type: object
+              required: [up_genes, down_genes]
+              properties:
+                up_genes:
+                  description: An array of strings of gene symbols
+                  type: array
+                  items: 
+                    type: string
+                down_genes:
+                  description: An array of strings of gene symbols
+                  type: array
+                  items: 
+                    type: string
       responses: 
         '200': 
           description: Successful response
@@ -153,6 +179,8 @@ paths:
   /result/topn/{result_id}:
     get:
       summary: Retrieve the top 50 results
+      description: Returns the top 50 signatures matching the query ID 
+      operationId: result
       parameters:
       - name: result_id
         description: ID returned from sig_search method
@@ -199,43 +227,11 @@ paths:
                   - scores: -0.1443
                     sig_id: 'NMH002_NPC_6H:BRD-K81473043-001-07-0:10'
 
-components: 
-  requestBodies:
-    sig_search_input:
-      content: 
-        application/json: 
-          schema: 
-            type: object
-            properties:
-              up_genes:
-                description: An array of strings of gene symbols
-                type: array
-                items: 
-                  type: string
-              down_genes:
-                description: An array of strings of gene symbols
-                type: array
-                items: 
-                  type: string
-            example:
-              up_genes:
-              - KIAA0907
-              - KDM5A
-              - CDC25A
-              - EGR1
-              - GADD45B
-              down_genes:
-              - SCCPDH
-              - KIF20A
-              - FZD7
-              - USP22
-              - PIP4K2B
-
 x-externalResources:
 - x-url: https://academic.oup.com/bioinformatics/article/34/12/2150/4840732
   x-type: publication
   x-description: 'L1000FWD: fireworks visualization of drug-induced transcriptomic signatures'
-- x-url: http://amp.pharm.mssm.edu/L1000FWD/api_page
+- x-url: https://maayanlab.cloud/L1000FWD/api_page
   x-type: api documentation
 - x-url: https://github.com/MaayanLab/smartAPIs/blob/master/l1000fwd_smartapi.yml
   x-type: api documentation
