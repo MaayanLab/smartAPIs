@@ -1,4 +1,4 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
   title: Harmonizome
@@ -6,28 +6,29 @@ info:
     Harmonizome is a web-based tool that allows users to search for genes or
     proteins and their functional terms, extracted and organized from over a
     hundred publicly available resources.
-  termsOfService: http://amp.pharm.mssm.edu/Harmonizome/terms
+  termsOfService: https://maayanlab.cloud/Harmonizome/terms
   contact: 
     name: Ma'ayan Lab
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
     x-role: responsible organization
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
   license:
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html 
-  version: 1.0.0
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  version: 2.0.0
 
 tags: 
 - name: Maayanlab
 - name: NIHdatacommons
 
 servers: 
-- url: http://amp.pharm.mssm.edu/Harmonizome
+- url: https://maayanlab.cloud/Harmonizome
 
 paths:
   /api/1.0:
     get: 
       summary: Returns a list of available data entities
+      description: Returns all available data entities in the database
       operationId: getEntities
       responses: 
         '200': 
@@ -65,9 +66,18 @@ paths:
   /api/1.0/attribute:
     get: 
       summary: Returns information on attributes
+      description: | 
+        Returns information on all attributes in the database starting from
+        the given cursor page
       operationId: attribute
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses: 
         '200':
           description: Successful response
@@ -106,9 +116,18 @@ paths:
   /api/1.0/dataset: 
     get:
       summary: Returns information on datasets
+      description: | 
+        Returns information on all datasets in the database, starting from the 
+        given cursor page
       operationId: dataset
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses: 
         '200':
           description: Successful response
@@ -147,9 +166,18 @@ paths:
   /api/1.0/gene:
     get:
       summary: Returns information on genes
+      description: | 
+        Returns information on all genes in the database, starting from the 
+        given cursor page
       operationId: gene
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses: 
         '200':
           description: Successful response
@@ -186,9 +214,18 @@ paths:
   /api/1.0/gene_set:
     get:
       summary: Returns information on gene sets
+      description: | 
+        Returns information on all gene sets in the database, starting from the 
+        given cursor page
       operationId: gene_set
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses:
         '200':
           description: Successful response
@@ -227,9 +264,18 @@ paths:
   /api/1.0/gene_family:
     get:
       summary: Returns information on gene families
+      description: | 
+        Returns information on all gene families in the database, starting from 
+        the given cursor page
       operationId: gene_family
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses:
         '200':
           description: Successful response
@@ -268,9 +314,18 @@ paths:
   /api/1.0/naming_authority:
     get:
       summary: Returns information on naming authorities
+      description: | 
+        Returns information on all naming authorities in the database, starting 
+        from the given cursor page
       operationId: naming_authority
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses:
         '200':
           description: Successful response
@@ -309,9 +364,18 @@ paths:
   /api/1.0/protein:
     get:
       summary: Returns information on proteins
+      description: | 
+        Returns information on all proteins in the database, starting from the 
+        given cursor page
       operationId: protein
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses:
         '200':
           description: Successful response
@@ -348,9 +412,18 @@ paths:
   /api/1.0/resource:
     get:
       summary: Returns information on resources
+      description: | 
+        Returns information on all resources in the database, starting from the 
+        given cursor page
       operationId: resource
       parameters:
-      - $ref: '#/components/parameters/cursor'
+      - name: cursor
+        in: query
+        description: See the selection of data starting here
+        schema: 
+          type: integer
+          default: 0
+        example: 0
       responses:
         '200':
           description: Successful response
@@ -389,6 +462,7 @@ paths:
   /api/1.0/attribute/{endpoint}:
     get: 
       summary: Returns data from a specified attribute
+      description: Returns detailed data on a specified attribute endpoint
       operationId: attribute_data
       parameters:
       - name: endpoint
@@ -397,7 +471,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: '%26alpha%3B-bungarotoxin'
+        example: %26alpha%3B-bungarotoxin
       responses:
         '200':
           description: Successful response
@@ -444,6 +518,7 @@ paths:
   /api/1.0/dataset/{endpoint}:
     get: 
       summary: Returns data from a specified dataset
+      description: Returns data from a specified dataset endpoint
       operationId: dataset_data
       parameters:
       - name: endpoint
@@ -452,7 +527,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: 'Biocarta+Pathways'
+        example: Biocarta+Pathways
       responses: 
         '200': 
           description: Successful response
@@ -507,6 +582,9 @@ paths:
   /api/1.0/gene/{endpoint}:
     get:
       summary: Returns data from a specified gene
+      description: | 
+        Returns data on a specified gene endpoint, optionally including 
+        functional associations
       operationId: gene_data
       parameters:
       - name: endpoint
@@ -522,6 +600,7 @@ paths:
         schema: 
           type: boolean
           default: false
+        example: false
       responses: 
         '200': 
           description: Successful response
@@ -576,15 +655,22 @@ paths:
   /api/1.0/gene_set/{endpoint}:
     get: 
       summary: Returns data from a specified gene set
+      description: Returns data on a specified gene set endpoint
       operationId: gene_set_data
       parameters:
       - name: endpoint
-        description: Endpoint of a gene set href
+        description: Multi-segmented endpoint of a gene set href
         in: path
         required: true
         schema: 
-          type: string
-        example: 'HS683/Achilles+Cell+Line+Gene+Essentiality+Profiles'
+          type: array
+          items:
+            type: string
+        style: simple
+        x-multiSegment: true
+        example: 
+        - achilles
+        - GeneRIF+Biological+Term+Annotations
       responses:
         '200':
           description: Successful response
@@ -635,6 +721,7 @@ paths:
   /api/1.0/gene_family/{endpoint}:
     get: 
       summary: Returns data from a specified gene family
+      description: Returns data on a specified gene family endpoint
       operationId: gene_family_data
       parameters:
       - name: endpoint
@@ -643,7 +730,7 @@ paths:
         required: true
         schema: 
           type: string
-        example: 'Annexins+%28ANXA%29'
+        example: Annexins+%28ANXA%29
       responses:
         '200':
           description: Successful response
@@ -665,7 +752,7 @@ paths:
                 example:
                   name: Annexins (ANXA)
                   familyId: 404
-                  url: 'http://www.genenames.org/cgi-bin/genefamilies/set/404'
+                  url: 'https://www.genenames.org/cgi-bin/genefamilies/set/404'
                   genes:
                   - symbol: ANXA8L1
                     href: '/api/1.0/gene/ANXA8L1'
@@ -679,16 +766,17 @@ paths:
           $ref: '#/components/responses/5XX'
   /api/1.0/naming_authority/{endpoint}:
     get: 
-      summary: Returns data from a specified resource
+      summary: Returns data from a specified naming authority
+      description: Returns data on a specified naming authority endpoint
       operationId: naming_authority_data
       parameters:
       - name: endpoint
-        description: Endpoint of a resource href
+        description: Endpoint of a naming authority href
         in: path
         required: true
         schema: 
           type: string
-        example: 'Cell+Ontology'
+        example: Cell+Ontology
       responses:
         '200':
           description: Successful response
@@ -711,7 +799,7 @@ paths:
                   name: Cell Ontology
                   acronym: CL
                   description: The Cell Ontology is designed as a structured controlled vocabulary for cell types.
-                  url: 'http://bioportal.bioontology.org/ontologies/CL'
+                  url: 'https://bioportal.bioontology.org/ontologies/CL'
                   publication: 'dx.doi.org/10.1186/1471-2105-12-6'
         '400':
           $ref: '#/components/responses/400'
@@ -721,11 +809,12 @@ paths:
           $ref: '#/components/responses/5XX'
   /api/1.0/protein/{endpoint}:
     get: 
-      summary: Returns data from a specified resource
+      summary: Returns data from a specified protein
+      description: Returns data on a specified protein endpoint
       operationId: protein_data
       parameters:
       - name: endpoint
-        description: Endpoint of a resource href
+        description: Endpoint of a protein href
         in: path
         required: true
         schema: 
@@ -755,7 +844,7 @@ paths:
                   symbol: A1BG_HUMAN
                   uniprotId: P04217
                   description: This is a protein.
-                  uniprotUrl: http://www.uniprot.org/uniprot/P04217'
+                  uniprotUrl: https://www.uniprot.org/uniprot/P04217'
                   gene: 
                     symbol: A1BG
                     href: '/api/1.0/gene/A1BG'
@@ -768,6 +857,7 @@ paths:
   /api/1.0/resource/{endpoint}:
     get: 
       summary: Returns data from a specified resource
+      description: Return data from a specified resource endpoint
       operationId: resource_data
       parameters:
       - name: endpoint
@@ -812,7 +902,7 @@ paths:
                   - 20829323
                   - 21746896
                   description: This is a resource.
-                  url: 'http://www.broadinstitute.org/achilles'
+                  url: 'https://www.broadinstitute.org/achilles'
         '400':
           $ref: '#/components/responses/400'
         '404': 
@@ -821,14 +911,6 @@ paths:
           $ref: '#/components/responses/5XX'
 
 components: 
-  parameters: 
-    cursor: 
-      name: cursor
-      in: query
-      description: See the selection of data starting here
-      schema: 
-        type: integer
-        default: 0
   responses:
     '400':
       description: Bad request'
