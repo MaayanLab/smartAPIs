@@ -659,18 +659,14 @@ paths:
       operationId: gene_set_data
       parameters:
       - name: endpoint
-        description: Multi-segmented endpoint of a gene set href
+        description: | 
+          Endpoint of a gene set href; currently OpenAPI does not support path 
+          parameters including slashes, but an example would be 
+          'achilles/GeneRIF+Biological+Term+Annotations'
         in: path
         required: true
         schema: 
-          type: array
-          items:
-            type: string
-        style: simple
-        x-multiSegment: true
-        example: 
-        - achilles
-        - GeneRIF+Biological+Term+Annotations
+          type: string
       responses:
         '200':
           description: Successful response
