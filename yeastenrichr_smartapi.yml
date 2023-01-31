@@ -32,19 +32,19 @@ paths:
       description: Submit a newline-delineated gene list for analysis
       operationId: addList
       requestBody:
+        required: true
         content: 
           multipart/form-data:
             schema:
               type: object
+              required: [list, description]
               properties:
                 list:
                   description: Newline- or space-delineated list of gene symbols
                   type: string
-                  example: RLI1 YBL010C ICE2 OST6 TIM18 VPS75 FLO5 UGO1 CIS3
                 description: 
                   description: String describing what the gene symbols represent
                   type: string
-                  example: Example gene list
       responses:
         '200':
           description: Successful response

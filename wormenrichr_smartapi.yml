@@ -32,10 +32,12 @@ paths:
       description: Submit a newline-delineated gene list for analysis
       operationId: addList
       requestBody:
+        required: true
         content: 
           multipart/form-data:
             schema:
               type: object
+              required: [list, description]
               properties:
                 list:
                   description: Newline- or space-delineated list of gene symbols
@@ -43,9 +45,6 @@ paths:
                 description: 
                   description: String describing what the gene symbols represent
                   type: string
-              example:
-                list: C49C8\natg-5\nhop-1\nmom-4\nlsm-8\nggtb-1\nacr-7\nstr-169
-                description: Example gene list
       responses:
         '200':
           description: Successful response

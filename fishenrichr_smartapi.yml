@@ -32,10 +32,12 @@ paths:
       description: Submit a newline-delineated gene list for analysis
       operationId: addList
       requestBody:
+        required: true
         content: 
           multipart/form-data:
             schema:
               type: object
+              required: [list, description]
               properties:
                 list:
                   description: Newline-delineated list of gene symbols
@@ -43,18 +45,6 @@ paths:
                 description: 
                   description: String describing what the gene symbols represent
                   type: string
-              example:
-                list: | 
-                  myt1a
-                  stk33
-                  rbm48
-                  vps13c
-                  rpl28
-                  clcn7
-                  npas4b
-                  cipca
-                  usp15
-                description: Example gene list
       responses:
         '200':
           description: Successful response

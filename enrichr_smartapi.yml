@@ -32,6 +32,7 @@ paths:
       description: Submit a newline-delineated gene list for analysis
       operationId: addList
       requestBody:
+        required: true
         content: 
           multipart/form-data:
             schema:
@@ -42,22 +43,6 @@ paths:
                   type: string
                 description: 
                   type: string
-              example: 
-                list: |
-                    Nsun3
-                    Polrmt
-                    Nlrx1
-                    Sfxn5
-                    Zc3h12c
-                    Slc25a39
-                    Arsg
-                    Defb29
-                    Ndufb6
-                    Zfand1
-                    Tmem77
-                    5730403B10Rik
-                    Tlcd1
-                description: Example input 
       responses:
         '200':
           description: Successful response
@@ -234,24 +219,6 @@ paths:
               schema:
                 format: binary
                 type: string
-  /calendar: 
-    get:
-      summary: Returns usage statistics for Enrichr website
-      description: |
-        Returns usage statistics for Enrichr website by day; may take a while 
-        to run 
-      operationId: calendar
-      responses:
-        '200':
-          description: Successful response
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: array
-                  items:
-                    type: integer
   /count: 
     get:
       summary: Returns counts for lists, terms, and libraries
@@ -324,7 +291,7 @@ paths:
         description: Select geneset(s) in the geneset library by `;` delimited exact-matching term name(s)
         schema:
           type: string
-        example: ChIP-seq;Data_aggregation
+        example: ChIP-seq
       - name: mode
         in: query
         required: true
