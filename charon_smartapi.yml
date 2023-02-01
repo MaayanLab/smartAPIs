@@ -1,7 +1,7 @@
-openapi: 3.0.1
+openapi: 3.0.3
 
 info:
-  version: 1.0.0
+  version: 2.0.0
   title: Charon
   description: | 
     Charon is an API that allows users to upload files to Amazon S3 
@@ -10,25 +10,27 @@ info:
   contact:
     name: Ma'ayan Lab
     email: avi.maayan@mssm.edu
-    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
     x-role: responsible organization
-    x-id: http://labs.icahn.mssm.edu/maayanlab/
-  license: 
-    name: Apache 2.0
-    url: http://www.apache.org/licenses/LICENSE-2.0.html
-  termsOfService: https://amp.pharm.mssm.edu/archs4/help.html
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/archs4/help.html
   
 tags:
 - name: Maayanlab
 - name: NIHdatacommons
 
 servers:
-- url: http://amp.pharm.mssm.edu/charon
+- url: https://maayanlab.cloud/charon
 
 paths: 
   /sign_auth:
     get: 
       summary: Returns a signature for the request
+      description: Returns a signature for the authentication request
+      operationId: sign_auth
       parameters:
       - name: to_sign
         description: Contains information about request
@@ -48,7 +50,9 @@ paths:
           description: Unexpected error
   /version: 
     get:
-      summary: Returns the version number and date of last build
+      summary: Returns the current version
+      description: Returns the version number and date of last build
+      operationId: version
       responses:
         '200': 
           description: Successful response
@@ -69,9 +73,19 @@ paths:
   /files: 
     get: 
       summary: Returns a list of your uploaded files
+      description: Returns a list of files uploaded by the authenticated user
+      operationId: files
       parameters: 
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Login username
+        in: query
+        schema: 
+          type: string
+      - name: password
+        description: User password
+        in: query
+        schema: 
+          type: string
       responses:
         '200': 
           description: Successful response
@@ -117,15 +131,24 @@ paths:
   /delete: 
     get: 
       summary: Delete a file from your account
+      description: Delete a file from the authenticated user account
+      operationId: delete
       parameters:
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Login username
+        in: query
+        schema: 
+          type: string
+      - name: password
+        description: User password
+        in: query
+        schema: 
+          type: string
       - name: file
         description: Name of file to be deleted
         in: query
         schema: 
           type: string
-        example: example_file.rtf
       responses:
         '200': 
           description: Successful response
@@ -162,30 +185,39 @@ paths:
   /createuser: 
     get: 
       summary: Create a new user account
+      description: Create a new user account using the input information
+      operationId: createuser
       parameters:
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
-      - name: firstname 
+      - name: username
+        description: New ussername
         in: query
         schema: 
           type: string
-        example: Maayan
+      - name: password
+        description: New password
+        in: query
+        schema: 
+          type: string
+      - name: firstname 
+        description: User first name
+        in: query
+        schema: 
+          type: string
       - name: lastname
+        description: User last name
         in: query 
         schema: 
           type: string
-        example: Lab
       - name: email
+        description: User email
         in: query 
         schema: 
           type: string
-        example: example@email.com
       - name: invitationKey
         description: Key needed to create an account
         in: query
         schema: 
           type: string
-        example: charon2018
       responses:
         '200': 
           description: Successful response
@@ -217,19 +249,21 @@ paths:
   /signpolicy: 
     post: 
       summary: Returns policy required for making POST requests
+      description: | 
+        Return a policy required for making POST requests from a user account
+      operationId: signpolicy_post
       requestBody:
         content: 
           multipart/form-data:
             schema: 
               type: object
               properties: 
-                username: 
+                username:  
+                  description: Username
                   type: string
                 password: 
+                  description: Password
                   type: string
-              example:
-                username: maayanlab2018
-                password: systemsbiology
       responses:
         '200':
           description: Successful response
@@ -242,11 +276,11 @@ paths:
                   value:
                     status: success
                     username: maayanlab2018
-                    uid: 1329449fed0aa7969400c3a485a80196
-                    policy: eydjb25kaXRpb25zJzogW3snYnVja2V0JzogJ2Jpb2Rvcyd9LCBb
-                    cid: AKIAJ5MAXJJUB76JKV3A
+                    uid: uid
+                    policy: policy
+                    cid: cid
                     action: generate policy
-                    signature: 2iVfCkAsJaT7DUxh3HWSTWIgUoo=
+                    signature: sig
                     bucket: biodos
                     expiration: '2018-07-02T18:53:42Z'
                 failure:
@@ -259,9 +293,20 @@ paths:
           description: Unexpected error
     get:
       summary: Returns policy required for making POST requests
+      description: | 
+        Return a policy required for making POST requests from a user account
+      operationId: signpolicy_get
       parameters:
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Username
+        in: query
+        schema: 
+          type: string
+      - name: password
+        description: Password
+        in: query
+        schema: 
+          type: string
       responses:
         '200':
           description: Successful response
@@ -274,11 +319,11 @@ paths:
                   value:
                     status: success
                     username: maayanlab2018
-                    uid: 1329449fed0aa7969400c3a485a80196
-                    policy: eydjb25kaXRpb25zJzogW3snYnVja2V0JzogJ2Jpb2Rvcyd9LCBb
-                    cid: AKIAJ5MAXJJUB76JKV3A
+                    uid: uid
+                    policy: policy
+                    cid: cid
                     action: generate policy
-                    signature: 2iVfCkAsJaT7DUxh3HWSTWIgUoo=
+                    signature: sig
                     bucket: biodos
                     expiration: '2018-07-02T18:53:42Z'
                 failure:
@@ -292,9 +337,19 @@ paths:
   /login: 
     get: 
       summary: Log into your account
+      description: Log into an existing user account
+      operationId: login
       parameters: 
-      - $ref: '#/components/parameters/username'
-      - $ref: '#/components/parameters/password'
+      - name: username
+        description: Username
+        in: query
+        schema: 
+          type: string
+      - name: password
+        description: Password
+        in: query
+        schema: 
+          type: string
       responses:
         '200':
           description: Successful response
@@ -317,19 +372,6 @@ paths:
                     task: maayanlab2018
   
 components:
-  parameters:
-    username: 
-      name: username
-      in: query
-      schema: 
-        type: string
-      example: maayanlab2018
-    password:
-      name: password
-      in: query
-      schema: 
-        type: string
-      example: systemsbiology
   schemas:
     generalresponse:
       type: object
