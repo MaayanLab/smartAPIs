@@ -35,6 +35,7 @@ paths:
       - name: to_sign
         description: Contains information about request
         in: query
+        required: true
         schema: 
           type: string
       responses:
@@ -79,11 +80,13 @@ paths:
       - name: username
         description: Login username
         in: query
+        required: true
         schema: 
           type: string
       - name: password
         description: User password
         in: query
+        required: true
         schema: 
           type: string
       responses:
@@ -137,16 +140,19 @@ paths:
       - name: username
         description: Login username
         in: query
+        required: true
         schema: 
           type: string
       - name: password
         description: User password
         in: query
+        required: true
         schema: 
           type: string
       - name: file
         description: Name of file to be deleted
         in: query
+        required: true
         schema: 
           type: string
       responses:
@@ -191,31 +197,37 @@ paths:
       - name: username
         description: New ussername
         in: query
+        required: true
         schema: 
           type: string
       - name: password
         description: New password
         in: query
+        required: true
         schema: 
           type: string
       - name: firstname 
         description: User first name
         in: query
+        required: true
         schema: 
           type: string
       - name: lastname
         description: User last name
         in: query 
+        required: true
         schema: 
           type: string
       - name: email
         description: User email
         in: query 
+        required: true
         schema: 
           type: string
       - name: invitationKey
         description: Key needed to create an account
         in: query
+        required: true
         schema: 
           type: string
       responses:
@@ -253,10 +265,12 @@ paths:
         Return a policy required for making POST requests from a user account
       operationId: signpolicy_post
       requestBody:
+        required: true
         content: 
           multipart/form-data:
             schema: 
               type: object
+              required: [username, password]
               properties: 
                 username:  
                   description: Username
@@ -300,11 +314,13 @@ paths:
       - name: username
         description: Username
         in: query
+        required: true
         schema: 
           type: string
       - name: password
         description: Password
         in: query
+        required: true
         schema: 
           type: string
       responses:
@@ -343,11 +359,13 @@ paths:
       - name: username
         description: Username
         in: query
+        required: true
         schema: 
           type: string
       - name: password
         description: Password
         in: query
+        required: true
         schema: 
           type: string
       responses:
