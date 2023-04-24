@@ -1,0 +1,596 @@
+openapi: 3.0.0
+info:
+  title: SigCom LINCS Data API
+  description: An API for efficient data-level queries on Sigcom LINCS.
+  termsOfService: https://lincsproject.org/LINCS/data/release-policy
+  version: 1.0.0
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    x-role: responsible organization
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+paths:
+  /listdata:
+    post:
+      description: List the available resources
+      summary: List the available resources
+      operationId: listdata
+      security: []
+      responses:
+        '200':
+          description: The available resources
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  repositories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uuid:
+                          type: string
+                        datatype:
+                          type: string
+                          enum:
+                            - geneset_library
+                            - rank_matrix
+  /enrich/overlap:
+    post:
+      description: Perform overlap set enrichment
+      summary: Perform overlap set enrichment
+      operationId: enrich.overlap
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                database:
+                  type: string
+                  description: The database to search against
+                entities:
+                  type: array
+                  description: Entity UUIDs to use for the analysis
+                  items:
+                    type: string
+                signatures:
+                  type: array
+                  description: Signature UUIDs to use for the analysis, `[]` for all signatures in library
+                  items:
+                    type: string
+                background:
+                  type: array
+                  description: Entity background for correction of library entitiy sets
+                  items:
+                    type: string
+                offset:
+                  type: number
+                  description: Skip `offset` number of results (sorted by significance)
+                limit:
+                  type: number
+                  description: Produce `limit` number of results (sorted by significance)
+                bgsize:
+                  type: number
+                  description: If set use min(bgsize, number of entities in library) as background size in Fisher's Exact test
+              required:
+                - database
+                - entities
+                - signatures
+        description: Signature search query
+        required: true
+      responses:
+        '200':
+          description: The analysis results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signatures:
+                    type: array
+                    description: Signatures used for enrichment analysis
+                    items:
+                      type: string
+                  matchingEntities:
+                    type: array
+                    description: Entities used for enrichment analysis
+                    items:
+                      type: string
+                  unknownEntities:
+                    type: array
+                    description: Entities not recognized or and therefore not used for enrichment analysis
+                    items:
+                      type: string
+                  queryTimeSec:
+                    type: number
+                    description: How long it took to perform the query
+                  results:
+                    type: object
+                    description: Results of the enrichment analysis
+                    properties:
+                      uuid:
+                        type: string
+                      p-value:
+                        type: number
+                      p-value-bonferroni:
+                        type: number
+                      fdr:
+                        type: number
+                      oddsratio:
+                        type: number
+                      setsize:
+                        type: number
+                      overlap:
+                        type: array
+                        items:
+                          type: string
+                    required:
+                      - uuid
+                      - p-value
+                      - p-value-bonferroni
+                      - fdr
+                      - oddsratio
+                      - setsize
+                      - overlap
+                required:
+                  - results
+  /enrich/rank:
+    post:
+      description: Perform enrichment for entity set to rank signatures
+      summary: Perform enrichment for entity set to rank signatures
+      operationId: enrich.rank
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                database:
+                  type: string
+                  description: The database to search against
+                entities:
+                  type: array
+                  description: Entity UUIDs to use for the analysis
+                  items:
+                    type: string
+                signatures:
+                  type: array
+                  description: Signature UUIDs to use for the analysis, `[]` for all signatures in library
+                  items:
+                    type: string
+                offset:
+                  type: number
+                  description: Skip `offset` number of results (sorted by significance)
+                limit:
+                  type: number
+                  description: Produce `limit` number of results (sorted by significance)
+              required:
+                - database
+                - entities
+                - signatures
+        description: Signature search query
+        required: true
+      responses:
+        '200':
+          description: The analysis results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signatures:
+                    type: array
+                    description: Signatures used for enrichment analysis
+                    items:
+                      type: string
+                  queryTimeSec:
+                    type: number
+                    description: How long it took to perform the query
+                  results:
+                    type: object
+                    description: Results of the enrichment analysis
+                    properties:
+                      uuid:
+                        type: string
+                      p-value:
+                        type: number
+                        x-nullable: true
+                      p-value-bonferroni:
+                        type: number
+                        x-nullable: true
+                      fdr:
+                        type: number
+                        x-nullable: true
+                      zscore:
+                        type: number
+                        x-nullable: true
+                      direction:
+                        type: number
+                    required:
+                      - uuid
+                      - p-value
+                      - p-value-bonferroni
+                      - fdr
+                      - zscore
+                      - direction
+                required:
+                  - results
+  /enrich/ranktwosided:
+    post:
+      description: Perform two-sided rank set enrichment
+      summary: Perform two-sided rank set enrichment
+      operationId: enrich.ranktwosided
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                database:
+                  type: string
+                  description: The database to search against
+                up_entities:
+                  type: array
+                  description: Up entity UUIDs to use for the analysis
+                  items:
+                    type: string
+                down_entities:
+                  type: array
+                  description: Down entity UUIDs to use for the analysis
+                  items:
+                    type: string
+                signatures:
+                  type: array
+                  description: Signature UUIDs to use for the analysis, `[]` for all signatures in library
+                  items:
+                    type: string
+                offset:
+                  type: number
+                  description: Skip `offset` number of results (sorted by significance)
+                limit:
+                  type: number
+                  description: Produce `limit` number of results (sorted by significance)
+              required:
+                - database
+                - up_entities
+                - down_entities
+                - signatures
+        description: Signature search query
+        required: true
+      responses:
+        '200':
+          description: The analysis results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signatures:
+                    type: array
+                    description: Signatures used for enrichment analysis
+                    items:
+                      type: string
+                  queryTimeSec:
+                    type: number
+                    description: How long it took to perform the query
+                  results:
+                    type: object
+                    description: Results of the enrichment analysis
+                    properties:
+                      uuid:
+                        type: string
+                      p-up:
+                        type: number
+                        x-nullable: true
+                      p-up-bonferroni:
+                        type: number
+                        x-nullable: true
+                      fdr-up:
+                        type: number
+                        x-nullable: true
+                      p-down:
+                        type: number
+                        x-nullable: true
+                      p-down-bonferroni:
+                        type: number
+                        x-nullable: true
+                      fdr-down:
+                        type: number
+                        x-nullable: true
+                      z-up:
+                        type: number
+                        x-nullable: true
+                      z-down:
+                        type: number
+                        x-nullable: true
+                      z-sum:
+                        type: number
+                        x-nullable: true
+                      logp-fisher:
+                        type: number
+                        x-nullable: true
+                      logp-avg:
+                        type: number
+                        x-nullable: true
+                      direction-up:
+                        type: number
+                      direction-down:
+                        type: number
+                    required:
+                      - uuid
+                      - p-up
+                      - p-up-bonferroni
+                      - fdr-up
+                      - p-down
+                      - p-down-bonferroni
+                      - fdr-down
+                      - z-up
+                      - z-down
+                      - logp-fisher
+                      - logp-avg
+                      - direction-up
+                      - direction-down
+                required:
+                  - results
+  /enrich/rankset:
+    post:
+      description: Perform enrichment for full weighted signature to gene-set library
+      summary: Perform enrichment for full weighted signature to gene-set library
+      operationId: enrich.rankset
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                database:
+                  type: string
+                  description: The database to search against
+                entity_ids:
+                  type: array
+                  description: Entity UUIDs of the signature
+                  items:
+                    type: string
+                entity_values:
+                  type: array
+                  description: Weights of entities, in the same order as entity_ids. This can be ranks (smallest rank is highest value) or differential gene expression scores (values < 0 entity is down-regulated, values > 0 entity is up-regulated).
+                  items:
+                    type: number
+                offset:
+                  type: number
+                  description: Skip `offset` number of results (sorted by significance)
+                limit:
+                  type: number
+                  description: Produce `limit` number of results (sorted by significance)
+              required:
+                - database
+                - entity_ids
+                - entity_values
+        description: Signature search query
+        required: true
+      responses:
+        '200':
+          description: The analysis results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signatures:
+                    type: array
+                    description: Signatures used for enrichment analysis
+                    items:
+                      type: string
+                  queryTimeSec:
+                    type: number
+                    description: How long it took to perform the query
+                  results:
+                    type: object
+                    description: Results of the enrichment analysis
+                    properties:
+                      uuid:
+                        type: string
+                      p-value:
+                        type: number
+                        x-nullable: true
+                      p-value-bonferroni:
+                        type: number
+                        x-nullable: true
+                      fdr:
+                        type: number
+                        x-nullable: true
+                      zscore:
+                        type: number
+                        x-nullable: true
+                      direction:
+                        type: number
+                    required:
+                      - uuid
+                      - p-value
+                      - p-value-bonferroni
+                      - fdr
+                      - zscore
+                      - direction
+                required:
+                  - results
+  /fetch/set:
+    post:
+      description: Obtain the actual set data of signature(s)
+      summary: Obtain the actual set data of signature(s)
+      operationId: fetch.set
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/fetch.setBody'
+      responses:
+        '200':
+          description: The signature data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  signatures:
+                    type: array
+                    description: Signatures used for enrichment analysis
+                    items:
+                      type: object
+                      properties:
+                        uid:
+                          type: string
+                        entities:
+                          type: array
+                          items:
+                            type: string
+                required:
+                  - uid
+                  - entities
+  /fetch/rank:
+    post:
+      description: Obtain the actual rank data of signature(s)
+      summary: Obtain the actual rank data of signature(s)
+      operationId: fetch.rank
+      security: []
+      requestBody:
+        $ref: '#/components/requestBodies/fetch.setBody'
+      responses:
+        '200':
+          description: The signature data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  entities:
+                    type: array
+                    description: The entities that are being ranked
+                    items:
+                      type: string
+                  signatures:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        uid:
+                          type: string
+                          description: ID of the entity
+                        maxrank:
+                          type: number
+                          description: The largest rank value
+                        ranks:
+                          type: array
+                          description: The first element would correspond to the first entity, the value corresponds to the rank
+                          items:
+                            type: number
+                      required:
+                        - uid
+                        - maxrank
+                        - ranks
+                required:
+                  - entities
+                  - signatures
+  /reloadrepositories:
+    get:
+      description: Clear the currently loaded API data
+      summary: Clear the currently loaded API data
+      operationId: reload
+      security:
+        - TokenAuth: []
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Permission Denied
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+  /load:
+    post:
+      description: Load data into the API
+      summary: Load data into the API
+      operationId: load
+      security:
+        - TokenAuth: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bucket:
+                  type: string
+                  description: The s3 bucket containing the file
+                file:
+                  type: string
+                  description: The file in the s3 bucket
+                datasetname:
+                  type: string
+                  description: The name to assign the file for use in the API
+                force:
+                  type: boolean
+                  description: Force re-download of file if cached
+              required:
+                - bucket
+                - file
+                - datasetname
+        required: true
+      responses:
+        '200':
+          description: Success
+        '403':
+          description: Permission Denied
+          content:
+            '*/*':
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string 
+components:
+  requestBodies:
+    fetch.setBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              database:
+                type: string
+                description: The database the signature is in
+              entities:
+                type: array
+                description: Entities to filter by ([] for no filter)
+                items:
+                  type: string
+              signatures:
+                type: array
+                description: Signature IDs to fetch
+                items:
+                  type: string
+            required:
+              - database
+              - entities
+              - signatures
+      required: true
+  securitySchemes:
+    TokenAuth:
+      type: apiKey
+      description: '`Token API_TOKEN`'
+      in: header
+      name: Authorization
+servers:
+  - url: https://maayanlab.cloud/data-api/api/v1
+x-externalResources:
+  - x-url: https://maayanlab.cloud/sigcom-lincs/data-api/swagger.yml
+    x-type: api documentation
+  - x-url: https://maayanlab.cloud/sigcom-lincs/#/
+    x-type: website

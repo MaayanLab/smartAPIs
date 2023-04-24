@@ -1,0 +1,435 @@
+openapi: 3.0.3
+
+info:
+  version: 2.0.0
+  title: Charon
+  description: | 
+    Charon is an API that allows users to upload files to Amazon S3 
+    without an Amazon account. Alignment jobs may then be performed
+    in the cloud using the Elysium API. 
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/archs4/help.html
+  
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+
+servers:
+- url: https://maayanlab.cloud/charon
+
+paths: 
+  /sign_auth:
+    get: 
+      summary: Returns a signature for the request
+      description: Returns a signature for the authentication request
+      operationId: sign_auth
+      parameters:
+      - name: to_sign
+        description: Contains information about request
+        in: query
+        required: true
+        schema: 
+          type: string
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            text/plain:
+              schema: 
+                type: string
+        '400':
+          description: Bad request
+        default: 
+          description: Unexpected error
+  /version: 
+    get:
+      summary: Returns the current version
+      description: Returns the version number and date of last build
+      operationId: version
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  version: 
+                    type: string
+                  last_build:
+                    type: string
+                example:
+                  version: '1'
+                  last_build: '2018-06-29'
+        default:
+          description: Unexpected error
+  /files: 
+    get: 
+      summary: Returns a list of your uploaded files
+      description: Returns a list of files uploaded by the authenticated user
+      operationId: files
+      parameters: 
+      - name: username
+        description: Login username
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: password
+        description: User password
+        in: query
+        required: true
+        schema: 
+          type: string
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                oneOf:
+                - type: object
+                  properties:
+                    action: 
+                      type: string
+                    status: 
+                      type: string
+                    task: 
+                      type: string
+                    filenames:
+                      type: array
+                      items: 
+                        type: string
+                    filesize: 
+                      type: array
+                      items: 
+                        type: string
+                - $ref: '#/components/schemas/generalresponse'
+              examples:
+                success: 
+                  value: 
+                    action: list files
+                    status: success
+                    task: maayanlab2018
+                    filesize: 
+                    - 361.0B
+                    filenames:
+                    - example_file.rtf
+                failure:
+                  value: 
+                    action: list files
+                    status: error
+                    task: maayanlab2018
+                    message: credentials not matching
+        default:
+          description: Successful response
+  /delete: 
+    get: 
+      summary: Delete a file from your account
+      description: Delete a file from the authenticated user account
+      operationId: delete
+      parameters:
+      - name: username
+        description: Login username
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: password
+        description: User password
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: file
+        description: Name of file to be deleted
+        in: query
+        required: true
+        schema: 
+          type: string
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json:
+              schema: 
+                oneOf:
+                - $ref: '#/components/schemas/generalresponse'
+                - type: object
+                  properties: 
+                    action: 
+                      type: string
+                    task: 
+                      type: string
+                    status: 
+                      type: string
+                    filename: 
+                      type: string
+              examples:
+                success:
+                  value:
+                    action: list files
+                    task: maayanlab2018
+                    status: success
+                    filename: example_file.rtf
+                failure:
+                  value:
+                    action: delete file
+                    task: maayanlab2018
+                    status: error
+                    message: credentials not working
+        default:
+          description: Unexpected error
+  /createuser: 
+    get: 
+      summary: Create a new user account
+      description: Create a new user account using the input information
+      operationId: createuser
+      parameters:
+      - name: username
+        description: New ussername
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: password
+        description: New password
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: firstname 
+        description: User first name
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: lastname
+        description: User last name
+        in: query 
+        required: true
+        schema: 
+          type: string
+      - name: email
+        description: User email
+        in: query 
+        required: true
+        schema: 
+          type: string
+      - name: invitationKey
+        description: Key needed to create an account
+        in: query
+        required: true
+        schema: 
+          type: string
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/generalresponse'
+              examples:
+                success:
+                  value:
+                    status: success
+                    action: create user
+                    task: maayanlab2018
+                    message: 1329449fed0aa7969400c3a485a80196
+                nokey:
+                  value: 
+                    status: error
+                    action: create user
+                    task: maayanlab2018
+                    message: invitation key needed
+                usernametaken:
+                  value: 
+                    status: error
+                    action: create user
+                    task: maayanlab2018
+                    message: username already taken
+        default:
+          description: Unexpected error
+  /signpolicy: 
+    post: 
+      summary: Returns policy required for making POST requests
+      description: | 
+        Return a policy required for making POST requests from a user account
+      operationId: signpolicy_post
+      requestBody:
+        required: true
+        content: 
+          multipart/form-data:
+            schema: 
+              type: object
+              required: [username, password]
+              properties: 
+                username:  
+                  description: Username
+                  type: string
+                password: 
+                  description: Password
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/signpolicyresponse'
+              examples:
+                success:
+                  value:
+                    status: success
+                    username: maayanlab2018
+                    uid: uid
+                    policy: policy
+                    cid: cid
+                    action: generate policy
+                    signature: sig
+                    bucket: biodos
+                    expiration: '2018-07-02T18:53:42Z'
+                failure:
+                  value: 
+                    action: create policy
+                    task: maayanlab2018
+                    status: error
+                    message: user not validated
+        default:
+          description: Unexpected error
+    get:
+      summary: Returns policy required for making POST requests
+      description: | 
+        Return a policy required for making POST requests from a user account
+      operationId: signpolicy_get
+      parameters:
+      - name: username
+        description: Username
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: password
+        description: Password
+        in: query
+        required: true
+        schema: 
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: 
+              schema:
+                $ref: '#/components/schemas/signpolicyresponse'
+              examples:
+                success:
+                  value:
+                    status: success
+                    username: maayanlab2018
+                    uid: uid
+                    policy: policy
+                    cid: cid
+                    action: generate policy
+                    signature: sig
+                    bucket: biodos
+                    expiration: '2018-07-02T18:53:42Z'
+                failure:
+                  value: 
+                    action: create policy
+                    task: maayanlab2018
+                    status: error
+                    message: user not validated
+        default:
+          description: Unexpected error
+  /login: 
+    get: 
+      summary: Log into your account
+      description: Log into an existing user account
+      operationId: login
+      parameters: 
+      - name: username
+        description: Username
+        in: query
+        required: true
+        schema: 
+          type: string
+      - name: password
+        description: Password
+        in: query
+        required: true
+        schema: 
+          type: string
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/generalresponse'
+              examples:
+                success:
+                  value:
+                    action: login
+                    status: success
+                    message: 1329449fed0aa79694003a485a80196
+                    task: maayanlab2018
+                failure:
+                  value: 
+                    action: login
+                    status: failed
+                    message: login failed
+                    task: maayanlab2018
+  
+components:
+  schemas:
+    generalresponse:
+      type: object
+      properties:
+        action: 
+          type: string
+        task:
+          type: string
+        status: 
+          type: string
+        message: 
+          type: string
+    signpolicyresponse:
+      oneOf:
+      - $ref: '#/components/schemas/generalresponse'
+      - type: object
+        properties:
+          status: 
+            type: string
+          username: 
+            type: string
+          uid: 
+            type: string
+          policy: 
+            type: string
+          cid: 
+            type: string
+          action: 
+            type: string
+          signature: 
+            type: string
+          bucket: 
+            type: string
+          expiration: 
+            type: string
+ 
+x-externalResources:
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/charon_smartapi.yml
+  x-type: api documentation
+- x-url: https://www.nature.com/articles/s41467-018-03751-6
+  x-type: publication
+  x-description: Massive mining of publicly available RNA-seq data from human and mouse
+  

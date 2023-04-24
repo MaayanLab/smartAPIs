@@ -1,0 +1,311 @@
+openapi: 3.0.3
+
+info:
+  version: 2.0.0
+  title: L1000CDS²
+  description: | 
+    L1000CDS² is a LINCS L1000 characteristic direction signature search engine.
+    It enables users to find consensus L1000 small molecule signatures that
+    match user input signatures. The underlying dataset for the search engine is
+    a portion of the LINCS L1000 small molecule expression profiles generated at
+    the Broad Institute by the Connectivity Map team. Depending on the user's 
+    input, L1000CDS² uses either a gene-set method or cosine distance method to 
+    compare the input signatures and perform the search. 
+  contact: 
+    name: Ma'ayan Lab
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    email: avi.maayan@mssm.edu
+    x-role: responsible organization
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  termsOfService: https://maayanlab.cloud/L1000CDS2/help/
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+    
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+    
+servers:
+- url: https://maayanlab.cloud/L1000CDS2
+    
+paths: 
+  /query: 
+    post: 
+      summary: Search L1000 small molecule signatures
+      description: | 
+        Query a set of up and down genes against all L1000 small molecule 
+        signatures in the database
+      operationId: query
+      requestBody: 
+        content: 
+          application/json: 
+            schema: 
+              type: object
+              properties: 
+                data:
+                  oneOf:
+                  - type: object
+                    properties: 
+                      upGenes: 
+                        type: array
+                        items: 
+                          type: string
+                      dnGenes:
+                        type: array
+                        items: 
+                          type: string
+                  - type: object
+                    properties: 
+                      genes: 
+                        type: array
+                        items: 
+                          type: string
+                      vals: 
+                        type: array
+                        items: 
+                          type: number
+                config: 
+                  type: object
+                  properties: 
+                    aggravate: 
+                      type: boolean
+                    searchMethod:
+                      type: string
+                      enum: 
+                      - geneSet
+                      - CD
+                    share:
+                      type: boolean
+                    combination:
+                      type: boolean
+                    db-version:
+                      type: string
+                      enum:
+                      - latest
+                      - cpcd-gse70138-v1.0
+                      - cpcd-v1.0
+                metadata:
+                  type: array
+                  items: 
+                    type: object
+                    properties: 
+                      key: 
+                        type: string
+                      value: 
+                        type: string
+              example: 
+                data:
+                  upGenes:
+                  - KDM5A
+                  - EGR1
+                  - RELB
+                  dnGenes:
+                  - USP22
+                  - PHGDH
+                  - HADH
+                config:
+                  aggravate: true
+                  searchMethod: geneSet
+                  share: true
+                  combination: true
+                  db-version: latest
+                metadata:
+                  - key: tag
+                    value: example geneSet search
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                oneOf:
+                - type: object
+                  properties:
+                    shareId: 
+                      type: string
+                    combinations:
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          X1: 
+                            type: string
+                          X2: 
+                            type: string
+                          value: 
+                            type: number
+                    topMeta:
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          score: 
+                            type: number
+                            format: double
+                          cell_id: 
+                            type: string
+                          pert_desc:
+                            type: string
+                          pert_id:
+                            type: string
+                          pubchem_id:
+                            type: string
+                          DEGcount:
+                            type: integer
+                          pert_time: 
+                            type: string
+                          pert_time_unit: 
+                            type: string
+                          pert_dose: 
+                            type: string
+                          pert_dose_unit: 
+                            type: string
+                          sig_id:
+                            type: string
+                          overlap: 
+                            type: object 
+                            properties: 
+                              up/dn: 
+                                type: array
+                                items: 
+                                  type: string
+                              dn/up: 
+                                type: array
+                                items:
+                                  type: string
+                              up/up:
+                                type: array
+                                items: 
+                                  type: string
+                              dn/dn:
+                                type: array
+                                items:
+                                  type: string
+                - type: object
+                  properties: 
+                    shareId: 
+                      type: string
+                    uniqInput: 
+                      type: object
+                      properties: 
+                        up: 
+                          type: object
+                          properties: 
+                            genes: 
+                              type: array
+                              items:
+                                type: string
+                            vals:
+                              type: array
+                              items: 
+                                type: number
+                        dn:
+                          type: object
+                          properties: 
+                            genes:
+                              type: array
+                              items: 
+                                type: string
+                            vals: 
+                              type: array
+                              items: 
+                                type: number
+                    combinations: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          X1: 
+                            type: string
+                          X2: 
+                            type: string
+                          value: 
+                            type: number
+                    topMeta: 
+                      type: array
+                      items: 
+                        type: object
+                        properties: 
+                          score: 
+                            type: number
+                            format: double
+                          cell_id: 
+                            type: string
+                          pert_desc:
+                            type: string
+                          pert_id:
+                            type: string
+                          pubchem_id:
+                            type: string
+                          DEGcount:
+                            type: integer
+                          pert_time: 
+                            type: string
+                          pert_time_unit: 
+                            type: string
+                          pert_dose: 
+                            type: string
+                          pert_dose_unit: 
+                            type: string
+                          sig_id:
+                            type: string
+                          overlap: 
+                            type: object
+                            properties:
+                              up: 
+                                type: array
+                                items:
+                                  type: number
+                              dn:
+                                type: array
+                                items: 
+                                  type: number
+                example: 
+                  shareId: 5b3258c78dcbbe0700f24237
+                  combinations: 
+                  - X1: CPC002_HA1E_24H:BRD-A71459254:10.0
+                    X2: CPC004_HA1E_24H:BRD-A68930007:10.0
+                    value: 0.8333
+                  topMeta:
+                  - score: 0.8333
+                    cell_id: HA1E
+                    pert_desc: CYMARIN
+                    pert_id: BRD-A71459254
+                    pubchem_id: '6708764'
+                    DEGcount: 397
+                    pert_time: '24.0'
+                    pert_time_unit: h
+                    pert_dose: '10.0'
+                    pert_dose_unit: um
+                    sig_id: CPC002_HA1E_24H:BRD-A71459254:10.0
+                    overlap: 
+                      up/dn: 
+                      - EGR1
+                      - RELB
+                      dn/up: 
+                      - PHGDH
+                      up/up: 
+                      - AKT1
+                      - KL
+                      - RELB
+                      dn/dn: 
+                      - HADH
+                      - ACE2
+        '400': 
+          description: Bad request
+        '404': 
+          description: Page not found
+        '500': 
+          description: Unexpected error
+
+x-externalResources: 
+- x-url: https://maayanlab.cloud/L1000CDS2/help/#api
+  x-type: api documentation
+  x-description: Original API
+- x-url: https://raw.githubusercontent.com/MaayanLab/smartAPIs/master/l1000cds2_smartapi.yml
+  x-type: api documentation
+  x-description: SmartAPI
+- x-url: https://www.nature.com/articles/npjsba201615
+  x-type: publication
+  x-description: 'L1000CDS²: LINCS L1000 characteristic direction signatures search engine'

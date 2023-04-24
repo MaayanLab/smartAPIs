@@ -1,0 +1,61 @@
+openapi: 3.0.1
+
+info:
+  version: 1.0.0
+  title: Clustergrammer
+  description: | 
+    Clustergrammer is a web-based tool for visualizing and analyzing 
+    high-dimensional data as interactive and shareable hierarchically clustered 
+    heatmaps. 
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    url: http://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: http://labs.icahn.mssm.edu/maayanlab/
+  termsOfService: http://clustergrammer.readthedocs.io/license.html
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+    
+tags: 
+- name: Maayanlab
+- name: NIHdatacommons
+
+servers:
+- url: http://amp.pharm.mssm.edu/clustergrammer
+
+paths:
+  /matrix_upload: 
+    post: 
+      summary: Generate visualization of a tab-separated .txt/.tsv matrix file
+      requestBody: 
+        content: 
+          multipart/form-data:
+            schema: 
+              type: object
+              properties: 
+                file: 
+                  type: string
+                  format: binary
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/octet-stream:
+              schema: 
+                type: string
+                example: http://amp.pharm.mssm.edu/clustergrammer/viz/5b3f8df9b119f01c5a848e44/small_38x29_clustergrammer_matrix.txt
+        default: 
+          description: Unexpected error
+
+x-externalResources: 
+- x-url: https://clustergrammer.readthedocs.io/clustergrammer_web.html
+  x-type: api documentation
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/clustergrammer_smartapi.yml
+  x-type: api documentation
+- x-url: https://www.nature.com/articles/sdata2017151
+  x-type: publication
+  x-description: | 
+    Clustergrammer, a web-based heatmap visualization and analysis tool for 
+    high-dimensional biological data

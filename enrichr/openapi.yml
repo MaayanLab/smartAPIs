@@ -1,0 +1,476 @@
+openapi: 3.0.3
+
+info:
+  title: Enrichr
+  version: 2.0.0
+  description: | 
+    Enrichr is a web-based tool for enrichment analysis, providing users with
+    interactive displays and visual summaries of collective functions of gene
+    lists.
+  contact:
+    email: avi.maayan@mssm.edu
+    name: Ma'ayan Lab
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+    x-role: responsible organization
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/Enrichr/help#terms
+
+servers:
+- url: https://maayanlab.cloud/Enrichr
+
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+
+paths:
+  /addList:
+    post:
+      summary: Submit a gene list for analysis
+      description: Submit a newline-delineated gene list for analysis
+      operationId: addList
+      requestBody:
+        required: true
+        content: 
+          multipart/form-data:
+            schema:
+              type: object
+              required: [list, description]
+              properties:
+                list:
+                  type: string
+                description: 
+                  type: string
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties:
+                  shortId:
+                    type: string
+                    example: 591h
+                  userListId:
+                    type: integer
+                    example: 363320  
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /view:
+    get:
+      summary: Returns a specific gene list
+      description: Returns the gene list corresponding to the input userListId
+      operationId: view
+      parameters: 
+      - name: userListId
+        description: Unique ID for a specific gene list
+        in: query
+        required: true
+        schema: 
+          type: integer
+        example: 56536742
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  description: 
+                    type: string
+                    example: Example gene list
+                  genelist: 
+                    type: array
+                    items:
+                      type: string
+                    example: 
+                    - PHF14
+                    - RBM3
+                    - MSL1
+                    - PHF21A
+                    - ARL10
+                    - INSR
+                    - JADE2
+  /enrich: 
+    get: 
+      summary: Returns enrichment analysis results for a specific gene list
+      description: | 
+        Returns the ranked terms from the input backgroundType library when 
+        enrichment analysis is computed using the list corresponding to the 
+        input userListId
+      operationId: enrich
+      parameters: 
+      - name: userListId
+        description: Unique ID for a specific gene list
+        in: query
+        required: true
+        schema: 
+          type: integer
+        example: 56536742
+      - name: backgroundType
+        description: Gene set library for which to download results
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: KEGG_2015
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  type: array
+                  items: 
+                    anyOf:
+                    - type: number
+                    - type: integer
+                    - type: array
+                      items: 
+                        type: string
+                    - type: string
+  /genemap: 
+    get:
+      summary: Returns enrichment terms that contain a given gene
+      description: | 
+        Returns all terms whose gene sets contain the input gene in either
+        json or plain-text form, with optional detailed library information
+        included
+      operationId: genemap
+      parameters:
+      - name: gene
+        description: Gene to use in search for terms
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: AKT1
+      - name: json
+        description: Set true to return JSON rather than plaintext
+        in: query
+        schema: 
+          type: boolean
+        example: true
+      - name: setup
+        description: Set true to return category information for the libraries
+        in: query
+        schema: 
+          type: boolean
+        example: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json: 
+              schema: 
+                type: object
+                properties:
+                  categories:
+                    $ref: '#/components/schemas/categories'
+                  descriptions:
+                    $ref: '#/components/schemas/descriptions'
+                  gene:
+                    $ref: '#/components/schemas/gene'
+  /export:
+    get: 
+      summary: Download enrichment analysis results for a specific gene list
+      description: | 
+        Exports the enrichment analysis results for the gene list corresponding 
+        to the input userListId when compared to the input backgroundType as
+        a tab-delimited text file
+      operationId: export
+      parameters:
+      - name: userListId
+        description: Unique ID for a specific gene list
+        in: query
+        required: true
+        schema: 
+          type: integer
+        example: 56536742
+      - name: backgroundType
+        description: Gene set library for which to download results
+        in: query
+        required: true
+        schema: 
+          type: string
+        example: KEGG_2015
+      - name: filename
+        description: Name of text file download
+        in: query
+        required: true
+        schema:
+          type: string
+        example: example_enrichment
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/text:
+              schema:
+                format: binary
+                type: string
+  /count: 
+    get:
+      summary: Returns counts for lists, terms, and libraries
+      description: | 
+        Returns total number of lists analyzed, number of terms, and number of
+        libraries
+      operationId: count
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: string
+  /datasetStatistics:
+    get:
+      summary: Returns statistic information on all gene libraries
+      description: |
+        Returns detailed statistics for all gene libraries, including
+        number of terms, number of genes, genes per term, etc.
+      operationId: datasetStatistics
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties: 
+                  statistics:
+                    type: array
+                    items: 
+                      $ref: '#/components/schemas/statisticobject'
+  /json/libraries.json:
+    get: 
+      summary: Returns descriptive information on all gene libraries in JSON
+      description: Returns information on all gene libraries in JSON format
+      operationId: libraries_json
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json: 
+              schema: 
+                type: object
+                additionalProperties: {}
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /geneSetLibrary:
+    get:
+      summary: Returns information on specific gene sets in a library
+      description: | 
+        Returns information on an entire gene set library or specific gene sets
+        specified by name in either JSON or plain text format
+      operationId: geneSetLibrary
+      parameters:
+      - name: libraryName
+        in: query
+        required: true
+        description: Geneset library to obtain
+        schema:
+          type: string
+        example: Data_Acquisition_Method_Most_Popular_Genes
+      - name: term
+        in: query
+        description: Select geneset(s) in the geneset library by `;` delimited exact-matching term name(s)
+        schema:
+          type: string
+        example: ChIP-seq
+      - name: mode
+        in: query
+        required: true
+        description: The output mode
+        schema:
+          type: string
+          enum:
+            - json
+            - text
+        example: json
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json: 
+              schema:
+                oneOf:
+                - type: object
+                  description: When term is not specified, object with library name mapped to library information
+                  additionalProperties:
+                    type: object
+                    properties:
+                      libraryName:
+                        type: string
+                      isFuzzy:
+                        type: boolean
+                        description: Fuzzy or crisp geneset
+                      format:
+                        type: string
+                      category:
+                        type: string
+                      terms:
+                        type: object
+                        description: Terms mapped to genes mapped to their weight
+                        properties:
+                          additionalProperties:
+                            type: object
+                            properties:
+                              additionalProperties:
+                                type: number
+                    items:
+                      type: object
+                      properties:
+                        additionalProperties:
+                          type: number
+                - type: object
+                  description: When term is specified, object with library name mapped to terms mapped to genesets
+                  additionalProperties:
+                    type: object
+                    additionalProperties:
+                      description: Terms mapped to genes mapped to their weight
+                      type: object
+                      additionalProperties:
+                        type: object
+                        properties:
+                          additionalProperties:
+                            type: number
+                    items:
+                      type: object
+                      properties:
+                        additionalProperties:
+                          type: number
+            text/plain: 
+              schema: 
+                type: string
+                description: GMT formatted file
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+  /termmap:
+    get:
+      summary: Endpoint for searching all libraries for terms
+      description: | 
+        Returns all gene sets across all libraries for terms matching the input 
+        query term
+      operationId: termmap
+      parameters:
+        - name: meta
+          in: query
+          description: Filter all terms in enrichr by this match clause
+          required: true
+          schema:
+            type: string
+          example: Cancer
+      responses:
+        '200': 
+          description: Library mapped to set of matched terms in that library
+          content:
+            application/json:
+              schema: 
+                type: object
+                additionalProperties:
+                  type: array
+                  items:
+                    type: string
+        '400':
+          $ref: '#/components/responses/400'
+        '404': 
+          $ref: '#/components/responses/404'
+        '5XX':
+          $ref: '#/components/responses/5XX'
+
+components:
+  responses:
+    '400':
+      description: Bad request
+    '404': 
+      description: Page not found
+    '5XX':
+      description: Unexpected error
+  schemas:
+    library:
+      type: object
+      properties:
+        name: 
+          type: string
+          example: ChEA_2015
+        format:
+          type: string
+          example: '{1} binds to the promoter region of {0}'
+        hasGrid:
+          type: boolean
+          example: true
+        isFuzzy: 
+          type: boolean
+          example: true
+    categories:
+      type: array
+      items: 
+        type: object
+        properties: 
+          name: 
+            type: string
+            example: Transcription
+          libraries:
+            type: array
+            items: 
+              $ref: '#/components/schemas/library'
+    descriptions:
+      type: array
+      items:
+        type: object
+        properties:
+          name: 
+            type: string
+            example: GeneSigDB
+          description: 
+            type: string
+            example: | 
+              The GeneSigDB gene-set library was borrowed from the GeneSigDB
+              database. 
+    gene:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+      example: 
+        GeneSigDB:
+        - 18535662-TableS2b
+        - 17671232-TableS2a
+    statisticobject:
+      type: object
+      properties:
+        geneCoverage:
+          type: integer
+          example: 13362
+        genesPerTerm:
+          type: number
+          example: 275.0
+        libraryName:
+          type: string
+          example: Genome_Browser_PWMs
+        link:
+          type: string
+          example: https://hgdownload.cse.ucsc.edu/goldenPath/hg18/database/
+        numTerms:
+          type: integer
+          example: 615

@@ -1,0 +1,222 @@
+openapi: 3.1.0
+info:
+  title: Speedrichr
+  version: 1.0.0
+  description: | 
+    Speedrichr is a faster API for enrichment analysis.
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+servers:
+  - url: https://maayanlab.cloud/speedrichr
+paths:
+  /api/datasetStatistics:
+    get:
+      operationId: datasetStatistics
+      responses:
+        '200':
+          description: Current dataset statistics
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  statistics:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        numTerms:
+                          type: number
+                        geneCoverage:
+                          type: number
+                        genesPerTerm:
+                          type: number
+                        libraryName:
+                          type: string
+                        link:
+                          type: string
+                        appyter:
+                          type: string
+                        categoryId:
+                          description: Index of category in categories array
+                          type: number
+                  categories:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        categoryId:
+                          type: number
+                        name:
+                          type: string
+  /api/addList:
+    post:
+      operationId: addList
+      requestBody:
+        description: Upload geneset for enrichment
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                list:
+                  description: Newline separated geneset
+                  type: string
+                  example: 'PHF14\nRBM3\nHSPA1L\nCUL2\nPLBD2\nLARP7\nTECPR2\nZNF302\nCUX1\nMOB2\nCYTH2\nSEC22C\nEIF4E3\nROBO2\nADAMTS9-AS2\nCXXC1\nLINC01314\nATF7'
+                description:
+                  description: A description for this geneset
+                  type: string
+                  example: 'Example gene list'
+              required:
+                - list
+                - description
+      responses:
+        '200':
+          description: Temporary user list record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  userListId:
+                    type: number
+                  shortId:
+                    type: string
+  /api/enrich:
+    get:
+      operationId: enrich
+      summary: Enrich submitted geneset against an Enrichr library
+      parameters:
+        - name: userListId
+          in: query
+          description: The submitted userlist
+          schema:
+            type: number
+          required: true
+        - name: backgroundType
+          in: query
+          description: The Enrichr geneset library
+          schema:
+            type: string
+            example: 'TRANSFAC_and_JASPAR_PWMs'
+          required: true
+      responses:
+        '200':
+          description: Enrichment results
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  prefixItems:
+                    - description: rank
+                      type: number
+                    - description: term
+                      type: string
+                    - description: pvalue
+                      type: number
+                    - description: oddsratio
+                      type: number
+                    - description: combined score
+                      type: number
+                    - description: overlap
+                      type: array
+                      items:
+                        type: string
+                    - description: adj pvalue
+                      type: number
+                    - description: legacy
+                      type: number
+                    - description: legacy
+                      type: number
+  /api/addbackground:
+    post:
+      operationId: addbackground
+      requestBody:
+        description: Upload geneset as an enrichment background
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                background:
+                  description: Newline separated background geneset
+                  type: string
+                  example: 'PHF14\nRBM3\nHSPA1L\nCUL2\nPLBD2\nLARP7\nTECPR2\nZNF302\nCUX1\nMOB2\nCYTH2\nSEC22C\nEIF4E3\nROBO2\nADAMTS9-AS2\nCXXC1\nLINC01314\nATF7'
+              required:
+                - background
+      responses:
+        '200':
+          description: Temporary user list record
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  backgroundid:
+                    description: A temporary user background record
+                    type: string
+  /api/backgroundenrich:
+    get:
+      operationId: backgroundenrich
+      summary: Enrich submitted geneset against an Enrichr library with a background
+      parameters:
+        - name: userListId
+          in: query
+          description: The submitted userlist id
+          schema:
+            type: number
+          required: true
+        - name: backgroundid
+          in: query
+          description: The submitted background id
+          schema:
+            type: string
+          required: true
+        - name: backgroundType
+          in: query
+          description: The Enrichr geneset library
+          schema:
+            type: string
+            example: 'TRANSFAC_and_JASPAR_PWMs'
+          required: true
+      responses:
+        '200':
+          description: Enrichment results
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: array
+                  prefixItems:
+                    - description: rank
+                      type: number
+                    - description: term
+                      type: string
+                    - description: pvalue
+                      type: number
+                    - description: oddsratio
+                      type: number
+                    - description: combined score
+                      type: number
+                    - description: overlap
+                      type: array
+                      items:
+                        type: string
+                    - description: adj pvalue
+                      type: number
+                    - description: legacy
+                      type: number
+                    - description: legacy
+                      type: number

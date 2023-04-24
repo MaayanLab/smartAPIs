@@ -1,0 +1,237 @@
+openapi: 3.0.3
+
+info:
+  version: 2.0.0
+  title: L1000FWD
+  description: | 
+    L1000 fireworks display (L1000FWD) is a web application that provides 
+    interactive visualization of over 16000 drug and small-molecule induced gene 
+    expression signatures. 
+  contact:
+    name: Ma'ayan Lab
+    email: avi.maayan@mssm.edu
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-role: responsible organization
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+  termsOfService: https://maayanlab.cloud/l1000fwd/
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+  
+servers:
+- url: https://maayanlab.cloud/L1000FWD
+  
+paths: 
+  /synonyms/{query_string}:
+    get:
+      summary: Search drugs using names or synonyms
+      description: Search for any drugs that match the input string
+      operationId: synonyms
+      parameters:
+      - name: query_string
+        description: Name or synonym for drug
+        in: path
+        required: true
+        schema:
+          type: string
+        example: Dex
+      responses:
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: array
+                items: 
+                  type: object
+                  properties:
+                    pert_id: 
+                      type: string
+                    Name: 
+                      type: string
+                example:
+                - pert_id: BRD-K07265709
+                  Name: DEXRAZOXANE
+                - pert_id: BRD-A93424738
+                  Name: DEXAMETHASONE-ACETATE
+  /sig/{sig_id}:
+    get:
+      summary: Get a single signature by ID
+      description: | 
+        Returns the full L1000 signature corresponding to the input L1000 
+        sig_id identifier
+      operationId: sig
+      parameters:
+      - name: sig_id
+        description: Signature ID
+        in: path
+        required: true
+        schema:
+          type: string
+        example: CPC006_HA1E_24H:BRD-A70155556-001-04-4:40
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  pert_time:
+                    type: integer
+                  cell_id:
+                    type: string
+                  mean_cosine_dist_centered_by_batch:
+                    type: number
+                  up_genes:
+                    type: array
+                    items: 
+                      type: string
+                  batch:
+                    type: string
+                  pvalue: 
+                    type: number
+                    format: float
+                  pert_dose:
+                    type: number
+                    format: float
+                  combined_genes:
+                    type: array
+                    items:
+                      type: string
+                  pert_id:
+                    type: string
+                  sig_id:
+                    type: string
+                  distil_id: 
+                    type: array
+                    items: 
+                      type: string
+                  down_genes:
+                    type: array
+                    items: 
+                      type: string
+                  pert_desc:
+                    type: string
+                example:
+                  pert_time: 24
+                  cell_id: HA1E
+                  mean_cosine_distance_centered_by_batch: 0.7235488042208277
+                  up_genes: 
+                  - CD74
+                  - TIIMP4
+                  batch: CPC006_HA1E_24H
+                  pvalue: 0.0
+                  pert_dose: 40.0
+                  combined_genes:
+                  - HSPA2
+                  - ADD3
+                  pert_id: BRD-A70155556
+                  sig_id: 'CPC006_HA1E_24H:BRD-A70155556-001-04-4:40'
+                  distil_id: 
+                  - 'CPC006_HA1E_24H_X1.A2_B4_DUO52HI53LO:D24'
+                  - 'CPC006_HA1E_24H_X1.A2_F1B3_DUO52HI53LO:D24'
+                  down_genes:
+                  - SFTPD
+                  - HSPA2
+                  pert_desc: NP-001236
+  /sig_search: 
+    post: 
+      summary: Query the L1000 signatures using up/down gene sets
+      description: | 
+        Submit lists of up and down genes to get an ID representing the top 
+        L1000 signatures that match the input up/down gene query
+      operationId: sig_search
+      requestBody:
+        required: true
+        content: 
+          application/json: 
+            schema: 
+              type: object
+              required: [up_genes, down_genes]
+              properties:
+                up_genes:
+                  description: An array of strings of gene symbols
+                  type: array
+                  items: 
+                    type: string
+                down_genes:
+                  description: An array of strings of gene symbols
+                  type: array
+                  items: 
+                    type: string
+      responses: 
+        '200': 
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties:
+                  result_id:
+                    type: string
+                example:
+                  result_id: 5b33da1c69834f0016fda98b
+  /result/topn/{result_id}:
+    get:
+      summary: Retrieve the top 50 results
+      description: Returns the top 50 signatures matching the query ID 
+      operationId: result
+      parameters:
+      - name: result_id
+        description: ID returned from sig_search method
+        in: path
+        required: true
+        schema: 
+          type: string
+        example: 5a01f822a5d0d538b1b7cb48
+      responses:
+        '200': 
+          description: Successful response
+          content:
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  similar: 
+                    type: array
+                    items: 
+                      type: object
+                      properties:
+                        scores:
+                          type: number
+                        sig_id:
+                          type: string
+                  opposite:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        scores: 
+                          type: number
+                        sig_id:
+                          type: string
+                example:
+                  similar:
+                  - scores: 0.5876
+                    sig_id: 'CPC003_HA1E_24H:BRD-K63606607-001-01-8:10'
+                  - scores: 0.5258
+                    sig_id: 'CPC003_HA1E_24H:BRD-K35708212-331-03-1:10'
+                  opposite:
+                  - scores: -0.1546
+                    sig_id: 'CPC003_HCC515_6H:BRD-A73909368-001-01-5:10'
+                  - scores: -0.1443
+                    sig_id: 'NMH002_NPC_6H:BRD-K81473043-001-07-0:10'
+
+x-externalResources:
+- x-url: https://academic.oup.com/bioinformatics/article/34/12/2150/4840732
+  x-type: publication
+  x-description: 'L1000FWD: fireworks visualization of drug-induced transcriptomic signatures'
+- x-url: https://maayanlab.cloud/L1000FWD/api_page
+  x-type: api documentation
+- x-url: https://github.com/MaayanLab/smartAPIs/blob/master/l1000fwd_smartapi.yml
+  x-type: api documentation
