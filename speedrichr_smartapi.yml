@@ -12,6 +12,7 @@ info:
     x-id: https://labs.icahn.mssm.edu/maayanlab/
   license:
     name: CC-BY-NC-SA-4.0
+    identifier: CC-BY-NC-SA-4.0
     url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
 servers:
   - url: https://maayanlab.cloud/speedrichr
