@@ -7,7 +7,7 @@
     "test": "npm run validate && npm run testapi",
     "testapi": "node bin/test.js *.yml",
     "validate": "node bin/validate.js *.yml",
-    "build": "npm run build:html && ( test -d build/dist || npm run build:swagger-ui )",
+    "build": "npm run build:html && ( test -d build/swagger-ui || npm run build:swagger-ui )",
     "build:html": "mkdir -p build && node bin/generate.js *.yml",
     "build:swagger-ui": "VERSION=5.0.0-alpha.6; mkdir -p build && cd build && curl -LO https://github.com/swagger-api/swagger-ui/archive/refs/tags/v${VERSION}.tar.gz && tar -xzf v${VERSION}.tar.gz --strip-components=1 swagger-ui-${VERSION}/dist/ && rm v${VERSION}.tar.gz && mv dist swagger-ui && cp ../bin/index.html index.html",
     "publish": "gh-pages -d build"
