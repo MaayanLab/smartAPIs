@@ -5,8 +5,8 @@
   "main": "validate.js",
   "scripts": {
     "test": "npm run validate && npm run testapi",
-    "testapi": "node test.js *.yml",
-    "validate": "node validate.js *.yml"
+    "testapi": "node bin/test.js *.yml",
+    "validate": "node bin/validate.js *.yml"
   },
   "repository": {
     "type": "git",
