@@ -1,0 +1,234 @@
+openapi: 3.0.3
+
+info:
+  title: G2N
+  version: 1.0.0
+  description: | 
+    Genes2Networks (G2N) generates a network that connects an enriched input 
+    list of genes/proteins using the shortest path algorithms using known PPI 
+    from select databases.
+  contact:
+    email: avi.maayan@mssm.edu
+    name: Ma'ayan Lab
+    url: https://labs.icahn.mssm.edu/maayanlab/contact/
+    x-id: https://labs.icahn.mssm.edu/maayanlab/
+    x-role: responsible organization
+  license:
+    name: CC-BY-NC-SA-4.0
+    url: https://creativecommons.org/licenses/by-nc-sa/4.0/legalcode
+  termsOfService: https://maayanlab.cloud/G2N/
+  
+servers:
+- url: https://maayanlab.cloud/G2N
+
+tags:
+- name: Maayanlab
+- name: NIHdatacommons
+
+paths:
+  /api:
+    post:
+      summary: Submit a gene list to generate a network
+      description: | 
+        Submit a newline-delineated gene list and select the PPI databases to 
+        use in constructing the network
+      operationId: api
+      requestBody:
+        required: true
+        content: 
+          multipart/form-data:
+            schema:
+              type: object
+              required: 
+                - text-genes
+                - path_length 
+                - min_network_size
+                - min_number_of_articles_supporting_interaction
+                - max_number_of_interactions_per_protein
+                - max_number_of_interactions_per_article
+                - enable_BioGRID
+                - enable_IntAct
+                - enable_MINT
+                - enable_ppid
+                - enable_Stelzl
+              properties:
+                text-genes:
+                  type: string
+                  example: | 
+                    Nsun3
+                    Polrmt
+                    Nlrx1
+                    Sfxn5
+                    Zc3h12c
+                    Slc25a39
+                    Tmem77
+                    Tlcd1
+                    Psmc6
+                    Slc30a6
+                    Unc119b
+                    Prkaca
+                    Tcn2
+                    Psmc3ip
+                    Pcmtd2
+                    Acaa1a
+                min_network_size: 
+                  type: integer
+                  example: 10
+                  default: 50
+                path_length:
+                  type: integer
+                  example: 2
+                  default: 2
+                min_number_of_articles_supporting_interaction:
+                  type: integer
+                  example: 0
+                  default: 2
+                max_number_of_interactions_per_protein:
+                  type: integer
+                  example: 200
+                  default: 200
+                max_number_of_interactions_per_article: 
+                  type: integer
+                  example: 100
+                  default: 100
+                enable_Biocarta:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_BioGRID: 
+                  type: boolean
+                  example: true
+                  default: true
+                enable_BioPlex:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_DIP:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_huMAP:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_InnateDB:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_IntAct:
+                  type: boolean
+                  example: true
+                  default: true
+                enable_KEGG:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_MINT:
+                  type: boolean
+                  example: true
+                  default: true
+                enable_ppid:
+                  type: boolean
+                  example: true
+                  default: true
+                enable_SNAVI: 
+                  type: boolean
+                  example: true
+                  default: false
+                enable_iREF:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_Stelzl:
+                  type: boolean
+                  example: true
+                  default: true
+                enable_vidal:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_BIND: 
+                  type: boolean
+                  example: false
+                  default: false
+                enable_figeys:
+                  type: boolean
+                  example: false
+                  default: false
+                enable_HPRD:
+                  type: boolean
+                  example: false
+                  default: false
+                number_of_results:
+                  type: integer
+                  default: 50
+                  example: 50
+      responses:
+        '200':
+          description: Successful response
+          content: 
+            application/json: 
+              schema: 
+                type: object
+                properties:
+                  G2N: 
+                    type: object
+                    properties: 
+                      nodes:
+                        type: array
+                        items: 
+                          type: object
+                          properties: 
+                            name: 
+                             type: string
+                            type: 
+                              type: string
+                        example:
+                        - name: Nsun3
+                          type: tf
+                        - name: Polrmt
+                          type: tf
+                        - name: Nlrx1
+                          type: tf
+                        - name: Sfxn5
+                          type: tf
+                        - name: Zc3h12c
+                          type: tf
+                      interactions:
+                        type: array
+                        items: 
+                          type: object 
+                          properties:
+                            source: 
+                              type: integer
+                              example: 374
+                            target:
+                              type: integer
+                              example: 463
+                        example:
+                        - source: 374
+                          target: 374
+                        - source: 374
+                          target: 463
+                        - source: 374
+                          target: 565
+                        - source: 374
+                          target: 450
+                        - source: 374
+                          target: 453
+                  input: 
+                    type: array
+                    items: 
+                      type: string
+                    example: 
+                    - Nsun3
+                    - Polrmt
+                    - Nlrx1
+                    - Sfxn5
+                    - Zc3h12c
+        '400':
+          description: Bad request
+        '404': 
+          description: Page not found
+        '5XX':
+          description: Unexpected server error
